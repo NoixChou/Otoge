@@ -5,7 +5,7 @@
 
 GUI::GUI(const std::string& guiName, const ScreenData& layoutScreen, std::shared_ptr<FlexibleScaler> parentScaler) : Scene(guiName, layoutScreen, parentScaler)
 {
-    Logger_->Info("GUI初期化 完了");
+    Logger_->Debug("GUI初期化 完了");
     ChangeFont(GAME_APP_DEFAULT_FONT, -1, 1, -1);
 }
 
@@ -60,7 +60,6 @@ bool GUI::ChangeFontSize(int size)
         
         if (GetFontStateToHandle(fontName, nullptr, &thickness, FontHandle_, &fontType) != -1)
         {
-            //Logger_->Info(fontName);
             return ChangeFont(fontName, size, thickness, fontType);
         }
     }

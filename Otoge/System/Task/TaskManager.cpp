@@ -133,7 +133,7 @@ void TaskManager::Tick(float tickSpeed = 1.0f)
             --m_Task;
         }
     }
-
+	//Logger_->Info("Ticked");
     //m_Task = std::vector< std::shared_ptr<Task> >::iterator();
     ScreenFlip();
 }

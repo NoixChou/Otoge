@@ -11,7 +11,6 @@
 TitleScene::TitleScene() : Scene("TitleScene")
 {
     std::shared_ptr<Button> testButton = std::make_shared<Button>("–ß‚é", ScreenData(0.f, 0.f, 10.f, 7.f), DefaultScaler_);
-    testButton->baseColor = GetColor(255, 255, 255);
     testButton->GetTextLabelInstance()->AdjustmentFontSize_ = false;
     testButton->GetTextLabelInstance()->ChangeFontSize(DefaultScaler_->CalculateHeight(2.f));
     AddChildTask(std::static_pointer_cast<Task>(testButton));
@@ -41,6 +40,30 @@ TitleScene::~TitleScene()
 
 void TitleScene::SceneUpdate(float deltaTime)
 {
+	float moveSpeed = 50.f * deltaTime;
+
+	if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_LEFT))
+	{
+		screen.width -= moveSpeed;
+	}
+	if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_RIGHT))
+	{
+		screen.width += moveSpeed;
+	}
+	if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_UP))
+	{
+		screen.height -= moveSpeed;
+	}
+	if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_DOWN))
+	{
+		screen.height += moveSpeed;
+	}
+
+	//Logger_->Warn("Tick, w:" + std::to_string(screen.width) + ", h:" + std::to_string(screen.height));
+
+	if (screen.width < 0.f) screen.width = 0.f;
+	if (screen.height < 0.f) screen.height = 0.f;
+
     /*if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_LEFT))
     {
         moveX = -1.f;

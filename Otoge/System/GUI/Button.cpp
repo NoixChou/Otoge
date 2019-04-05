@@ -6,6 +6,7 @@ Button::Button(const std::string& label, const ScreenData& layoutScreen, std::sh
 {
     Label_ = label;
     textColor = GetColor(50, 50, 50);
+	baseColor = GetColor(240, 240, 240);
 
     TextLabel_ = std::make_shared<Label>(Label_, ScreenData(0.f, 0.f, 100.f, 100.f), DefaultScaler_);
     TextLabel_->baseColor = textColor;
@@ -13,6 +14,8 @@ Button::Button(const std::string& label, const ScreenData& layoutScreen, std::sh
     TextLabel_->AdjustmentFontSize_ = AdjustmentFontSize_;
     TextLabel_->textAlign = Label::TextAlignment::center | Label::TextAlignment::middle;
     AddChildTask(std::static_pointer_cast<Task>(TextLabel_));
+	Logger_->Debug("button defScaler: w:" + std::to_string(DefaultScaler_->GetScreenWidth()) + ", h:" + std::to_string(DefaultScaler_->GetScreenHeight()));
+
 }
 
 Button::~Button()
@@ -23,18 +26,11 @@ Button::~Button()
 void Button::GUIUpdate(float deltaTime)
 {
     TextLabel_->SetLabel(Label_);
-    /*VECTOR center = FontStringCalculator::GetStringCenterInBox(FontHandle_, Label_, screen);
-    TextLabel_->screen.posX = center.x;
-    TextLabel_->screen.posY = center.y;
-    TextLabel_->screen.height = static_cast<float>(GetFontSize());
-    TextLabel_->screen.width = FontStringCalculator::GetStringWidth(TextLabel_->GetFontHandle(), Label_);*/
     TextLabel_->baseColor = textColor;
 }
 
 void Button::Draw()
 {
-	Logger_->Debug("scaler: w:" + std::to_string(DefaultScaler_->GetScreenWidth()) + ", h:" + std::to_string(DefaultScaler_->GetScreenHeight()));
-
     DrawBox(0, 0, screen.width, screen.height, baseColor, TRUE);
     int r, g, b;
     GetColor2(baseColor, &r, &g, &b);
