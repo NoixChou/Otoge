@@ -90,7 +90,70 @@ void Initialize()
     TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(KeyboardManager::GetInstance()));
     TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(MouseManager::GetInstance()));
     TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(make_shared<DebugScene>()));
-    TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(make_shared<TitleScene>()));
+
+	/*** --!!!-- 一時的なコード --!!!-- ***/
+	auto titleInit = [&](shared_ptr<TitleScene> title)
+	{
+		title->screen.width = static_cast<float>(g_SystemSettings->Get<int>(SETTINGS_RES_WIDTH).get()) / 4.0f;
+		title->screen.height = static_cast<float>(g_SystemSettings->Get<int>(SETTINGS_RES_HEIGHT).get()) / 3.0f;
+		title->RefreshDrawBuffer();
+		TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(title));
+	};
+
+	shared_ptr<TitleScene> title1 = make_shared<TitleScene>();
+	titleInit(title1);
+
+	shared_ptr<TitleScene> title2 = make_shared<TitleScene>();
+	title2->screen.posX = static_cast<float>(g_SystemSettings->Get<int>(SETTINGS_RES_WIDTH).get()) / 4.0f;
+	titleInit(title2);
+
+	shared_ptr<TitleScene> title3 = make_shared<TitleScene>();
+	title3->screen.posX = static_cast<float>(g_SystemSettings->Get<int>(SETTINGS_RES_WIDTH).get()) / 4.0f * 2.0f;
+	titleInit(title3);
+
+	shared_ptr<TitleScene> title4 = make_shared<TitleScene>();
+	title4->screen.posX = static_cast<float>(g_SystemSettings->Get<int>(SETTINGS_RES_WIDTH).get()) / 4.0f * 3.0f;
+	titleInit(title4);
+
+
+	shared_ptr<TitleScene> title5 = make_shared<TitleScene>();
+	title5->screen.posY = static_cast<float>(g_SystemSettings->Get<int>(SETTINGS_RES_HEIGHT).get()) / 3.0f;
+	titleInit(title5);
+
+	shared_ptr<TitleScene> title6 = make_shared<TitleScene>();
+	title6->screen.posX = static_cast<float>(g_SystemSettings->Get<int>(SETTINGS_RES_WIDTH).get()) / 4.0f;
+	title6->screen.posY = static_cast<float>(g_SystemSettings->Get<int>(SETTINGS_RES_HEIGHT).get()) / 3.0f;
+	titleInit(title6);
+
+	shared_ptr<TitleScene> title7 = make_shared<TitleScene>();
+	title7->screen.posX = static_cast<float>(g_SystemSettings->Get<int>(SETTINGS_RES_WIDTH).get()) / 4.0f * 2.0f;
+	title7->screen.posY = static_cast<float>(g_SystemSettings->Get<int>(SETTINGS_RES_HEIGHT).get()) / 3.0f;
+	titleInit(title7);
+
+	shared_ptr<TitleScene> title8 = make_shared<TitleScene>();
+	title8->screen.posX = static_cast<float>(g_SystemSettings->Get<int>(SETTINGS_RES_WIDTH).get()) / 4.0f * 3.0f;
+	title8->screen.posY = static_cast<float>(g_SystemSettings->Get<int>(SETTINGS_RES_HEIGHT).get()) / 3.0f;
+	titleInit(title8);
+
+
+	shared_ptr<TitleScene> title9 = make_shared<TitleScene>();
+	title9->screen.posY = static_cast<float>(g_SystemSettings->Get<int>(SETTINGS_RES_HEIGHT).get()) / 3.0f * 2.0f;
+	titleInit(title9);
+
+	shared_ptr<TitleScene> title10 = make_shared<TitleScene>();
+	title10->screen.posX = static_cast<float>(g_SystemSettings->Get<int>(SETTINGS_RES_WIDTH).get()) / 4.0f;
+	title10->screen.posY = static_cast<float>(g_SystemSettings->Get<int>(SETTINGS_RES_HEIGHT).get()) / 3.0f * 2.0f;
+	titleInit(title10);
+
+	shared_ptr<TitleScene> title11 = make_shared<TitleScene>();
+	title11->screen.posX = static_cast<float>(g_SystemSettings->Get<int>(SETTINGS_RES_WIDTH).get()) / 4.0f * 2.0f;
+	title11->screen.posY = static_cast<float>(g_SystemSettings->Get<int>(SETTINGS_RES_HEIGHT).get()) / 3.0f * 2.0f;
+	titleInit(title11);
+
+	shared_ptr<TitleScene> title12 = make_shared<TitleScene>();
+	title12->screen.posX = static_cast<float>(g_SystemSettings->Get<int>(SETTINGS_RES_WIDTH).get()) / 4.0f * 3.0f;
+	title12->screen.posY = static_cast<float>(g_SystemSettings->Get<int>(SETTINGS_RES_HEIGHT).get()) / 3.0f * 2.0f;
+	titleInit(title12);
 }
 
 // メインループ
@@ -98,7 +161,26 @@ void Loop()
 {
     while(ProcessMessage() != -1 && !TaskManager::GetInstance()->IsGameExit())
     {
-        TaskManager::GetInstance()->Tick(1.0f);
+		if(KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_A))
+	        TaskManager::GetInstance()->Tick(0.2f);
+		else
+			TaskManager::GetInstance()->Tick(1.0f);
+
+		if(KeyboardManager::GetInstance()->IsDownKey(KEY_INPUT_R))
+		{
+			Terminate();
+
+			FlexibleScaler::CreateWindowBasedInstance();
+			FlexibleScaler::GetWindowBasedInstance()->SetScale(1.0f);
+			TaskManager::CreateInstance();
+			KeyboardManager::CreateInstance();
+			MouseManager::CreateInstance();
+			
+			TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(KeyboardManager::GetInstance()));
+			TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(MouseManager::GetInstance()));
+			TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(make_shared<DebugScene>()));
+			TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(make_shared<TitleScene>()));
+		}
     }
 }
 

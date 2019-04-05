@@ -9,15 +9,10 @@ DebugScene::DebugScene() : Scene("DebugScene")
 {
     DefaultScaler_->lockTop = false;
     DefaultScaler_->lockBottom = true;
-	std::shared_ptr<Button> button = std::make_shared<Button>("", ScreenData(1.f, 94.f, 10.f, 2.5f), DefaultScaler_);
-	button->baseColor = GetColor(255, 0, 0);
-
-	AddChildTask(std::static_pointer_cast<Task>(button));
 
     FpsLabel_ = std::make_shared<Label>("FPS", ScreenData(1.f, 94.f, 10.f,2.5f), DefaultScaler_);
     FpsLabel_->SetTransparent(80);
-	FpsLabel_->baseColor = GetColor(0, 0, 0);
-    //FpsLabel_->baseColor = GetColor(180, 255, 180);
+    FpsLabel_->baseColor = GetColor(180, 255, 180);
     
     AddChildTask(std::static_pointer_cast<Task>(FpsLabel_));
 

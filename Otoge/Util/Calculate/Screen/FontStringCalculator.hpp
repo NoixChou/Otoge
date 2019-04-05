@@ -15,6 +15,7 @@ public:
     static void CreateInstance();
     static void DestroyInstance();
     */
+
     static float GetStringWidth(int fontHandle, const std::string& string);
     static float GetStringHeight(int fontHandle);
 

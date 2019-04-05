@@ -114,51 +114,23 @@ void Task::SetLifespan(float lifespan)
 
 void Task::ChildUpdate(float deltaTime)
 {
-    //Logger_->Debug("子タスク処理");
-    // 子タスク追加処理
-    for (auto& child : childrenQueues)
-    {
-        children.push_back(child);
-        Logger_->Debug(TaskName_ + "子タスク追加 タスク数:" + std::to_string(children.size()));
-    }
-    childrenQueues.clear();
-
-
-    auto task = children.begin();
-
-    for (task; task != children.end(); ++task)
-    {
-        // タイマー更新
-        float fixedDeltaTime = deltaTime * tickSpeed * (*task)->GetTickSpeed();
-        (*task)->timerCount += fixedDeltaTime;
-
-        // タスク処理
-        if ((*task)->CanRunning() && (*task)->IsRunning())
-        {
-            (*task)->Update(fixedDeltaTime);
-            if ((*task)->isAutoUpdateChildren)
-                (*task)->ChildUpdate(fixedDeltaTime);
-        }
-
-        // 寿命の処理
-        if ((*task)->HasLifespan())
-        {
-            (*task)->SetLifespan((*task)->GetLifespan() - fixedDeltaTime);
-            if ((*task)->GetLifespan() < 0.0f) (*task)->Terminate();
-        }
-
-        if ((*task)->IsTerminated())
-        {
-            task = children.erase(task);
-            --task;
-        }
-    }
+    
 }
 
 bool Task::AddChildTask(const std::shared_ptr<Task>& task)
 {
     childrenQueues.push_back(task);
-    Logger_->Debug(TaskName_ + "タスクキュー追加 キュー数:" + std::to_string(childrenQueues.size()));
+    //Logger_->Debug(TaskName_ + "タスクキュー追加 キュー数:" + std::to_string(childrenQueues.size()));
 
     return task->Initialize(childrenQueues.size() - 1);
+}
+
+std::vector<std::shared_ptr<Task>>& Task::GetChildren()
+{
+	return children;
+}
+
+std::vector<std::shared_ptr<Task>>& Task::GetChildrenQueues()
+{
+	return childrenQueues;
 }

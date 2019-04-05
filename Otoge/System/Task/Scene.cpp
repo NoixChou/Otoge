@@ -3,6 +3,7 @@
 #include "../../Util/Setting/SettingManager.h"
 #include "../Input/MouseManager.hpp"
 #include "../../Util/Calculate/Screen/FontStringCalculator.hpp"
+#include "TaskManager.hpp"
 
 
 Scene::Scene(const std::string& sceneName, float sceneWidth, float sceneHeight, float sceneX, float sceneY, std::shared_ptr<FlexibleScaler> parentScaler, std::shared_ptr<Scene> prevScene) : Task(sceneName)
@@ -72,10 +73,9 @@ void Scene::Update(float deltaTime)
         SetDrawScreen(SceneBuffer_);
         SetDrawBlendMode(currentBlendMode, currentBlendParam);
         ClearDrawScreen();
-        clsDx();
 
         Draw();
-        ChildUpdate(deltaTime);
+		TaskManager::UpdateTasks(children, childrenQueues, tickSpeed, deltaTime);
 
         if (isDrawFrame)
         {
@@ -91,44 +91,44 @@ void Scene::Update(float deltaTime)
         {
             DrawBox(static_cast<int>(floor(screen.posX)), static_cast<int>(floor(screen.posY)), static_cast<int>(floor(screen.posX + screen.width)), static_cast<int>(floor(screen.posY + screen.height)), GetColor(255, 0, 0), FALSE);
         }
-        /*int bufSX, bufSY;
-        GetGraphSize(SceneBuffer_, &bufSX, &bufSY);
-        if (bufSX < static_cast<int>(screen.width)) screen.width = static_cast<float>(bufSX);
-        if (bufSY < static_cast<int>(screen.height)) screen.height = static_cast<float>(bufSY);*/
-        if (0.f > screen.width) screen.width = 0.f;
-        if (0.f > screen.height) screen.height = 0.f;
+        if (1.f > screen.width) screen.width = 1.f;
+        if (1.f > screen.height) screen.height = 1.f;
 
-        currentBlendMode = DX_BLENDMODE_NOBLEND, currentBlendParam = 0;
         GetDrawBlendMode(&currentBlendMode, &currentBlendParam);
 		if (static_cast<int>(Transparency_) < 100)
-		{
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>((Transparency_ / 100.f) * 255.f));
-			//Logger_->Debug("trans: " + std::to_string(static_cast<int>((Transparency_ / 100.f) * 255.f)));
-		}
-        DrawExtendGraph(static_cast<int>(floor(screen.posX)), static_cast<int>(floor(screen.posY)), static_cast<int>(floor(screen.posX + screen.width)), static_cast<int>(floor(screen.posY + screen.height)), SceneBuffer_, TRUE);
+        DrawRectGraph(static_cast<int>(floor(screen.posX)), static_cast<int>(floor(screen.posY)), 0, 0, static_cast<int>(floor(screen.posX + screen.width)), static_cast<int>(floor(screen.posY + screen.height)), SceneBuffer_, TRUE);
         SetDrawBlendMode(currentBlendMode, currentBlendParam);
     }
 }
 
 void Scene::ReCalculateScreen()
 {
+	bool doRefreshBuffer = false;
+
 	if (isAutoScaling)
 	{
 		if (!IsCalculated_)
 		{
 			PreLayoutScreen_ = screen;
 			IsCalculated_ = true;
+			doRefreshBuffer = true;
 		}
 		if (ParentScaler_ != nullptr)
 		{
 			Logger_->Debug("レイアウト中: x" + std::to_string(screen.posX) + ", y" + std::to_string(screen.posY) + ", w" + std::to_string(screen.width) + ", h" + std::to_string(screen.height));
+			if (ParentScaler_->Calculate(&PreLayoutScreen_).width > screen.width) doRefreshBuffer = true;
+			if (ParentScaler_->Calculate(&PreLayoutScreen_).height > screen.height) doRefreshBuffer = true;
 			screen = ParentScaler_->Calculate(&PreLayoutScreen_);
 			Logger_->Debug("レイアウト済: x" + std::to_string(screen.posX) + ", y" + std::to_string(screen.posY) + ", w" + std::to_string(screen.width) + ", h" + std::to_string(screen.height));
 		}
 	}
 
-	if(DefaultScaler_ == nullptr)
+	if (DefaultScaler_ == nullptr)
+	{
 		DefaultScaler_ = std::make_shared<FlexibleScaler>(screen.width, screen.height, 1.0f);
+		doRefreshBuffer = true;
+	}
 	else
 	{
 		DefaultScaler_->SetScreenWidth(screen.width);
@@ -136,7 +136,8 @@ void Scene::ReCalculateScreen()
 		DefaultScaler_->SetScale(1.0f);
 	}
 
-	RefreshDrawBuffer();
+	if(doRefreshBuffer)
+		RefreshDrawBuffer();
 }
 
 bool Scene::RefreshDrawBuffer()

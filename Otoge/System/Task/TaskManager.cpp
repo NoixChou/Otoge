@@ -3,7 +3,7 @@
 using namespace std;
 using namespace std::chrono;
 
-TaskManager *TaskManager::Instance_ = nullptr;
+std::shared_ptr<TaskManager> TaskManager::Instance_ = nullptr;
 
 TaskManager::TaskManager()
 {
@@ -19,7 +19,7 @@ TaskManager::~TaskManager()
 }
 
 
-TaskManager *TaskManager::GetInstance()
+std::shared_ptr<TaskManager> TaskManager::GetInstance()
 {
     return Instance_;
 }
@@ -28,13 +28,13 @@ void TaskManager::CreateInstance()
 {
     if(!Instance_)
     {
-        Instance_ = new TaskManager;
+        Instance_.reset(new TaskManager);
     }
 }
 
 void TaskManager::DestroyInstance()
 {
-    delete Instance_;
+    Instance_.reset();
 }
 
 
@@ -63,17 +63,10 @@ bool TaskManager::AddTask(const shared_ptr<Task>& task)
 {
     bool result = false;
 
-    /*if (ProcessingTask_ != std::vector< std::shared_ptr<Task> >::iterator())
-    {
-        Logger_->Info("プロセス内からのAddTask呼び出し");
-        result = (*ProcessingTask_)->AddChildTask(task);
-    }
-    else*/ {
-        TaskQueues_.push_back(task);
-        Logger_->Debug("タスクキュー追加 キュー数:" + to_string(TaskQueues_.size()));
+    TaskQueues_.push_back(task);
+    //Logger_->Debug("タスクキュー追加 キュー数:" + to_string(TaskQueues_.size()));
 
-        task->Initialize(TaskQueues_.size() - 1);
-    }
+    task->Initialize(TaskQueues_.size() - 1);
 
     return result;
 }
@@ -94,46 +87,51 @@ void TaskManager::Tick(float tickSpeed = 1.0f)
         fps_interval_count = 0.0f;
     }
 
-    for (auto& task : TaskQueues_)
-    {
-        Tasks_.push_back(task);
-        Logger_->Debug("タスク追加 タスク数:" + std::to_string(Tasks_.size()));
-    }
-    TaskQueues_.clear();
-
-    auto m_Task = Tasks_.begin();
-
     ClearDrawScreen();
     clsDx();
     
-    for(m_Task; m_Task != Tasks_.end(); ++m_Task)
-    {
-        // タイマー更新
-        float fixedDeltaTime = m_DeltaTime * tickSpeed * (*m_Task)->GetTickSpeed();
-        (*m_Task)->timerCount += fixedDeltaTime;
-
-        // タスク処理
-        if ((*m_Task)->CanRunning() && (*m_Task)->IsRunning())
-        {
-            (*m_Task)->Update(fixedDeltaTime);
-            if((*m_Task)->isAutoUpdateChildren)
-                (*m_Task)->ChildUpdate(fixedDeltaTime);
-        }
-
-        // 寿命の処理
-        if((*m_Task)->HasLifespan())
-        {
-            (*m_Task)->SetLifespan((*m_Task)->GetLifespan() - fixedDeltaTime);
-            if ((*m_Task)->GetLifespan() < 0.0f) (*m_Task)->Terminate();
-        }
-
-        if ((*m_Task)->IsTerminated())
-        {
-            m_Task = Tasks_.erase(m_Task);
-            --m_Task;
-        }
-    }
+	UpdateTasks(Tasks_, TaskQueues_, tickSpeed, m_DeltaTime);
 	//Logger_->Info("Ticked");
     //m_Task = std::vector< std::shared_ptr<Task> >::iterator();
     ScreenFlip();
+}
+
+void TaskManager::UpdateTasks(std::vector<std::shared_ptr<Task>>& tasks, std::vector<std::shared_ptr<Task>>& queues, float tickSpeed, float deltaTime)
+{
+	for (auto task : queues)
+	{
+		tasks.push_back(task);
+		//Logger::LowLevelLog("タスク追加 タスク数:" + std::to_string(tasks.size()), "LOG");
+	}
+	queues.clear();
+	
+	auto m_Task = tasks.begin();
+
+	for (m_Task; m_Task != tasks.end(); ++m_Task)
+	{
+		//Logger::LowLevelLog("処理", (*m_Task)->GetName());
+		// タイマー更新
+		float fixedDeltaTime = deltaTime * tickSpeed * (*m_Task)->GetTickSpeed();
+		(*m_Task)->timerCount += fixedDeltaTime;
+
+		// タスク処理
+		if ((*m_Task)->CanRunning() && (*m_Task)->IsRunning())
+		{
+			(*m_Task)->Update(fixedDeltaTime);
+			if ((*m_Task)->isAutoUpdateChildren)
+				UpdateTasks((*m_Task)->GetChildren(), (*m_Task)->GetChildrenQueues(), (*m_Task)->GetTickSpeed(), fixedDeltaTime);
+		}
+
+		// 寿命の処理
+		if ((*m_Task)->HasLifespan())
+		{
+			(*m_Task)->SetLifespan((*m_Task)->GetLifespan() - fixedDeltaTime);
+			if ((*m_Task)->GetLifespan() < 0.0f) (*m_Task)->Terminate();
+		}
+
+		if ((*m_Task)->IsTerminated())
+		{
+			m_Task = tasks.erase(m_Task);
+		}
+	}
 }

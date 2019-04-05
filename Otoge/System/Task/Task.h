@@ -61,5 +61,7 @@ public:
     // 子タスク
     void ChildUpdate(float deltaTime);
     bool AddChildTask(const std::shared_ptr<Task> &task);
+	std::vector<std::shared_ptr<Task>>& GetChildren();
+	std::vector<std::shared_ptr<Task>>& GetChildrenQueues();
     
 };
