@@ -7,25 +7,30 @@
 int DrawableTask::TemporaryDrawBuffer_ = -1;
 int DrawableTask::BufferWidth_ = -1;
 int DrawableTask::BufferHeight_ = -1;
-bool DrawableTask::isDrawFrame = false;
+bool DrawableTask::IsDrawPoint_ = false;
+float DrawableTask::DrawPointSize_ = 1.5f;
 
-DrawableTask::DrawableTask(const std::string& sceneName, float x, float y, std::shared_ptr<FlexibleScaler> parentScaler) : Task(sceneName)
+DrawableTask::DrawableTask(const std::string& sceneName, float x, float y, float z, std::shared_ptr<FlexibleScaler> parentScaler) : Task(sceneName)
 {
 	if(TemporaryDrawBuffer_ == -1)
 	{
-		if(BufferWidth_ = -1)
+		if(BufferWidth_ == -1)
 			BufferWidth_ = SettingManager::GetGlobal()->Get<int>(SETTINGS_RES_WIDTH).get();
-		if(BufferHeight_ = -1)
+		if(BufferHeight_ == -1)
 			BufferHeight_ = SettingManager::GetGlobal()->Get<int>(SETTINGS_RES_HEIGHT).get();
 
-		isDrawFrame = SettingManager::GetGlobal()->Get<bool>(SETTINGS_DEBUG_DRAW_SCENE_FRAME).get();
+		IsDrawPoint_ = SettingManager::GetGlobal()->Get<bool>(SETTINGS_DEBUG_DRAW_DTASK_POINT).get();
+		SettingManager::GetGlobal()->SetDefault<float>("system.debug.drawable.drawPointSize", DrawPointSize_);
+		SettingManager::GetGlobal()->Save();
 
+		DrawPointSize_ = SettingManager::GetGlobal()->Get<float>("system.debug.drawable.drawPointSize").get();
 		TemporaryDrawBuffer_ = MakeScreen(BufferWidth_, BufferHeight_, TRUE);
 		Logger_->Info("一時描画バッファを生成しました。");
 	}
 	isAutoUpdateChildren = false;
-	this->drawX = x;
-	this->drawY = y;
+	this->position.x = x;
+	this->position.y = y;
+	this->position.z = z;
 
 	ParentScaler_ = parentScaler;
 
@@ -55,6 +60,15 @@ void DrawableTask::Update(float deltaTime)
 
 		Draw();
 		ChildUpdate(deltaTime);
+		// デバッグ
+		if (IsDrawPoint_)
+		{
+			float x = ParentScaler_->CalculatePositionX(position.x);
+			float y = ParentScaler_->CalculatePositionY(position.y);
+			float rx = ParentScaler_->CalculateWidth(DrawPointSize_);
+			float ry = ParentScaler_->CalculateHeight(DrawPointSize_);
+			DrawOvalAA(x, y, rx, ry, 50.f, GetColor(0, 255, 0), TRUE);
+		}
 
 		/* 描画終わり */
 		SetDrawScreen(currentBuffer);
@@ -66,6 +80,16 @@ void DrawableTask::Update(float deltaTime)
 
 		SetDrawBlendMode(currentBlendMode, currentBlendParam);
 	}
+}
+
+void DrawableTask::Enable3D()
+{
+	IsEnabled3D_ = true;
+}
+
+void DrawableTask::Disable3D()
+{
+	IsEnabled3D_ = false;
 }
 
 void DrawableTask::SetVisible(bool visible)
@@ -86,4 +110,9 @@ float DrawableTask::GetTransparent()
 bool DrawableTask::IsVisible() const
 {
 	return IsVisible_;
+}
+
+bool DrawableTask::IsEnable3D() const
+{
+	return IsEnabled3D_;
 }

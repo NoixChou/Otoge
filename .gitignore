@@ -434,3 +434,5 @@
 /work_dir/config.json
 /x64
 /Otoge.sln.DotSettings.user
+/Otoge/Release
+/Release

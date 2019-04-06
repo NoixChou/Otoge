@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "../Task/Task.h"
+#include "../../Util/Calculate/Screen/FlexibleScaler.hpp"
 
 class MouseManager : public Task
 {
@@ -44,6 +45,9 @@ public:
     int GetReleasePosY();
     float GetReleasePosXf();
     float GetReleasePosYf();
+
+	float GetMouseRateX(std::shared_ptr<FlexibleScaler> scaler);
+	float GetMouseRateY(std::shared_ptr<FlexibleScaler> scaler);
 
     bool IsDownButton(int key);
     bool IsHoldButton(int key);

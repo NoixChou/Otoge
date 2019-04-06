@@ -63,6 +63,16 @@ void FlexibleScaler::SetScale(float scale)
     Scale_ = scale;
 }
 
+float FlexibleScaler::CalculatePositionRateX(float rawX)
+{
+	return rawX / ScreenWidth_ * 100.f * Scale_;
+}
+
+float FlexibleScaler::CalculatePositionRateY(float rawY)
+{
+	return rawY / ScreenHeight_ * 100.f * Scale_;
+}
+
 float FlexibleScaler::CalculatePositionX(float px)
 {
     return ScreenWidth_ * (px / 100.f) * Scale_;

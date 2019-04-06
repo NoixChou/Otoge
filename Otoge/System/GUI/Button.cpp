@@ -1,6 +1,8 @@
 ﻿#include "Button.hpp"
 #include "../../Util/Calculate/Screen/FontStringCalculator.hpp"
 #include "../Task/TaskManager.hpp"
+#include "../Input/MouseManager.hpp"
+#include "../../Game/Scenes/Title/Ball.hpp"
 
 Button::Button(const std::string& label, const ScreenData& layoutScreen, std::shared_ptr<FlexibleScaler> parentScaler) : GUI(label + "\"<Button>\"", layoutScreen, parentScaler)
 {
@@ -32,10 +34,19 @@ void Button::GUIUpdate(float deltaTime)
 void Button::Draw()
 {
     DrawBox(0, 0, screen.width, screen.height, baseColor, TRUE);
-    int r, g, b;
-    GetColor2(baseColor, &r, &g, &b);
-    if (IsHoldMouse()) r -= 50, g -= 50, b -= 50;
-    DrawBox(0, 0, screen.width, screen.height, GetColor(r, g, b), TRUE);
+
+	if (IsHoldMouse() && timerCount > 0.2f)
+	{
+		
+	}
+
+	if(IsDownMouse())
+	{
+		AddChildTask(std::static_pointer_cast<Task>(
+			std::make_shared<ButtonPushedAnimate>(MouseManager::GetInstance()->GetMouseRateX(DefaultScaler_), MouseManager::GetInstance()->GetMouseRateY(DefaultScaler_), baseColor, 35.f, DefaultScaler_)
+		));
+		timerCount = 0.f;
+	}
 }
 
 void Button::SetTextLabelInstance(std::shared_ptr<Label> textLabel)
@@ -46,4 +57,38 @@ void Button::SetTextLabelInstance(std::shared_ptr<Label> textLabel)
 std::shared_ptr<Label> Button::GetTextLabelInstance()
 {
     return TextLabel_;
+}
+
+
+/* ボタン押下時のアニメーション */
+ButtonPushedAnimate::ButtonPushedAnimate(float x, float y, unsigned color, float size, std::shared_ptr<FlexibleScaler> parentScaler) : DrawableTask("ButtonPushedAnimation", x, y, 0.f, parentScaler)
+{
+	this->color = color;
+	Size_ = size;
+	SetTransparent(50.f);
+	hasLifespan = true;
+	lifespan = 0.5f;
+}
+
+ButtonPushedAnimate::~ButtonPushedAnimate()
+{
+
+}
+
+void ButtonPushedAnimate::PreUpdate(float deltaTime)
+{
+	Size_ += 500.0f * deltaTime;
+	SetTransparent(GetTransparent() - (100.f * deltaTime));
+}
+
+void ButtonPushedAnimate::Draw()
+{
+	ScreenData circle;
+	circle.posX = position.x;
+	circle.posY = position.y;
+	circle.width = Size_;
+	circle.height = Size_;
+
+	ScreenData fixed = ParentScaler_->Calculate(&circle);
+	DrawCircle(fixed.posX, fixed.posY, fixed.width + fixed.height / 2.0f, color, TRUE);
 }

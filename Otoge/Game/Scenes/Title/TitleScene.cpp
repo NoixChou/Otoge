@@ -11,11 +11,11 @@
 
 TitleScene::TitleScene() : Scene("TitleScene")
 {
-    /*std::shared_ptr<Button> testButton = std::make_shared<Button>("–ß‚é", ScreenData(0.f, 0.f, 10.f, 7.f), DefaultScaler_);
+    std::shared_ptr<Button> testButton = std::make_shared<Button>("Button", ScreenData(0.f, 0.f, 10.f, 7.f), DefaultScaler_);
     testButton->GetTextLabelInstance()->AdjustmentFontSize_ = false;
-    testButton->GetTextLabelInstance()->ChangeFontSize(DefaultScaler_->CalculateHeight(2.f));
+    testButton->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(2.f)));
     AddChildTask(std::static_pointer_cast<Task>(testButton));
-
+	
     std::shared_ptr<Label> testLabel = std::make_shared<Label>("TinyLabel", ScreenData(11.f, 0.f, 6.f, 1.5f), DefaultScaler_);
     testLabel->baseColor = GetColor(255, 255, 255);
     AddChildTask(std::static_pointer_cast<Task>(testLabel));
@@ -30,7 +30,7 @@ TitleScene::TitleScene() : Scene("TitleScene")
 
     std::shared_ptr<Label> testLabel3 = std::make_shared<Label>("LargeLabel", ScreenData(11.f, 6.9f, 18.f, 6.0f), DefaultScaler_);
     testLabel3->baseColor = GetColor(255, 255, 255);
-    AddChildTask(std::static_pointer_cast<Task>(testLabel3));*/
+    AddChildTask(std::static_pointer_cast<Task>(testLabel3));
 }
 
 
@@ -64,13 +64,7 @@ void TitleScene::SceneUpdate(float deltaTime)
 
 	static bool patternToggle = true;
 
-	/*if(timerCount < 1.0f)
-	{
-		patternToggle = !patternToggle;
-		timerCount = 1.0f;
-	}
-	*/
-	if(timerCount > 0.01f)
+	/*if(timerCount > 0.01f)
 	{
 		if (patternToggle)
 		{
@@ -83,7 +77,7 @@ void TitleScene::SceneUpdate(float deltaTime)
 			ball->SetTickSpeed(0.5f);
 			AddChildTask(ball);
 		}
-	}
+	}*/
 
 	if(timerCount > 0.01f)
 	{
@@ -100,10 +94,10 @@ void TitleScene::SceneUpdate(float deltaTime)
 void TitleScene::Draw()
 {
     ScreenData d;
-    d.posX = 50.f;
+    d.posX = 0.f;
     d.posY = 0.f;
-    d.width = 50.f;
-    d.height = 50.f;
+    d.width = 100.f;
+    d.height = 100.f;
     ScreenData fixed = DefaultScaler_->Calculate(&d);
-    //DrawBox(fixed.posX, fixed.posY, fixed.posX + fixed.width, fixed.posY + fixed.height, GetColor(255, 255, 255), FALSE);
+    //DrawBox(fixed.posX, fixed.posY, fixed.width, fixed.height, GetColor(0, 0, 0), TRUE);
 }

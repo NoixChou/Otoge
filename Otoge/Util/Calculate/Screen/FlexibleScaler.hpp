@@ -29,10 +29,17 @@ public:
     void SetScreenWidth(float width);
     void SetScreenHeight(float height);
     void SetScale(float scale);
+
+
+	// スクリーンベース座標から割合に変換
+	float CalculatePositionRateX(float rawX);
+	float CalculatePositionRateY(float rawY);
+
+	// 割合から実際の画面サイズに基づく座標に調整
     float CalculatePositionX(float px);
     float CalculatePositionY(float py);
     float CalculateWidth(float width);
     float CalculateHeight(float height);
-    ScreenData Calculate(const ScreenData *dataOfPercent); // 百分率から実際の画面サイズに基づく割合に調整
+    ScreenData Calculate(const ScreenData *dataOfPercent);
     ScreenData Calculate(float px, float py, float width, float height);
 };

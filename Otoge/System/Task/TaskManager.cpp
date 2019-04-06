@@ -128,10 +128,15 @@ void TaskManager::UpdateTasks(std::vector<std::shared_ptr<Task>>& tasks, std::ve
 			(*m_Task)->SetLifespan((*m_Task)->GetLifespan() - fixedDeltaTime);
 			if ((*m_Task)->GetLifespan() < 0.0f) (*m_Task)->Terminate();
 		}
+	}
 
+	m_Task = tasks.begin();
+	for (m_Task; m_Task != tasks.end(); ++m_Task)
+	{
 		if ((*m_Task)->IsTerminated())
 		{
 			m_Task = tasks.erase(m_Task);
+			--m_Task;
 		}
 	}
 }

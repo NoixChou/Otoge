@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "GUI.hpp"
 #include "Label.hpp"
+#include "../Task/DrawableTask.hpp"
 
 class Button : public GUI
 {
@@ -18,4 +19,18 @@ public:
 
     void SetTextLabelInstance(std::shared_ptr<Label> textLabel);
     std::shared_ptr<Label> GetTextLabelInstance();
+};
+
+class ButtonPushedAnimate : public DrawableTask
+{
+private:
+	float Size_;
+public:
+	unsigned color;
+
+	ButtonPushedAnimate(float x, float y, unsigned color, float size = 1.f, std::shared_ptr<FlexibleScaler> parentScaler = nullptr);
+	~ButtonPushedAnimate();
+
+	void PreUpdate(float deltaTime) override;
+	void Draw() override;
 };
