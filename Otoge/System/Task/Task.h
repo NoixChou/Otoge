@@ -24,6 +24,7 @@ protected:
 public:
     bool isAutoUpdateChildren = true; // 子タスクのUpdateを自動で実行するか
 
+    std::shared_ptr<Task> parentTask; // 親タスク
     std::vector<std::shared_ptr<Task>> children; // 子タスク
     std::vector<std::shared_ptr<Task>> childrenQueues;
 

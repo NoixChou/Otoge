@@ -40,6 +40,16 @@ public:
         
         //DefaultTree_.put(dataPath, value);
     }
+	template<> void SetDefault<std::string>(const std::string& dataPath, std::string value)
+    {
+		Logger_->Debug("‰Šú’lƒZƒbƒg: " + dataPath + " = " + value);
+
+		if (SettingsTree_.get_optional<std::string>(dataPath) == boost::none)
+		{
+			Logger_->Info("‰Šú‰»: " + dataPath);
+			Set(dataPath, value);
+		}
+    }
 
     template<typename T> boost::optional<T> Get(const std::string &dataPath)
     {
@@ -47,11 +57,21 @@ public:
         {
             Logger_->Debug( "æ“¾¬Œ÷: " + dataPath + " = " + std::to_string(value.get()));
             return value;
-        }else
-        {
-            Logger_->Error("æ“¾¸”s: " + dataPath);
-            return boost::none;
         }
+
+        Logger_->Error("æ“¾¸”s: " + dataPath);
+        return boost::none;
+    }
+	template<> boost::optional<std::string> Get(const std::string& dataPath)
+	{
+		if (boost::optional<std::string> value = SettingsTree_.get_optional<std::string>(dataPath))
+		{
+			Logger_->Debug("æ“¾¬Œ÷: " + dataPath + " = " + value.get());
+			return value;
+		}
+        
+        Logger_->Error("æ“¾¸”s: " + dataPath);
+        return boost::none;
     }
 
     template<typename T> void Set(const std::string &dataPath, T value)

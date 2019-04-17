@@ -10,6 +10,7 @@ private:
 
 public:
     unsigned textColor;
+	unsigned animationColor;
 
     Button(const std::string& label, const ScreenData& layoutScreen, std::shared_ptr<FlexibleScaler> parentScaler = nullptr);
     ~Button();

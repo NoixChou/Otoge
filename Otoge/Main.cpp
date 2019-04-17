@@ -1,7 +1,7 @@
 ﻿#include "Util/Debug/Logger.h"
 #include "Util/Debug/DebugScene.hpp"
 #include "Util/Setting/SettingManager.h"
-#include "Game/Scenes/Title/TitleScene.h"
+#include "Game/Scenes/Title/TitleScene.hpp"
 #include "System/Task/TaskManager.hpp"
 #include "System/Input/KeyboardManager.hpp"
 #include "System/Input/MouseManager.hpp"
@@ -44,6 +44,10 @@ void PreInitialize()
     g_SystemSettings->SetDefault(SETTINGS_RES_HEIGHT, 720);
     g_SystemSettings->SetDefault(SETTINGS_AA_SAMPLE, 2);
     g_SystemSettings->SetDefault(SETTINGS_AA_QUALITY, 2);
+
+	g_SystemSettings->SetDefault<std::string>(SETTINGS_FONT_NAME, GAME_APP_DEFAULT_FONT);
+	g_SystemSettings->SetDefault(SETTINGS_FONT_DRAWTYPE, DX_FONTTYPE_ANTIALIASING);
+
     g_SystemSettings->SetDefault(SETTINGS_DEBUG_DRAW_SCENE_FRAME, false);
 	g_SystemSettings->SetDefault(SETTINGS_DEBUG_DRAW_DTASK_POINT, false);
     g_SystemSettings->Save();
@@ -56,6 +60,8 @@ void PreInitialize()
     SetUseFPUPreserveFlag(TRUE);
     SetGraphMode(g_SystemSettings->Get<int>(SETTINGS_RES_WIDTH).get(), g_SystemSettings->Get<int>(SETTINGS_RES_HEIGHT).get(), 32);
     SetFullSceneAntiAliasingMode(g_SystemSettings->Get<int>(SETTINGS_AA_SAMPLE).get(), g_SystemSettings->Get<int>(SETTINGS_AA_QUALITY).get());
+
+	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
 }
 
 // 初期化

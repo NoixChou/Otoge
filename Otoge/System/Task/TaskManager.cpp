@@ -118,8 +118,16 @@ void TaskManager::UpdateTasks(std::vector<std::shared_ptr<Task>>& tasks, std::ve
 		if ((*m_Task)->CanRunning() && (*m_Task)->IsRunning())
 		{
 			(*m_Task)->Update(fixedDeltaTime);
-			if ((*m_Task)->isAutoUpdateChildren)
-				UpdateTasks((*m_Task)->GetChildren(), (*m_Task)->GetChildrenQueues(), (*m_Task)->GetTickSpeed(), fixedDeltaTime);
+
+            for (auto m_Child : (*m_Task)->GetChildren())
+            {
+                m_Child->parentTask = (*m_Task);
+            }
+
+            if ((*m_Task)->isAutoUpdateChildren)
+            {
+                UpdateTasks((*m_Task)->GetChildren(), (*m_Task)->GetChildrenQueues(), (*m_Task)->GetTickSpeed(), fixedDeltaTime);
+            }
 		}
 
 		// 寿命の処理

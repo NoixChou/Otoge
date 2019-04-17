@@ -9,6 +9,7 @@ Button::Button(const std::string& label, const ScreenData& layoutScreen, std::sh
     Label_ = label;
     textColor = GetColor(50, 50, 50);
 	baseColor = GetColor(240, 240, 240);
+	animationColor = GetColor(180,180,180);
 
     TextLabel_ = std::make_shared<Label>(Label_, ScreenData(0.f, 0.f, 100.f, 100.f), DefaultScaler_);
     TextLabel_->baseColor = textColor;
@@ -29,24 +30,21 @@ void Button::GUIUpdate(float deltaTime)
 {
     TextLabel_->SetLabel(Label_);
     TextLabel_->baseColor = textColor;
+
+    if (IsDownMouse())
+    {
+        AddChildTask(std::static_pointer_cast<Task>(
+            std::make_shared<ButtonPushedAnimate>(
+                MouseManager::GetInstance()->GetMouseRateX(DefaultScaler_) - DefaultScaler_->CalculatePositionRateX(Screen_.posX),
+                MouseManager::GetInstance()->GetMouseRateY(DefaultScaler_) - DefaultScaler_->CalculatePositionRateY(Screen_.posY),
+                animationColor, 35.f, DefaultScaler_)
+            ));
+    }
 }
 
 void Button::Draw()
 {
-    DrawBox(0, 0, screen.width, screen.height, baseColor, TRUE);
-
-	if (IsHoldMouse() && timerCount > 0.2f)
-	{
-		
-	}
-
-	if(IsDownMouse())
-	{
-		AddChildTask(std::static_pointer_cast<Task>(
-			std::make_shared<ButtonPushedAnimate>(MouseManager::GetInstance()->GetMouseRateX(DefaultScaler_), MouseManager::GetInstance()->GetMouseRateY(DefaultScaler_), baseColor, 35.f, DefaultScaler_)
-		));
-		timerCount = 0.f;
-	}
+    DrawBox(0, 0, Screen_.width, Screen_.height, baseColor, TRUE);
 }
 
 void Button::SetTextLabelInstance(std::shared_ptr<Label> textLabel)
@@ -77,7 +75,7 @@ ButtonPushedAnimate::~ButtonPushedAnimate()
 
 void ButtonPushedAnimate::PreUpdate(float deltaTime)
 {
-	Size_ += 500.0f * deltaTime;
+	Size_ += Size_ * 10.f * deltaTime;
 	SetTransparent(GetTransparent() - (100.f * deltaTime));
 }
 

@@ -2,9 +2,7 @@
 # この .gitignore ファイルは Microsoft(R) Visual Studio によって自動的に作成されました。
 ################################################################################
 
-/work_dir/Log.txt
 /.vs
-/Debug
 /DxLib/zlib_x64_d.lib
 /DxLib/zlib_x64.lib
 /DxLib/zlib_vs2015_x86_MTd.lib
@@ -429,10 +427,10 @@
 /DxLib/celt_vs2012_x64.lib
 /DxLib/celt_d.lib
 /DxLib/celt.lib
-/Otoge/Debug
-/Otoge/x64
 /work_dir/config.json
-/x64
 /Otoge.sln.DotSettings.user
-/Otoge/Release
-/Release
+/Bin
+/WorkDir
+/PDB
+/Otoge/x64
+/x64/Debug

@@ -2,11 +2,12 @@
 #include "../../Util/Calculate/ScreenData.h"
 #include "../Config.h"
 #include "../../Util/Calculate/Screen/FontStringCalculator.hpp"
+#include "../../Util/Setting/SettingManager.h"
 
 GUI::GUI(const std::string& guiName, const ScreenData& layoutScreen, std::shared_ptr<FlexibleScaler> parentScaler) : Scene(guiName, layoutScreen, parentScaler)
 {
     Logger_->Debug("GUI初期化 完了");
-    ChangeFont(GAME_APP_DEFAULT_FONT, -1, 1, -1);
+    ChangeFont(SettingManager::GetGlobal()->Get<std::string>(SETTINGS_FONT_NAME).get().c_str(), -1, 1, SettingManager::GetGlobal()->Get<int>(SETTINGS_FONT_DRAWTYPE).get());
 }
 
 GUI::~GUI()
@@ -18,12 +19,11 @@ void GUI::SceneUpdate(float deltaTime)
 {
     if(IsChangedScreen() && AdjustmentFontSize_)
     {
-        ChangeFontSize(static_cast<int>(floor(this->screen.height)));
-        if (FontStringCalculator::GetStringWidth(FontHandle_, Label_) > screen.width) ChangeFontSize(static_cast<int>(floor(screen.width * 1.8f)) / Label_.length());
+        ChangeFontSize(static_cast<int>(floor(this->Screen_.height)));
+        if (FontStringCalculator::GetStringWidth(FontHandle_, Label_) > Screen_.width) ChangeFontSize(static_cast<int>(floor(Screen_.width * 1.5f)) / static_cast<int>(Label_.length()));
     }
 
     GUIUpdate(deltaTime);
-    //Draw();
 }
 
 void GUI::SetLabel(const std::string& label)
@@ -40,12 +40,12 @@ bool GUI::ChangeFont(const char* fontName, int size, int thickness, int fontType
         FontHandle_ = CreateFontToHandle(fontName, size, thickness, fontType);
     }else
     {
-        Logger_->Error("既にフォントが生成されていて、削除に失敗しました");
+        Logger_->Error("既にフォントが生成されていて、削除に失敗");
     }
 
     if(FontHandle_ == -1)
     {
-        Logger_->Error("フォントの生成に失敗しました。デフォルトフォントを使用します。");
+        Logger_->Error("フォントの生成に失敗。デフォルトフォントを使用");
     }
 
     return FontHandle_ != -1;
@@ -80,12 +80,12 @@ bool GUI::ChangeFontThickness(int thickness)
     return false;
 }
 
-const int GUI::GetFontHandle()
+int GUI::GetFontHandle() const
 {
     return FontHandle_;
 }
 
-int GUI::GetFontSize()
+int GUI::GetFontSize() const
 {
     int fontSize = 0;
     GetFontStateToHandle(nullptr, &fontSize, nullptr, FontHandle_);

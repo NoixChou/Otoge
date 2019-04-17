@@ -121,7 +121,6 @@ bool Task::AddChildTask(const std::shared_ptr<Task>& task)
 {
     childrenQueues.push_back(task);
     //Logger_->Debug(TaskName_ + "タスクキュー追加 キュー数:" + std::to_string(childrenQueues.size()));
-
     return task->Initialize(childrenQueues.size() - 1);
 }
 

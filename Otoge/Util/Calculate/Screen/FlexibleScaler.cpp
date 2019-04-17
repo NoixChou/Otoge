@@ -4,8 +4,10 @@
 
 std::shared_ptr<FlexibleScaler> FlexibleScaler::GlobalInstance_ = nullptr;
 
-FlexibleScaler::FlexibleScaler(float screenWidth, float screenHeight, float scale)
+FlexibleScaler::FlexibleScaler(float screenWidth, float screenHeight, float scale, float offsetX, float offsetY)
 {
+    OffsetX_ = offsetX;
+    OffsetY_ = offsetY;
     ScreenWidth_ = screenWidth;
     ScreenHeight_ = screenHeight;
     Scale_ = scale;
@@ -24,7 +26,7 @@ void FlexibleScaler::CreateWindowBasedInstance()
 {
     if (!GlobalInstance_)
     {
-        GlobalInstance_.reset(new FlexibleScaler(SettingManager::GetGlobal()->Get<int>(SETTINGS_RES_WIDTH).get(), SettingManager::GetGlobal()->Get<int>(SETTINGS_RES_HEIGHT).get(), 1.f));
+        GlobalInstance_.reset(new FlexibleScaler(static_cast<float>(SettingManager::GetGlobal()->Get<int>(SETTINGS_RES_WIDTH).get()), static_cast<float>(SettingManager::GetGlobal()->Get<int>(SETTINGS_RES_HEIGHT).get()), 1.f));
     }
 }
 
@@ -33,19 +35,39 @@ void FlexibleScaler::DestroyWindowBasedInstance()
     GlobalInstance_.reset();
 }
 
-float FlexibleScaler::GetScreenWidth()
+float FlexibleScaler::GetOffsetX() const
+{
+    return OffsetX_;
+}
+
+float FlexibleScaler::GetOffsetY() const
+{
+    return OffsetY_;
+}
+
+float FlexibleScaler::GetScreenWidth() const
 {
     return ScreenWidth_;
 }
 
-float FlexibleScaler::GetScreenHeight()
+float FlexibleScaler::GetScreenHeight() const
 {
     return ScreenHeight_;
 }
 
-float FlexibleScaler::GetScale()
+float FlexibleScaler::GetScale() const
 {
     return Scale_;
+}
+
+void FlexibleScaler::SetOffsetX(float offsetX)
+{
+    OffsetX_ = offsetX;
+}
+
+void FlexibleScaler::SetOffsetY(float offsetY)
+{
+    OffsetY_ = offsetY;
 }
 
 void FlexibleScaler::SetScreenWidth(float width)
@@ -63,39 +85,38 @@ void FlexibleScaler::SetScale(float scale)
     Scale_ = scale;
 }
 
-float FlexibleScaler::CalculatePositionRateX(float rawX)
+float FlexibleScaler::CalculatePositionRateX(float rawX) const
 {
-	return rawX / ScreenWidth_ * 100.f * Scale_;
+	return rawX / (ScreenWidth_ - OffsetX_) * 100.f * Scale_;
 }
 
-float FlexibleScaler::CalculatePositionRateY(float rawY)
+float FlexibleScaler::CalculatePositionRateY(float rawY) const
 {
-	return rawY / ScreenHeight_ * 100.f * Scale_;
+	return rawY / (ScreenHeight_ - OffsetY_) * 100.f * Scale_;
 }
 
-float FlexibleScaler::CalculatePositionX(float px)
+float FlexibleScaler::CalculatePositionX(float px) const
 {
-    return ScreenWidth_ * (px / 100.f) * Scale_;
+    return OffsetX_ + ScreenWidth_ * (px / 100.f) * Scale_;
 }
 
-float FlexibleScaler::CalculatePositionY(float py)
+float FlexibleScaler::CalculatePositionY(float py) const
 {
-    return ScreenHeight_ * (py / 100.f) * Scale_;
+    return OffsetY_ + ScreenHeight_ * (py / 100.f) * Scale_;
 }
 
-float FlexibleScaler::CalculateWidth(float width)
+float FlexibleScaler::CalculateWidth(float width) const
 {
-    return ScreenWidth_ * (width / 100.f) * Scale_;
+    return OffsetX_ + ScreenWidth_ * (width / 100.f) * Scale_;
 }
 
-float FlexibleScaler::CalculateHeight(float height)
+float FlexibleScaler::CalculateHeight(float height) const
 {
-    return ScreenHeight_ * (height / 100.f) * Scale_;
+    return OffsetY_ + ScreenHeight_ * (height / 100.f) * Scale_;
 }
 
-ScreenData FlexibleScaler::Calculate(const ScreenData *dataOfPercent)
+ScreenData FlexibleScaler::Calculate(const ScreenData *dataOfPercent) const
 {
-    //Logger::LowLevelLog("Calc:\nx" + std::to_string(dataOfPercent->posX) + ",\ny:" + std::to_string(dataOfPercent->posY) + ",\nwidth:" + std::to_string(dataOfPercent->width) + ",\nheight:" + std::to_string(dataOfPercent->height), "DEBUG<flexscaler>");
     ScreenData result;
 
     result.posX = CalculatePositionX(dataOfPercent->posX);
@@ -124,7 +145,7 @@ ScreenData FlexibleScaler::Calculate(const ScreenData *dataOfPercent)
     return result;
 }
 
-ScreenData FlexibleScaler::Calculate(float px, float py, float width, float height)
+ScreenData FlexibleScaler::Calculate(float px, float py, float width, float height) const
 {
     ScreenData data(px, py, width, height);
     return Calculate(&data);

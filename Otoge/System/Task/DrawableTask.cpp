@@ -52,7 +52,7 @@ void DrawableTask::Update(float deltaTime)
 	if (IsVisible_ && static_cast<int>(Transparency_) > 0)
 	{
 		int currentBuffer = GetDrawScreen();
-		int currentBlendMode = DX_BLENDMODE_NOBLEND, currentBlendParam = 0;
+		int currentBlendMode = DX_BLENDMODE_NOBLEND, currentBlendParam = 255;
 		GetDrawBlendMode(&currentBlendMode, &currentBlendParam);
 		SetDrawScreen(TemporaryDrawBuffer_);
 		ClearDrawScreen();
@@ -60,6 +60,7 @@ void DrawableTask::Update(float deltaTime)
 
 		Draw();
 		ChildUpdate(deltaTime);
+
 		// デバッグ
 		if (IsDrawPoint_)
 		{
@@ -67,7 +68,7 @@ void DrawableTask::Update(float deltaTime)
 			float y = ParentScaler_->CalculatePositionY(position.y);
 			float rx = ParentScaler_->CalculateWidth(DrawPointSize_);
 			float ry = ParentScaler_->CalculateHeight(DrawPointSize_);
-			DrawOvalAA(x, y, rx, ry, 50.f, GetColor(0, 255, 0), TRUE);
+			DrawOvalAA(x, y, rx, ry, 50, GetColor(0, 255, 0), TRUE);
 		}
 
 		/* 描画終わり */
@@ -75,7 +76,7 @@ void DrawableTask::Update(float deltaTime)
 		SetDrawBlendMode(currentBlendMode, currentBlendParam);
 
 		if (static_cast<int>(Transparency_) < 100)
-			SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>((Transparency_ / 100.f) * 255.f));
+			SetDrawBlendMode(DX_BLENDMODE_PMA_ALPHA, static_cast<int>((Transparency_ / 100.f) * 255.f));
 		DrawExtendGraph(0, 0, BufferWidth_, BufferHeight_, TemporaryDrawBuffer_, TRUE);
 
 		SetDrawBlendMode(currentBlendMode, currentBlendParam);
