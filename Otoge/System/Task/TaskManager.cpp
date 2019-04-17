@@ -46,7 +46,7 @@ void TaskManager::GameExit()
 
 int TaskManager::GetTaskCount()
 {
-    return Tasks_.size();
+    return static_cast<int>(Tasks_.size());
 }
 
 float TaskManager::GetFrameRate()
@@ -66,7 +66,7 @@ bool TaskManager::AddTask(const shared_ptr<Task>& task)
     TaskQueues_.push_back(task);
     //Logger_->Debug("タスクキュー追加 キュー数:" + to_string(TaskQueues_.size()));
 
-    task->Initialize(TaskQueues_.size() - 1);
+    task->Initialize(static_cast<int>(TaskQueues_.size()) - 1);
 
     return result;
 }
@@ -121,7 +121,11 @@ void TaskManager::UpdateTasks(std::vector<std::shared_ptr<Task>>& tasks, std::ve
 
             for (auto m_Child : (*m_Task)->GetChildren())
             {
-                m_Child->parentTask = (*m_Task);
+                if (m_Child->parentTask == nullptr)
+                {
+                    Logger::LowLevelLog("Set parent " + (*m_Task)->GetName() + " to " + m_Child->GetName(), "TaskManager");
+                    m_Child->parentTask = (*m_Task);
+                }
             }
 
             if ((*m_Task)->isAutoUpdateChildren)

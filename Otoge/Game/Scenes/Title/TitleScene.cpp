@@ -11,65 +11,48 @@
 
 TitleScene::TitleScene() : Scene("TitleScene")
 {
-    std::shared_ptr<Button> testButton = std::make_shared<Button>("Button", ScreenData(0.f, 0.f, 10.f, 7.f), DefaultScaler_);
-    testButton->GetTextLabelInstance()->AdjustmentFontSize_ = false;
-    testButton->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(2.f)));
-    AddChildTask(std::static_pointer_cast<Task>(testButton));
-
-    // メニュー開閉ボタン
-	MenuOpener_ = std::make_shared<Button>("Menu", ScreenData(40.f, 40.f, 20.f, 20.f), DefaultScaler_);
-	MenuOpener_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
-    MenuOpener_->baseColor = GetColor(179, 229, 252);
-    MenuOpener_->animationColor = GetColor(3, 169, 244);
-	MenuOpener_->GetTextLabelInstance()->ChangeFontThickness(1);
-    MenuOpener_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
-	AddChildTask(std::static_pointer_cast<Task>(MenuOpener_));
-
     //メニュー項目ボタン
-    auto l_GroupScreen = ScreenData(50.f, 50.f, 50.f, 14.f);
-    MenuGroup_ = std::make_shared<Scene>("MenuGroup", l_GroupScreen, std::make_shared<FlexibleScaler>(static_cast<float>(SettingManager::GetGlobal()->Get<int>(SETTINGS_RES_WIDTH).get()), static_cast<float>(SettingManager::GetGlobal()->Get<int>(SETTINGS_RES_HEIGHT).get())));
-    TaskManager::GetInstance()->AddTask(std::static_pointer_cast<Task>(MenuGroup_));
+    auto l_GroupScreen = ScreenData(20.f, 43.f, 50.f, 14.f);
+    MenuGroup_ = std::make_shared<Scene>("MenuGroup", l_GroupScreen, DefaultScaler_);
+    MenuGroup_->SetTransparent(100.f);
+    AddChildTask(std::static_pointer_cast<Task>(MenuGroup_));
 
-    MenuPlay_ = std::make_shared<Button>("Play", ScreenData(10.f, 0.f, 30.f, 100.f), MenuGroup_->GetDefaultScaler());
+    MenuPlay_ = std::make_shared<Button>("Play", ScreenData(0.f, 0.f, 30.f, 100.f), MenuGroup_->GetDefaultScaler());
     MenuPlay_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
     MenuPlay_->baseColor = GetColor(240, 98, 146);
     MenuPlay_->animationColor = GetColor(233, 30, 99);
     MenuPlay_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
-    MenuPlay_->GetTextLabelInstance()->ChangeFontThickness(3);
+    MenuPlay_->GetTextLabelInstance()->ChangeFontThickness(9);
+    MenuPlay_->SetTransparent(0.f);
     MenuGroup_->AddChildTask(std::static_pointer_cast<Task>(MenuPlay_));
 
-    MenuOption_ = std::make_shared<Button>("Option", ScreenData(40.f, 0.f, 30.f, 100.f), MenuGroup_->GetDefaultScaler());
+    MenuOption_ = std::make_shared<Button>("Option", ScreenData(30.f, 0.f, 30.f, 100.f), MenuGroup_->GetDefaultScaler());
     MenuOption_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
     MenuOption_->baseColor = GetColor(120, 144, 156);
     MenuOption_->animationColor = GetColor(38, 50, 56);
     MenuOption_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
-    MenuOption_->GetTextLabelInstance()->ChangeFontThickness(9);
+    MenuOption_->GetTextLabelInstance()->ChangeFontThickness(1);
+    MenuOption_->SetTransparent(0.f);
     MenuGroup_->AddChildTask(std::static_pointer_cast<Task>(MenuOption_));
 
-    MenuClose_ = std::make_shared<Button>("Exit", ScreenData(70.f, 0.f, 30.f, 100.f), MenuGroup_->GetDefaultScaler());
+    MenuClose_ = std::make_shared<Button>("Exit", ScreenData(59.9f, 0.f, 30.f, 100.f), MenuGroup_->GetDefaultScaler());
     MenuClose_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
     MenuClose_->baseColor = GetColor(117, 117, 117);
     MenuClose_->animationColor = GetColor(33, 33, 33);
     MenuClose_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
-    MenuClose_->GetTextLabelInstance()->ChangeFontThickness(6);
+    MenuClose_->GetTextLabelInstance()->ChangeFontThickness(1);
+    MenuClose_->SetTransparent(0.f);
     MenuGroup_->AddChildTask(std::static_pointer_cast<Task>(MenuClose_));
 
-
-    std::shared_ptr<Label> testLabel = std::make_shared<Label>("TinyLabel", ScreenData(11.f, 0.f, 6.f, 1.5f), DefaultScaler_);
-    testLabel->baseColor = GetColor(255, 255, 255);
-    AddChildTask(std::static_pointer_cast<Task>(testLabel));
-
-    std::shared_ptr<Label> testLabel4 = std::make_shared<Label>("SmallLabel", ScreenData(11.f, 1.5f, 8.f, 2.4f), DefaultScaler_);
-    testLabel4->baseColor = GetColor(255, 255, 255);
-    AddChildTask(std::static_pointer_cast<Task>(testLabel4));
-
-    std::shared_ptr<Label> testLabel2 = std::make_shared<Label>("MediumLabel", ScreenData(11.f, 3.9f, 12.f, 3.0f), DefaultScaler_);
-    testLabel2->baseColor = GetColor(255, 255, 255);
-    AddChildTask(std::static_pointer_cast<Task>(testLabel2));
-
-    std::shared_ptr<Label> testLabel3 = std::make_shared<Label>("LargeLabel", ScreenData(11.f, 6.9f, 18.f, 6.0f), DefaultScaler_);
-    testLabel3->baseColor = GetColor(255, 255, 255);
-    AddChildTask(std::static_pointer_cast<Task>(testLabel3));
+    // メニュー開閉ボタン
+    MenuOpener_ = std::make_shared<Button>("おなまえ", ScreenData(40.f, 40.f, 20.f, 20.f), DefaultScaler_);
+    MenuOpener_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
+    MenuOpener_->baseColor = GetColor(179, 229, 252);
+    MenuOpener_->animationColor = GetColor(3, 169, 244);
+    MenuOpener_->GetTextLabelInstance()->ChangeFontThickness(1);
+    MenuOpener_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
+    AddChildTask(std::static_pointer_cast<Task>(MenuOpener_));
+    
 }
 
 
@@ -79,23 +62,23 @@ TitleScene::~TitleScene()
 
 void TitleScene::SceneUpdate(float deltaTime)
 {
-	float moveSpeed = 50.f * deltaTime;
+	float moveSpeed = 1.f * deltaTime;
 
 	if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_LEFT))
 	{
-		Screen_.width -= moveSpeed;
+		AddScreenWidth(-moveSpeed);
 	}
 	if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_RIGHT))
 	{
-		Screen_.width += moveSpeed;
+		AddScreenWidth(moveSpeed);
 	}
 	if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_UP))
 	{
-		Screen_.height -= moveSpeed;
+		AddScreenHeight(-moveSpeed);
 	}
 	if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_DOWN))
 	{
-		Screen_.height += moveSpeed;
+		AddScreenHeight(moveSpeed);
 	}
 
     //MenuOpener_->SetPositionX(MouseManager::GetInstance()->GetMouseRateX(DefaultScaler_));
@@ -110,15 +93,23 @@ void TitleScene::SceneUpdate(float deltaTime)
 		isOpened = !isOpened;
 		isMoving = true;
 	}
-
+    
     if(isMoving)
     {
+        float menuMove = 8.f / timerCount * deltaTime;
+        //MenuGroup_->SetTransparent(((MenuGroup_->GetPositionX()-20.f) / 20.f) * 100.f);
+        MenuPlay_->SetTransparent(((MenuGroup_->GetPositionX() - 20.f) / 20.f) * 100.f);
+        MenuOption_->SetTransparent(((MenuGroup_->GetPositionX() - 22.f) / 20.f) * 100.f);
+        MenuClose_->SetTransparent(((MenuGroup_->GetPositionX() - 24.f) / 20.f) * 100.f);
+
         if(isOpened)
         {
-			MenuOpener_->SetPositionX(MenuOpener_->GetPositionX() - (timerCount * 200.f * deltaTime));
+			MenuOpener_->AddPositionX(-menuMove);
+            MenuGroup_->AddPositionX(menuMove);
         }else
         {
-			MenuOpener_->SetPositionX(MenuOpener_->GetPositionX() + (timerCount * 200.f * deltaTime));
+			MenuOpener_->AddPositionX(menuMove);
+            MenuGroup_->AddPositionX(-menuMove);
         }
 
         if (MenuOpener_->GetPositionX() < 20.f)
@@ -127,6 +118,10 @@ void TitleScene::SceneUpdate(float deltaTime)
             isMoving = false;
             MenuOpener_->SetPositionX(20.f);
         }
+        if(MenuGroup_->GetPositionX() < 20.f)
+        {
+            MenuGroup_->SetPositionX(20.f);
+        }
 
         if (MenuOpener_->GetPositionX() > 40.f)
         {
@@ -134,6 +129,15 @@ void TitleScene::SceneUpdate(float deltaTime)
             isMoving = false;
             MenuOpener_->SetPositionX(40.f);
         }
+        if (MenuGroup_->GetPositionX() > 40.f)
+        {
+            MenuGroup_->SetPositionX(40.f);
+        }
+    }
+
+    if(MenuClose_->IsClickedMouse())
+    {
+        TaskManager::GetInstance()->GameExit();
     }
     
 	if (IsChangedScreen())

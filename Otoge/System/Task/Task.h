@@ -1,5 +1,6 @@
 #pragma once
 #include "../../Util/Debug/Logger.h"
+#include <cstdarg>
 
 class Task
 {
@@ -22,11 +23,13 @@ protected:
     float lifespan = 0.f; // 寿命
 
 public:
+    using TaskPointer = std::shared_ptr<Task>;
+
     bool isAutoUpdateChildren = true; // 子タスクのUpdateを自動で実行するか
 
     std::shared_ptr<Task> parentTask; // 親タスク
-    std::vector<std::shared_ptr<Task>> children; // 子タスク
-    std::vector<std::shared_ptr<Task>> childrenQueues;
+    std::vector<TaskPointer> children; // 子タスク
+    std::vector<TaskPointer> childrenQueues;
 
     float timerCount = 0.f; // deltaTime蓄積
 
@@ -61,8 +64,8 @@ public:
 
     // 子タスク
     void ChildUpdate(float deltaTime);
-    bool AddChildTask(const std::shared_ptr<Task> &task);
-	std::vector<std::shared_ptr<Task>>& GetChildren();
-	std::vector<std::shared_ptr<Task>>& GetChildrenQueues();
+    bool AddChildTask(const TaskPointer& task);
+	std::vector<TaskPointer>& GetChildren();
+	std::vector<TaskPointer>& GetChildrenQueues();
     
 };

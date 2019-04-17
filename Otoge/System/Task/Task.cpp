@@ -117,19 +117,19 @@ void Task::ChildUpdate(float deltaTime)
     
 }
 
-bool Task::AddChildTask(const std::shared_ptr<Task>& task)
+bool Task::AddChildTask(const TaskPointer& task)
 {
     childrenQueues.push_back(task);
     //Logger_->Debug(TaskName_ + "タスクキュー追加 キュー数:" + std::to_string(childrenQueues.size()));
-    return task->Initialize(childrenQueues.size() - 1);
+    return task->Initialize(static_cast<int>(childrenQueues.size()) - 1);
 }
 
-std::vector<std::shared_ptr<Task>>& Task::GetChildren()
+std::vector<Task::TaskPointer>& Task::GetChildren()
 {
 	return children;
 }
 
-std::vector<std::shared_ptr<Task>>& Task::GetChildrenQueues()
+std::vector<Task::TaskPointer>& Task::GetChildrenQueues()
 {
 	return childrenQueues;
 }

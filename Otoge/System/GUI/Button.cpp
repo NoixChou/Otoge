@@ -17,8 +17,6 @@ Button::Button(const std::string& label, const ScreenData& layoutScreen, std::sh
     TextLabel_->AdjustmentFontSize_ = AdjustmentFontSize_;
     TextLabel_->textAlign = Label::TextAlignment::center | Label::TextAlignment::middle;
     AddChildTask(std::static_pointer_cast<Task>(TextLabel_));
-	Logger_->Debug("button defScaler: w:" + std::to_string(DefaultScaler_->GetScreenWidth()) + ", h:" + std::to_string(DefaultScaler_->GetScreenHeight()));
-
 }
 
 Button::~Button()
@@ -35,8 +33,8 @@ void Button::GUIUpdate(float deltaTime)
     {
         AddChildTask(std::static_pointer_cast<Task>(
             std::make_shared<ButtonPushedAnimate>(
-                MouseManager::GetInstance()->GetMouseRateX(DefaultScaler_) - DefaultScaler_->CalculatePositionRateX(Screen_.posX),
-                MouseManager::GetInstance()->GetMouseRateY(DefaultScaler_) - DefaultScaler_->CalculatePositionRateY(Screen_.posY),
+                DefaultScaler_->CalculatePositionRateX(MouseManager::GetInstance()->GetMouseXf() - GetRawPositionX() - ParentScaler_->GetDiffX()),
+                DefaultScaler_->CalculatePositionRateY(MouseManager::GetInstance()->GetMouseYf() - GetRawPositionY() - ParentScaler_->GetDiffY()),
                 animationColor, 35.f, DefaultScaler_)
             ));
     }
@@ -44,7 +42,7 @@ void Button::GUIUpdate(float deltaTime)
 
 void Button::Draw()
 {
-    DrawBox(0, 0, Screen_.width, Screen_.height, baseColor, TRUE);
+    DrawBox(0, 0, static_cast<int>(floor(GetRawScreenWidth())), static_cast<int>(floor(GetRawScreenHeight())), baseColor, TRUE);
 }
 
 void Button::SetTextLabelInstance(std::shared_ptr<Label> textLabel)
@@ -86,7 +84,6 @@ void ButtonPushedAnimate::Draw()
 	circle.posY = position.y;
 	circle.width = Size_;
 	circle.height = Size_;
-
-	ScreenData fixed = ParentScaler_->Calculate(&circle);
-	DrawCircle(fixed.posX, fixed.posY, fixed.width + fixed.height / 2.0f, color, TRUE);
+    const auto l_Fixed = ParentScaler_->Calculate(&circle);
+	DrawCircle(static_cast<int>(floor(l_Fixed.posX)), static_cast<int>(floor(l_Fixed.posY)), static_cast<int>(floor(l_Fixed.width + l_Fixed.height / 2.0f)), color, TRUE);
 }

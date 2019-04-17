@@ -19,8 +19,8 @@ void GUI::SceneUpdate(float deltaTime)
 {
     if(IsChangedScreen() && AdjustmentFontSize_)
     {
-        ChangeFontSize(static_cast<int>(floor(this->Screen_.height)));
-        if (FontStringCalculator::GetStringWidth(FontHandle_, Label_) > Screen_.width) ChangeFontSize(static_cast<int>(floor(Screen_.width * 1.5f)) / static_cast<int>(Label_.length()));
+        ChangeFontSize(static_cast<int>(floor(GetRawScreenHeight())));
+        if (FontStringCalculator::GetStringWidth(FontHandle_, Label_) > GetRawScreenWidth()) ChangeFontSize(static_cast<int>(floor(GetRawScreenWidth() * 1.5f)) / static_cast<int>(Label_.length()));
     }
 
     GUIUpdate(deltaTime);
