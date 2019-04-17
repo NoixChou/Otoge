@@ -17,11 +17,12 @@ private:
     bool isDrawFrame;
 protected:
     bool isAutoScaling = true;
-    /*float CurrentParentWidth_ = 0.f, CurrentParentHeight_ = 0.f;*/
-    std::shared_ptr<FlexibleScaler> ParentScaler_;
-    std::shared_ptr<FlexibleScaler> DefaultScaler_;
-    std::shared_ptr<Scene> PrevScene_;
-    ScreenData PreLayoutScreen_;
+    float CurrentParentWidth_ = 0.f, CurrentParentHeight_ = 0.f;
+    std::shared_ptr<FlexibleScaler> ParentScaler_ = nullptr;
+    std::shared_ptr<FlexibleScaler> DefaultScaler_ = nullptr;
+    std::shared_ptr<Scene> PrevScene_ = nullptr;
+    ScreenData PreLayoutScreen_ = {0.f, 0.f, 0.f, 0.f};
+	bool IsCalculated_ = false;
 
 public:
     ScreenData screen;
@@ -35,6 +36,7 @@ public:
     virtual void SceneUpdate(float deltaTime) = 0;
     virtual void Draw() = 0;
 
+	void ReCalculateScreen();
     bool RefreshDrawBuffer();
 
     void SetVisible(bool visible);

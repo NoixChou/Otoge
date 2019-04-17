@@ -3,6 +3,7 @@
 #include "../../Util/Setting/SettingManager.h"
 #include "../Input/MouseManager.hpp"
 #include "../../Util/Calculate/Screen/FontStringCalculator.hpp"
+#include "TaskManager.hpp"
 
 
 Scene::Scene(const std::string& sceneName, float sceneWidth, float sceneHeight, float sceneX, float sceneY, std::shared_ptr<FlexibleScaler> parentScaler, std::shared_ptr<Scene> prevScene) : Task(sceneName)
@@ -16,21 +17,8 @@ Scene::Scene(const std::string& sceneName, float sceneWidth, float sceneHeight, 
     screen.posY = sceneY;
 
     ParentScaler_ = parentScaler;
-    DefaultScaler_ = std::make_shared<FlexibleScaler>(screen.width, screen.height, 1.0f);
 
-    if (isAutoScaling)
-    {
-        PreLayoutScreen_ = screen;
-        if (ParentScaler_ != nullptr)
-        {
-            Logger_->Info("PreLayouting: x" + std::to_string(screen.posX) + ", y" + std::to_string(screen.posY) + ", w" + std::to_string(screen.width) + ", h" + std::to_string(screen.height));
-            screen = ParentScaler_->Calculate(&PreLayoutScreen_);
-            Logger_->Info("PreLayouted: x" + std::to_string(screen.posX) + ", y" + std::to_string(screen.posY) + ", w" + std::to_string(screen.width) + ", h" + std::to_string(screen.height));
-        }
-    }
-
-    SceneBuffer_ = -1;
-    RefreshDrawBuffer();
+	ReCalculateScreen();
 
     isDrawFrame = SettingManager::GetGlobal()->Get<bool>(SETTINGS_DEBUG_DRAW_SCENE_FRAME).get();
 }
@@ -40,7 +28,7 @@ Scene::Scene(const std::string& sceneName, const ScreenData& screen, std::shared
 Scene::~Scene()
 {
     DeleteGraph(SceneBuffer_);
-    Logger_->Info("シーンバッファ開放");
+    Logger_->Debug("シーンバッファ開放");
 }
 
 void Scene::Update(float deltaTime)
@@ -51,7 +39,6 @@ void Scene::Update(float deltaTime)
     else if (PrevScreen_.height != screen.height) HasChangedScreen_ = true;
     else HasChangedScreen_ = false;
 
-    /*
     if (ParentScaler_ != nullptr && isAutoScaling)
     {
         if (CurrentParentWidth_ != ParentScaler_->GetScreenWidth()) HasChangedScreen_ = true;
@@ -59,7 +46,7 @@ void Scene::Update(float deltaTime)
 
         CurrentParentWidth_ = ParentScaler_->GetScreenWidth();
         CurrentParentHeight_ = ParentScaler_->GetScreenHeight();
-    }*/
+    }
 
     PrevScreen_ = screen;
 
@@ -67,11 +54,12 @@ void Scene::Update(float deltaTime)
 
     if (HasChangedScreen_)
     {
-        RefreshDrawBuffer();
+		ReCalculateScreen();
+        /*RefreshDrawBuffer();
         DefaultScaler_->SetScreenWidth(screen.width);
         DefaultScaler_->SetScreenHeight(screen.height);
         DefaultScaler_->SetScale(1.0f);
-        /*
+        
         if(ParentScaler_ != nullptr && isAutoScaling)
             screen = ParentScaler_->Calculate(&PreLayoutScreen_);*/
     }
@@ -85,10 +73,9 @@ void Scene::Update(float deltaTime)
         SetDrawScreen(SceneBuffer_);
         SetDrawBlendMode(currentBlendMode, currentBlendParam);
         ClearDrawScreen();
-        clsDx();
 
         Draw();
-        ChildUpdate(deltaTime);
+		TaskManager::UpdateTasks(children, childrenQueues, tickSpeed, deltaTime);
 
         if (isDrawFrame)
         {
@@ -104,20 +91,53 @@ void Scene::Update(float deltaTime)
         {
             DrawBox(static_cast<int>(floor(screen.posX)), static_cast<int>(floor(screen.posY)), static_cast<int>(floor(screen.posX + screen.width)), static_cast<int>(floor(screen.posY + screen.height)), GetColor(255, 0, 0), FALSE);
         }
-        int bufSX, bufSY;
-        GetGraphSize(SceneBuffer_, &bufSX, &bufSY);
-        if (bufSX < static_cast<int>(screen.width)) screen.width = static_cast<float>(bufSX);
-        if (bufSY < static_cast<int>(screen.height)) screen.height = static_cast<float>(bufSY);
-        if (0.f > screen.width) screen.width = 0.f;
-        if (0.f > screen.height) screen.height = 0.f;
+        if (1.f > screen.width) screen.width = 1.f;
+        if (1.f > screen.height) screen.height = 1.f;
 
-        currentBlendMode = DX_BLENDMODE_NOBLEND, currentBlendParam = 0;
         GetDrawBlendMode(&currentBlendMode, &currentBlendParam);
-        if (static_cast<int>(Transparency_) < 100)
-            SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>((Transparency_ / 100.f) * 255.f));
-        DrawExtendGraph(static_cast<int>(floor(screen.posX)), static_cast<int>(floor(screen.posY)), static_cast<int>(floor(screen.posX + screen.width)), static_cast<int>(floor(screen.posY + screen.height)), SceneBuffer_, TRUE);
+		if (static_cast<int>(Transparency_) < 100)
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>((Transparency_ / 100.f) * 255.f));
+        DrawRectGraph(static_cast<int>(floor(screen.posX)), static_cast<int>(floor(screen.posY)), 0, 0, static_cast<int>(floor(screen.posX + screen.width)), static_cast<int>(floor(screen.posY + screen.height)), SceneBuffer_, TRUE);
         SetDrawBlendMode(currentBlendMode, currentBlendParam);
     }
+}
+
+void Scene::ReCalculateScreen()
+{
+	bool doRefreshBuffer = false;
+
+	if (isAutoScaling)
+	{
+		if (!IsCalculated_)
+		{
+			PreLayoutScreen_ = screen;
+			IsCalculated_ = true;
+			doRefreshBuffer = true;
+		}
+		if (ParentScaler_ != nullptr)
+		{
+			Logger_->Debug("レイアウト中: x" + std::to_string(screen.posX) + ", y" + std::to_string(screen.posY) + ", w" + std::to_string(screen.width) + ", h" + std::to_string(screen.height));
+			if (ParentScaler_->Calculate(&PreLayoutScreen_).width > screen.width) doRefreshBuffer = true;
+			if (ParentScaler_->Calculate(&PreLayoutScreen_).height > screen.height) doRefreshBuffer = true;
+			screen = ParentScaler_->Calculate(&PreLayoutScreen_);
+			Logger_->Debug("レイアウト済: x" + std::to_string(screen.posX) + ", y" + std::to_string(screen.posY) + ", w" + std::to_string(screen.width) + ", h" + std::to_string(screen.height));
+		}
+	}
+
+	if (DefaultScaler_ == nullptr)
+	{
+		DefaultScaler_ = std::make_shared<FlexibleScaler>(screen.width, screen.height, 1.0f);
+		doRefreshBuffer = true;
+	}
+	else
+	{
+		DefaultScaler_->SetScreenWidth(screen.width);
+		DefaultScaler_->SetScreenHeight(screen.height);
+		DefaultScaler_->SetScale(1.0f);
+	}
+
+	if(doRefreshBuffer)
+		RefreshDrawBuffer();
 }
 
 bool Scene::RefreshDrawBuffer()

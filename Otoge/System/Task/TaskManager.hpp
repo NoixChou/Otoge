@@ -16,19 +16,20 @@ private:
     std::chrono::high_resolution_clock::time_point PrevClockCount_ = std::chrono::high_resolution_clock::now();
 
     bool IsGameExit_ = false;
+	bool IsGameRestart_ = false;
 
     int FrameCount = 0;
     int StartCount = 0;
     float FPS = 0.f;
 
 protected:
-    static TaskManager* Instance_;
+	static std::shared_ptr<TaskManager> Instance_;
     TaskManager();
 
 public:
     ~TaskManager();
 
-    static TaskManager* GetInstance();
+    static std::shared_ptr<TaskManager> GetInstance();
     static void CreateInstance();
     static void DestroyInstance();
 
@@ -48,4 +49,5 @@ public:
     }
 
     void Tick(float tickSpeed);
+	static void UpdateTasks(std::vector<std::shared_ptr<Task>>& tasks, std::vector<std::shared_ptr<Task>>& queues, float tickSpeed, float deltaTime);
 };

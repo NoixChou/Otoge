@@ -120,6 +120,16 @@ float MouseManager::GetReleasePosYf()
     return static_cast<float>(MouseReleasePosY_);
 }
 
+float MouseManager::GetMouseRateX(std::shared_ptr<FlexibleScaler> scaler)
+{
+	return scaler->CalculatePositionRateX(MousePosX_);
+}
+
+float MouseManager::GetMouseRateY(std::shared_ptr<FlexibleScaler> scaler)
+{
+	return scaler->CalculatePositionRateY(MousePosY_);
+}
+
 
 bool MouseManager::IsDownButton(int key)
 {

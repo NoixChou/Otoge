@@ -12,7 +12,7 @@ protected:
 
 public:
     bool AdjustmentFontSize_ = true;
-    unsigned baseColor = 0;
+    unsigned baseColor;
 
     GUI(const std::string& guiName, const ScreenData& layoutScreen, std::shared_ptr<FlexibleScaler> parentScaler = nullptr);
     ~GUI();

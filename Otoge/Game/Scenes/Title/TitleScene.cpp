@@ -6,16 +6,16 @@
 #include "../../../System/Task/TaskManager.hpp"
 #include "../../../System/GUI/Button.hpp"
 #include "../../../System/GUI/Label.hpp"
+#include "Ball.hpp"
 
 
 TitleScene::TitleScene() : Scene("TitleScene")
 {
-    std::shared_ptr<Button> testButton = std::make_shared<Button>("–ß‚é", ScreenData(0.f, 0.f, 10.f, 7.f), DefaultScaler_);
-    testButton->baseColor = GetColor(255, 255, 255);
+    std::shared_ptr<Button> testButton = std::make_shared<Button>("Button", ScreenData(0.f, 0.f, 10.f, 7.f), DefaultScaler_);
     testButton->GetTextLabelInstance()->AdjustmentFontSize_ = false;
-    testButton->GetTextLabelInstance()->ChangeFontSize(DefaultScaler_->CalculateHeight(2.f));
+    testButton->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(2.f)));
     AddChildTask(std::static_pointer_cast<Task>(testButton));
-
+	
     std::shared_ptr<Label> testLabel = std::make_shared<Label>("TinyLabel", ScreenData(11.f, 0.f, 6.f, 1.5f), DefaultScaler_);
     testLabel->baseColor = GetColor(255, 255, 255);
     AddChildTask(std::static_pointer_cast<Task>(testLabel));
@@ -31,7 +31,6 @@ TitleScene::TitleScene() : Scene("TitleScene")
     std::shared_ptr<Label> testLabel3 = std::make_shared<Label>("LargeLabel", ScreenData(11.f, 6.9f, 18.f, 6.0f), DefaultScaler_);
     testLabel3->baseColor = GetColor(255, 255, 255);
     AddChildTask(std::static_pointer_cast<Task>(testLabel3));
-    
 }
 
 
@@ -41,43 +40,64 @@ TitleScene::~TitleScene()
 
 void TitleScene::SceneUpdate(float deltaTime)
 {
-    /*if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_LEFT))
-    {
-        moveX = -1.f;
-    }
-    if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_RIGHT))
-    {
-        moveX = 1.f;
-    }
-    if(KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_UP))
-    {
-        moveY = -1.f;
-    }
-    if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_DOWN))
-    {
-        moveY = 1.f;
-    }
+	float moveSpeed = 50.f * deltaTime;
 
-    moveX *= 100.f;
-    moveY *= 100.f;
+	if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_LEFT))
+	{
+		screen.width -= moveSpeed;
+	}
+	if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_RIGHT))
+	{
+		screen.width += moveSpeed;
+	}
+	if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_UP))
+	{
+		screen.height -= moveSpeed;
+	}
+	if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_DOWN))
+	{
+		screen.height += moveSpeed;
+	}
 
-    drawX += moveX * deltaTime;
-    drawY += moveY * deltaTime;
+	if (screen.width < 0.f) screen.width = 0.f;
+	if (screen.height < 0.f) screen.height = 0.f;
 
-    if(MouseManager::GetInstance()->IsMovedMouse())
-    {
-        drawX = MouseManager::GetInstance()->GetMouseXf();
-        drawY = MouseManager::GetInstance()->GetMouseYf();
-    }*/
+	static bool patternToggle = true;
+
+	/*if(timerCount > 0.01f)
+	{
+		if (patternToggle)
+		{
+			std::shared_ptr<Ball> ball = std::make_shared<Ball>(50.f, 50.f, static_cast<float>(GetRand(100) + 50) / 100.f, DefaultScaler_);
+			AddChildTask(ball);
+		}
+		else
+		{
+			std::shared_ptr<Ball> ball = std::make_shared<Ball>(50.f, 50.f, static_cast<float>(GetRand(200) + 50) / 100.f, DefaultScaler_);
+			ball->SetTickSpeed(0.5f);
+			AddChildTask(ball);
+		}
+	}*/
+
+	if(timerCount > 0.01f)
+	{
+		timerCount = 0.f;
+	}
+
+	if (IsChangedScreen())
+	{
+		ReCalculateScreen();
+		RefreshDrawBuffer();
+	}
 }
 
 void TitleScene::Draw()
 {
     ScreenData d;
-    d.posX = 50.f;
+    d.posX = 0.f;
     d.posY = 0.f;
-    d.width = 50.f;
-    d.height = 50.f;
+    d.width = 100.f;
+    d.height = 100.f;
     ScreenData fixed = DefaultScaler_->Calculate(&d);
-    DrawBox(fixed.posX, fixed.posY, fixed.posX + fixed.width, fixed.posY + fixed.height, GetColor(255, 255, 255), FALSE);
+    //DrawBox(fixed.posX, fixed.posY, fixed.width, fixed.height, GetColor(0, 0, 0), TRUE);
 }

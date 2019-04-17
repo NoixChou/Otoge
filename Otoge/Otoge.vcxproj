@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\Scenes\Title\Ball.cpp" />
     <ClCompile Include="System\Buffer\BufferManager.cpp" />
     <ClCompile Include="System\Font\FontManager.cpp" />
     <ClCompile Include="System\GUI\Button.cpp" />
@@ -162,6 +163,7 @@
     <ClCompile Include="System\GUI\Label.cpp" />
     <ClCompile Include="System\Input\KeyboardManager.cpp" />
     <ClCompile Include="System\Input\MouseManager.cpp" />
+    <ClCompile Include="System\Task\DrawableTask.cpp" />
     <ClCompile Include="System\Task\Scene.cpp" />
     <ClCompile Include="Game\Scenes\Title\TitleScene.cpp" />
     <ClCompile Include="Util\Calculate\Screen\FontStringCalculator.cpp" />
@@ -180,6 +182,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Scenes\Title\Ball.hpp" />
     <ClInclude Include="System\Buffer\BufferManager.hpp" />
     <ClInclude Include="System\DefineSettings.h" />
     <ClInclude Include="System\Font\FontManager.hpp" />
@@ -188,6 +191,7 @@
     <ClInclude Include="System\GUI\Label.hpp" />
     <ClInclude Include="System\Input\KeyboardManager.hpp" />
     <ClInclude Include="System\Input\MouseManager.hpp" />
+    <ClInclude Include="System\Task\DrawableTask.hpp" />
     <ClInclude Include="System\Task\Scene.hpp" />
     <ClInclude Include="Game\Scenes\Title\TitleScene.h" />
     <ClInclude Include="Util\Calculate\ScreenData.h" />

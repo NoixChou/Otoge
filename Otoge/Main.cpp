@@ -45,6 +45,7 @@ void PreInitialize()
     g_SystemSettings->SetDefault(SETTINGS_AA_SAMPLE, 2);
     g_SystemSettings->SetDefault(SETTINGS_AA_QUALITY, 2);
     g_SystemSettings->SetDefault(SETTINGS_DEBUG_DRAW_SCENE_FRAME, false);
+	g_SystemSettings->SetDefault(SETTINGS_DEBUG_DRAW_DTASK_POINT, false);
     g_SystemSettings->Save();
     g_SystemSettings->SetGlobal();
 
@@ -52,7 +53,6 @@ void PreInitialize()
     SetMainWindowText(GAME_APP_NAME " v" GAME_APP_VER); // ウィンドウのタイトル
     SetAlwaysRunFlag(TRUE); // 常に処理
     SetWaitVSyncFlag(g_SystemSettings->Get<bool>(SETTINGS_VSYNC).get()); // 垂直同期
-
     SetUseFPUPreserveFlag(TRUE);
     SetGraphMode(g_SystemSettings->Get<int>(SETTINGS_RES_WIDTH).get(), g_SystemSettings->Get<int>(SETTINGS_RES_HEIGHT).get(), 32);
     SetFullSceneAntiAliasingMode(g_SystemSettings->Get<int>(SETTINGS_AA_SAMPLE).get(), g_SystemSettings->Get<int>(SETTINGS_AA_QUALITY).get());
@@ -90,7 +90,7 @@ void Initialize()
     TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(KeyboardManager::GetInstance()));
     TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(MouseManager::GetInstance()));
     TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(make_shared<DebugScene>()));
-    TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(make_shared<TitleScene>()));
+	TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(make_shared<TitleScene>()));
 }
 
 // メインループ
@@ -98,7 +98,26 @@ void Loop()
 {
     while(ProcessMessage() != -1 && !TaskManager::GetInstance()->IsGameExit())
     {
-        TaskManager::GetInstance()->Tick(1.0f);
+		if(KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_A))
+	        TaskManager::GetInstance()->Tick(0.05f);
+		else
+			TaskManager::GetInstance()->Tick(1.0f);
+
+		if(KeyboardManager::GetInstance()->IsDownKey(KEY_INPUT_R))
+		{
+			Terminate();
+
+			FlexibleScaler::CreateWindowBasedInstance();
+			FlexibleScaler::GetWindowBasedInstance()->SetScale(1.0f);
+			TaskManager::CreateInstance();
+			KeyboardManager::CreateInstance();
+			MouseManager::CreateInstance();
+			
+			TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(KeyboardManager::GetInstance()));
+			TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(MouseManager::GetInstance()));
+			TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(make_shared<DebugScene>()));
+			TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(make_shared<TitleScene>()));
+		}
     }
 }
 

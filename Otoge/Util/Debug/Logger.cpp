@@ -18,14 +18,14 @@ Logger::Logger(const string &moduleName)
 
     userCount++;
     this->ModuleName = moduleName;
-    Debug("Logger added, logger count: " + to_string(userCount));
+    //Debug("Logger added, logger count: " + to_string(userCount));
 }
 
 
 Logger::~Logger()
 {
     userCount--;
-    Debug("Logger removed, logger count: " + to_string(userCount));
+    //Debug("Logger removed, logger count: " + to_string(userCount));
 
 #ifdef _DEBUG
     if (userCount == 0) {
