@@ -29,6 +29,8 @@ void Button::GUIUpdate(float deltaTime)
     TextLabel_->SetLabel(Label_);
     TextLabel_->baseColor = textColor;
 
+    static float currentTrans = 0.f;
+
     if (IsDownMouse())
     {
         AddChildTask(std::static_pointer_cast<Task>(
@@ -43,6 +45,11 @@ void Button::GUIUpdate(float deltaTime)
 void Button::Draw()
 {
     DrawBox(0, 0, static_cast<int>(floor(GetRawScreenWidth())), static_cast<int>(floor(GetRawScreenHeight())), baseColor, TRUE);
+    if (IsOnMouse())
+    {
+        SetDrawBlendMode(DX_BLENDMODE_PMA_ALPHA, 20);
+        DrawBox(0, 0, static_cast<int>(floor(GetRawScreenWidth())), static_cast<int>(floor(GetRawScreenHeight())), textColor, TRUE);
+    }
 }
 
 void Button::SetTextLabelInstance(std::shared_ptr<Label> textLabel)

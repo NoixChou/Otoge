@@ -8,9 +8,9 @@ class TaskManager
 private:
     std::shared_ptr<Logger> Logger_;
 
-    std::vector< std::shared_ptr<Task> > Tasks_;
-    std::vector< std::shared_ptr<Task> > TaskQueues_;
-    std::vector< std::shared_ptr<Task> >::iterator ProcessingTask_;
+    std::vector< Task::TaskPointer > Tasks_;
+    std::vector< Task::TaskPointer > TaskQueues_;
+    std::vector< Task::TaskPointer >::iterator ProcessingTask_;
 
     std::chrono::high_resolution_clock::time_point ClockCount_ = std::chrono::high_resolution_clock::now();
     std::chrono::high_resolution_clock::time_point PrevClockCount_ = std::chrono::high_resolution_clock::now();
@@ -38,7 +38,7 @@ public:
     void GameExit();
 
     int GetTaskCount();
-    bool AddTask(const std::shared_ptr<Task> &task);
+    bool AddTask(const Task::TaskPointer &task);
     template<class T> bool AddTaskByTypename()
     {
         return AddTask(std::make_shared<T>());
@@ -49,5 +49,5 @@ public:
     }
 
     void Tick(float tickSpeed);
-	static void UpdateTasks(std::vector<std::shared_ptr<Task>>& tasks, std::vector<std::shared_ptr<Task>>& queues, float tickSpeed, float deltaTime);
+	static void UpdateTasks(std::vector<Task::TaskPointer>& tasks, std::vector<Task::TaskPointer>& queues, float tickSpeed, float deltaTime);
 };

@@ -6,15 +6,15 @@
 #include "../../../System/Task/TaskManager.hpp"
 #include "../../../System/GUI/Button.hpp"
 #include "../../../System/GUI/Label.hpp"
-#include "Ball.hpp"
-
+#include "../../../Util/Calculate/Animation/Easing.hpp"
+#include "Setting/SettingScene.hpp"
 
 TitleScene::TitleScene() : Scene("TitleScene")
 {
     //メニュー項目ボタン
     auto l_GroupScreen = ScreenData(20.f, 43.f, 50.f, 14.f);
     MenuGroup_ = std::make_shared<Scene>("MenuGroup", l_GroupScreen, DefaultScaler_);
-    MenuGroup_->SetTransparent(100.f);
+    MenuGroup_->SetTransparent(0.f);
     AddChildTask(std::static_pointer_cast<Task>(MenuGroup_));
 
     MenuPlay_ = std::make_shared<Button>("Play", ScreenData(0.f, 0.f, 30.f, 100.f), MenuGroup_->GetDefaultScaler());
@@ -23,7 +23,7 @@ TitleScene::TitleScene() : Scene("TitleScene")
     MenuPlay_->animationColor = GetColor(233, 30, 99);
     MenuPlay_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
     MenuPlay_->GetTextLabelInstance()->ChangeFontThickness(9);
-    MenuPlay_->SetTransparent(0.f);
+    MenuPlay_->SetTransparent(100.f);
     MenuGroup_->AddChildTask(std::static_pointer_cast<Task>(MenuPlay_));
 
     MenuOption_ = std::make_shared<Button>("Option", ScreenData(30.f, 0.f, 30.f, 100.f), MenuGroup_->GetDefaultScaler());
@@ -32,7 +32,7 @@ TitleScene::TitleScene() : Scene("TitleScene")
     MenuOption_->animationColor = GetColor(38, 50, 56);
     MenuOption_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
     MenuOption_->GetTextLabelInstance()->ChangeFontThickness(1);
-    MenuOption_->SetTransparent(0.f);
+    MenuOption_->SetTransparent(100.f);
     MenuGroup_->AddChildTask(std::static_pointer_cast<Task>(MenuOption_));
 
     MenuClose_ = std::make_shared<Button>("Exit", ScreenData(59.9f, 0.f, 30.f, 100.f), MenuGroup_->GetDefaultScaler());
@@ -41,11 +41,11 @@ TitleScene::TitleScene() : Scene("TitleScene")
     MenuClose_->animationColor = GetColor(33, 33, 33);
     MenuClose_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
     MenuClose_->GetTextLabelInstance()->ChangeFontThickness(1);
-    MenuClose_->SetTransparent(0.f);
+    MenuClose_->SetTransparent(100.f);
     MenuGroup_->AddChildTask(std::static_pointer_cast<Task>(MenuClose_));
 
     // メニュー開閉ボタン
-    MenuOpener_ = std::make_shared<Button>("おなまえ", ScreenData(40.f, 40.f, 20.f, 20.f), DefaultScaler_);
+    MenuOpener_ = std::make_shared<Button>("おなまえ", ScreenData(40.f, 40.f, 20.f, 20.f, true), DefaultScaler_);
     MenuOpener_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
     MenuOpener_->baseColor = GetColor(179, 229, 252);
     MenuOpener_->animationColor = GetColor(3, 169, 244);
@@ -60,36 +60,28 @@ TitleScene::~TitleScene()
 {
 }
 
+void TitleScene::SceneFadeIn(float deltaTime)
+{
+    float totalTime = 1.0f;
+    Easing::EaseFunction ease = Easing::OutExp;
+
+    SetTransparent(ease(timerCount, totalTime, 100.f, 0.f));
+    SetPositionX(ease(timerCount, totalTime, 0.f, -20.f));
+
+    if (timerCount > totalTime)
+    {
+        IsFadingIn_ = false;
+    }
+}
+
 void TitleScene::SceneUpdate(float deltaTime)
 {
-	float moveSpeed = 1.f * deltaTime;
-
-	if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_LEFT))
-	{
-		AddScreenWidth(-moveSpeed);
-	}
-	if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_RIGHT))
-	{
-		AddScreenWidth(moveSpeed);
-	}
-	if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_UP))
-	{
-		AddScreenHeight(-moveSpeed);
-	}
-	if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_DOWN))
-	{
-		AddScreenHeight(moveSpeed);
-	}
-
-    //MenuOpener_->SetPositionX(MouseManager::GetInstance()->GetMouseRateX(DefaultScaler_));
-    //MenuOpener_->SetPositionY(MouseManager::GetInstance()->GetMouseRateY(DefaultScaler_));
-
-    
 	static bool isOpened = false;
 	static bool isMoving = false;
+
     if(MenuOpener_->IsClickedMouse())
     {
-        timerCount = 0.02f;
+        timerCount = 0.0f;
 		isOpened = !isOpened;
 		isMoving = true;
 	}
@@ -98,46 +90,85 @@ void TitleScene::SceneUpdate(float deltaTime)
     {
         float menuMove = 8.f / timerCount * deltaTime;
         //MenuGroup_->SetTransparent(((MenuGroup_->GetPositionX()-20.f) / 20.f) * 100.f);
-        MenuPlay_->SetTransparent(((MenuGroup_->GetPositionX() - 20.f) / 20.f) * 100.f);
+        /*MenuPlay_->SetTransparent(((MenuGroup_->GetPositionX() - 20.f) / 20.f) * 100.f);
         MenuOption_->SetTransparent(((MenuGroup_->GetPositionX() - 22.f) / 20.f) * 100.f);
-        MenuClose_->SetTransparent(((MenuGroup_->GetPositionX() - 24.f) / 20.f) * 100.f);
+        MenuClose_->SetTransparent(((MenuGroup_->GetPositionX() - 24.f) / 20.f) * 100.f);*/
+        if (MenuPlay_->GetRawPositionX() + MenuGroup_->GetRawPositionX() < MenuOpener_->GetRawPositionX())
+            MenuPlay_->SetTransparent(0.f);
+        else
+            MenuPlay_->SetTransparent(100.f);
+
+        if (MenuOption_->GetRawPositionX() + MenuGroup_->GetRawPositionX() < MenuOpener_->GetRawPositionX())
+            MenuOption_->SetTransparent(0.f);
+        else
+            MenuOption_->SetTransparent(100.f);
+
+        if (MenuClose_->GetRawPositionX() + MenuGroup_->GetRawPositionX() < MenuOpener_->GetRawPositionX())
+            MenuClose_->SetTransparent(0.f);
+        else
+            MenuClose_->SetTransparent(100.f);
+
+        float totalTime = 0.5f;
+        Easing::EaseFunction ease = Easing::OutQuint;
 
         if(isOpened)
         {
-			MenuOpener_->AddPositionX(-menuMove);
-            MenuGroup_->AddPositionX(menuMove);
+            MenuOpener_->SetPositionX(ease(timerCount, totalTime, 20.f, 40.f));
+            MenuGroup_->SetPositionX(ease(timerCount, totalTime, 40.f, 20.f));
+            MenuGroup_->SetTransparent(ease(timerCount, totalTime, 99.f, 0.f));
         }else
         {
-			MenuOpener_->AddPositionX(menuMove);
-            MenuGroup_->AddPositionX(-menuMove);
+            MenuOpener_->SetPositionX(ease(timerCount, totalTime, 40.f, 20.f));
+            MenuGroup_->SetPositionX(ease(timerCount, totalTime, 20.f, 40.f));
+            MenuGroup_->SetTransparent(ease(timerCount, totalTime, 0.f, 99.f));
+
         }
 
-        if (MenuOpener_->GetPositionX() < 20.f)
+        if(timerCount > totalTime)
         {
-            timerCount = 0.02f;
             isMoving = false;
-            MenuOpener_->SetPositionX(20.f);
-        }
-        if(MenuGroup_->GetPositionX() < 20.f)
-        {
-            MenuGroup_->SetPositionX(20.f);
-        }
-
-        if (MenuOpener_->GetPositionX() > 40.f)
-        {
-            timerCount = 0.02f;
-            isMoving = false;
-            MenuOpener_->SetPositionX(40.f);
-        }
-        if (MenuGroup_->GetPositionX() > 40.f)
-        {
-            MenuGroup_->SetPositionX(40.f);
         }
     }
 
     if(MenuClose_->IsClickedMouse())
     {
         TaskManager::GetInstance()->GameExit();
+    }
+    if(MenuOption_->IsClickedMouse())
+    {
+        if (SettingScene_.expired())
+        {
+            auto setting = std::make_shared<SettingScene>();
+            SettingScene_ = setting;
+            TaskManager::GetInstance()->AddTask(setting);
+            timerCount = 0.f;
+        }
+    }
+
+    if (!SettingScene_.expired())
+    {
+        auto l_SettingScene = SettingScene_.lock();
+        if(l_SettingScene->IsFadingIn())
+        {
+            SetTransparent(100.f - (l_SettingScene->GetTransparent() / 2.f));
+            if (timerCount >= 0.5f)
+            {
+                SetEnable(false);
+            }
+            //SetTransparent(Easing::OutExp(timerCount, 0.5f, 50.f, 100.f));
+        }else if(l_SettingScene->IsFadingOut())
+        {
+            SetTransparent(100.f - (l_SettingScene->GetTransparent() / 2.f));
+            if (timerCount >= 0.5f)
+            {
+                SetEnable(true);
+            }
+            //SetTransparent(Easing::OutExp(timerCount, 0.5f, 100.f, 50.f));
+        }
+        if (timerCount > 0.5f)
+        {
+            timerCount = 0.f;
+        }
     }
     
 	if (IsChangedScreen())
@@ -155,5 +186,5 @@ void TitleScene::Draw()
     d.width = 100.f;
     d.height = 100.f;
     ScreenData fixed = DefaultScaler_->Calculate(&d);
-    //DrawBox(fixed.posX, fixed.posY, fixed.width, fixed.height, GetColor(0, 0, 0), TRUE);
+    DrawBox(fixed.posX, fixed.posY, fixed.width, fixed.height, GetColor(117, 117, 117), TRUE);
 }

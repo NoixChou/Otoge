@@ -15,6 +15,7 @@ TaskManager::TaskManager()
 
 TaskManager::~TaskManager()
 {
+    Tasks_.clear();
     Logger_->Info("タスク機能 終了");
 }
 
@@ -64,8 +65,6 @@ bool TaskManager::AddTask(const shared_ptr<Task>& task)
     bool result = false;
 
     TaskQueues_.push_back(task);
-    //Logger_->Debug("タスクキュー追加 キュー数:" + to_string(TaskQueues_.size()));
-
     task->Initialize(static_cast<int>(TaskQueues_.size()) - 1);
 
     return result;
@@ -96,7 +95,7 @@ void TaskManager::Tick(float tickSpeed = 1.0f)
     ScreenFlip();
 }
 
-void TaskManager::UpdateTasks(std::vector<std::shared_ptr<Task>>& tasks, std::vector<std::shared_ptr<Task>>& queues, float tickSpeed, float deltaTime)
+void TaskManager::UpdateTasks(std::vector<Task::TaskPointer>& tasks, std::vector<Task::TaskPointer>& queues, float tickSpeed, float deltaTime)
 {
 	for (auto task : queues)
 	{
@@ -121,11 +120,7 @@ void TaskManager::UpdateTasks(std::vector<std::shared_ptr<Task>>& tasks, std::ve
 
             for (auto m_Child : (*m_Task)->GetChildren())
             {
-                if (m_Child->parentTask == nullptr)
-                {
-                    Logger::LowLevelLog("Set parent " + (*m_Task)->GetName() + " to " + m_Child->GetName(), "TaskManager");
-                    m_Child->parentTask = (*m_Task);
-                }
+                m_Child->parentTask = (*m_Task);
             }
 
             if ((*m_Task)->isAutoUpdateChildren)

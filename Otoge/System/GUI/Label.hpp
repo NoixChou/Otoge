@@ -9,10 +9,10 @@ public:
     enum class TextAlignment : int
     {
         left = 1 << 0,
-        center = 1 << 1,
+        center = 1 << 1,    // 水平の中心
         right = 1 << 2,
         top = 1 << 3,
-        middle = 1 << 4,
+        middle = 1 << 4,    // 垂直の中心
         bottom = 1 << 5,
 
     };

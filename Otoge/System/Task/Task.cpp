@@ -11,6 +11,8 @@ Task::~Task()
     isLiving = false;
     isRunning = false;
     isInitialized = false;
+
+    Logger_->Info("タスク開放");
 }
 
 bool Task::Initialize(int taskID)
@@ -120,6 +122,7 @@ void Task::ChildUpdate(float deltaTime)
 bool Task::AddChildTask(const TaskPointer& task)
 {
     childrenQueues.push_back(task);
+    task->parentTask = weak_from_this();
     //Logger_->Debug(TaskName_ + "タスクキュー追加 キュー数:" + std::to_string(childrenQueues.size()));
     return task->Initialize(static_cast<int>(childrenQueues.size()) - 1);
 }

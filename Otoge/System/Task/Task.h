@@ -2,7 +2,7 @@
 #include "../../Util/Debug/Logger.h"
 #include <cstdarg>
 
-class Task
+class Task : public std::enable_shared_from_this<Task>
 {
 private:
     //int ID = -1; // タスクID
@@ -24,10 +24,11 @@ protected:
 
 public:
     using TaskPointer = std::shared_ptr<Task>;
+    using WeakTaskPointer = std::weak_ptr<Task>;
 
     bool isAutoUpdateChildren = true; // 子タスクのUpdateを自動で実行するか
 
-    std::shared_ptr<Task> parentTask; // 親タスク
+    WeakTaskPointer parentTask; // 親タスク
     std::vector<TaskPointer> children; // 子タスク
     std::vector<TaskPointer> childrenQueues;
 
@@ -67,5 +68,4 @@ public:
     bool AddChildTask(const TaskPointer& task);
 	std::vector<TaskPointer>& GetChildren();
 	std::vector<TaskPointer>& GetChildrenQueues();
-    
 };

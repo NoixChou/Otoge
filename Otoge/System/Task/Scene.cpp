@@ -33,7 +33,8 @@ Scene::Scene(const std::string& sceneName, float sceneWidth, float sceneHeight, 
     PreLayoutScreen_.posY = sceneY;
 
     ParentScaler_ = parentScaler;
-    ParentTask_ = parentTask;
+
+    this->parentTask = parentTask;
 
     Screen_ = ParentScaler_->Calculate(&PreLayoutScreen_);
 
@@ -42,6 +43,8 @@ Scene::Scene(const std::string& sceneName, float sceneWidth, float sceneHeight, 
     IsDrawFrame_ = SettingManager::GetGlobal()->Get<bool>(SETTINGS_DEBUG_DRAW_SCENE_FRAME).get();
 
     Logger_->Info(GetName() + " 初期化完了");
+
+    StartFadeIn();
 }
 
 Scene::Scene(const std::string& sceneName, const ScreenData& screen, std::shared_ptr<FlexibleScaler> parentScaler, Task::TaskPointer parentTask)
@@ -71,6 +74,12 @@ void Scene::Update(float deltaTime)
 
     PrevScreen_ = Screen_;
 
+    // シーンのフェード
+    if (IsFadingIn_)
+        SceneFadeIn(deltaTime);
+    if (IsFadingOut_)
+        SceneFadeOut(deltaTime);
+
     // シーンの更新
     SceneUpdate(deltaTime);
 
@@ -81,7 +90,7 @@ void Scene::Update(float deltaTime)
     }
 
     // Visibleか、透明度が0%以上の場合 描画処理
-    if (IsVisible_ && static_cast<int>(Transparency_) > 0)
+    if (IsVisible())
     {
         // 現在の描画設定を保持
         int currentBuffer = GetDrawScreen();
@@ -94,6 +103,10 @@ void Scene::Update(float deltaTime)
         ClearDrawScreen();
 
         Draw();
+
+        // 元の描画設定に戻す
+        //SetDrawScreen(currentBuffer);
+        SetDrawBlendMode(currentBlendMode, currentBlendParam);
 
         // 子タスクの更新処理
 		TaskManager::UpdateTasks(children, childrenQueues, tickSpeed, deltaTime);
@@ -147,15 +160,18 @@ void Scene::ReCalculateScreen()
 		if (ParentScaler_->Calculate(&PreLayoutScreen_).width > Screen_.width) doRefreshBuffer = true;
 		if (ParentScaler_->Calculate(&PreLayoutScreen_).height > Screen_.height) doRefreshBuffer = true;
 		Screen_ = ParentScaler_->Calculate(&PreLayoutScreen_);
+        if (PreLayoutScreen_.lockAspectRate)
+        {
+            Screen_.height = Screen_.width;
+            PreLayoutScreen_.height = Screen_.height;
+        }
 	}
 
 	if (DefaultScaler_ == nullptr)
 	{
-        Logger_->Debug("sw: " + std::to_string(Screen_.width) + ", sh: " + std::to_string(Screen_.height));
 		DefaultScaler_ = std::make_shared<FlexibleScaler>(Screen_.width, Screen_.height, 1.0f);
         DefaultScaler_->SetDiffX(ParentScaler_->GetDiffX() + Screen_.posX);
         DefaultScaler_->SetDiffY(ParentScaler_->GetDiffY() + Screen_.posY);
-        Logger_->Info("diffx: " + std::to_string(DefaultScaler_->GetDiffX()));
 		doRefreshBuffer = true;
 	}
 	else
@@ -187,6 +203,30 @@ bool Scene::RefreshDrawBuffer()
         return false;
     }
     return true;
+}
+
+void Scene::StartFadeIn()
+{
+    IsFadingIn_ = true;
+    IsFadingOut_ = false;
+    timerCount = 0.f;
+}
+
+void Scene::StartFadeOut()
+{
+    IsFadingIn_ = false;
+    IsFadingOut_ = true;
+    timerCount = 0.f;
+}
+
+bool Scene::IsFadingIn()
+{
+    return IsFadingIn_;
+}
+
+bool Scene::IsFadingOut()
+{
+    return IsFadingOut_;
 }
 
 std::shared_ptr<FlexibleScaler> Scene::GetDefaultScaler() const
@@ -288,6 +328,10 @@ float Scene::GetRawScreenHeight() const
 	return Screen_.height;
 }
 
+void Scene::SetEnable(bool enable)
+{
+    IsEnable_ = enable;
+}
 
 void Scene::SetVisible(bool visible)
 {
@@ -304,9 +348,33 @@ float Scene::GetTransparent() const
     return Transparency_;
 }
 
+bool Scene::IsEnable() const
+{
+    if (!parentTask.expired())
+    {
+        auto parent = std::dynamic_pointer_cast<Scene>(parentTask.lock());
+        if (parent != nullptr)
+        {
+            if (!parent->IsEnable()) return false;
+        }
+    }
+
+    return IsEnable_;
+}
+
 bool Scene::IsVisible() const
 {
-    return IsVisible_ && Transparency_ > 0.f;
+    
+    if(!parentTask.expired())
+    {
+        auto parent = std::dynamic_pointer_cast<Scene>(parentTask.lock());
+        if(parent != nullptr)
+        {
+            if (!parent->IsVisible()) return false;
+        }
+    }
+
+    return IsVisible_ && (static_cast<int>(floor(Transparency_)) > 0);
 }
 
 bool Scene::IsChangedScreen() const
@@ -320,13 +388,19 @@ bool Scene::IsOnMouse() const
         (MouseManager::GetInstance()->GetMouseXf() > Screen_.posX + ParentScaler_->GetDiffX()) &&
         (MouseManager::GetInstance()->GetMouseXf() < Screen_.posX + Screen_.width + ParentScaler_->GetDiffX()) &&
         (MouseManager::GetInstance()->GetMouseYf() > Screen_.posY + ParentScaler_->GetDiffY()) &&
-        (MouseManager::GetInstance()->GetMouseYf() < Screen_.posY + Screen_.height + ParentScaler_->GetDiffY());
+        (MouseManager::GetInstance()->GetMouseYf() < Screen_.posY + Screen_.height + ParentScaler_->GetDiffY()) &&
+        IsEnable();
     /*return
         (MouseManager::GetInstance()->GetMouseRateX(ParentScaler_) > ParentScaler_->CalculatePositionRateX(Screen_.posX)) &&
         (MouseManager::GetInstance()->GetMouseRateX(ParentScaler_) < ParentScaler_->CalculatePositionRateX(Screen_.posX + Screen_.width)) &&
         (MouseManager::GetInstance()->GetMouseRateY(ParentScaler_) > ParentScaler_->CalculatePositionRateY(Screen_.posY)) &&
         (MouseManager::GetInstance()->GetMouseRateY(ParentScaler_) < ParentScaler_->CalculatePositionRateY(Screen_.posY + Screen_.height));
     */
+}
+
+bool Scene::IsStartOverMouse() const
+{
+    return false;
 }
 
 bool Scene::IsDownMouse() const

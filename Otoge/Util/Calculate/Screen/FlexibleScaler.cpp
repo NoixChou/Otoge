@@ -129,6 +129,8 @@ ScreenData FlexibleScaler::Calculate(const ScreenData *dataOfPercent) const
 {
     ScreenData result;
 
+    result.lockAspectRate = dataOfPercent->lockAspectRate;
+
     result.posX = CalculatePositionX(dataOfPercent->posX);
     result.posY = CalculatePositionY(dataOfPercent->posY);
 

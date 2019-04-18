@@ -175,6 +175,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\Scenes\Title\Setting\SettingScene.cpp" />
+    <ClCompile Include="Util\Calculate\Animation\Easing.cpp" />
     <ClCompile Include="Game\Scenes\Title\Ball.cpp" />
     <ClCompile Include="System\Buffer\BufferManager.cpp" />
     <ClCompile Include="System\Font\FontManager.cpp" />
@@ -202,6 +204,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Scenes\Title\Setting\SettingScene.hpp" />
+    <ClInclude Include="Util\Calculate\Animation\Easing.hpp" />
     <ClInclude Include="Game\Scenes\Title\Ball.hpp" />
     <ClInclude Include="System\Buffer\BufferManager.hpp" />
     <ClInclude Include="System\DefineSettings.h" />

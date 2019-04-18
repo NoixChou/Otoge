@@ -8,6 +8,8 @@
 
 #include "System/Config.h"
 
+// TODO: 4/19 タスク/シーン優先度を実装する
+
 using namespace std;
 
 // 前方宣言
@@ -56,7 +58,7 @@ void PreInitialize()
     ChangeWindowMode(!g_SystemSettings->Get<bool>(SETTINGS_FULLSCREEN).get()); // ウィンドウモード/フルスクリーン
     SetMainWindowText(GAME_APP_NAME " v" GAME_APP_VER); // ウィンドウのタイトル
     SetAlwaysRunFlag(TRUE); // 常に処理
-    SetWaitVSyncFlag(g_SystemSettings->Get<bool>(SETTINGS_VSYNC).get()); // 垂直同期
+    SetWaitVSyncFlag(static_cast<int>(g_SystemSettings->Get<bool>(SETTINGS_VSYNC).get())); // 垂直同期
     SetUseFPUPreserveFlag(TRUE);
     SetGraphMode(g_SystemSettings->Get<int>(SETTINGS_RES_WIDTH).get(), g_SystemSettings->Get<int>(SETTINGS_RES_HEIGHT).get(), 32);
     SetFullSceneAntiAliasingMode(g_SystemSettings->Get<int>(SETTINGS_AA_SAMPLE).get(), g_SystemSettings->Get<int>(SETTINGS_AA_QUALITY).get());
@@ -105,7 +107,7 @@ void Loop()
     while(ProcessMessage() != -1 && !TaskManager::GetInstance()->IsGameExit())
     {
 		if(KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_A))
-	        TaskManager::GetInstance()->Tick(0.05f);
+	        TaskManager::GetInstance()->Tick(0.5f);
 		else
 			TaskManager::GetInstance()->Tick(1.0f);
 
