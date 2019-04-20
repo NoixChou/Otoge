@@ -2,7 +2,6 @@
 #include "../../Util/Calculate/Screen/FontStringCalculator.hpp"
 #include "../Task/TaskManager.hpp"
 #include "../Input/MouseManager.hpp"
-#include "../../Game/Scenes/Title/Ball.hpp"
 
 Button::Button(const std::string& label, const ScreenData& layoutScreen, std::shared_ptr<FlexibleScaler> parentScaler) : GUI(label + "\"<Button>\"", layoutScreen, parentScaler)
 {
@@ -33,6 +32,7 @@ void Button::GUIUpdate(float deltaTime)
 
     if (IsDownMouse())
     {
+        timerCount = 0.f;
         AddChildTask(std::static_pointer_cast<Task>(
             std::make_shared<ButtonPushedAnimate>(
                 DefaultScaler_->CalculatePositionRateX(MouseManager::GetInstance()->GetMouseXf() - GetRawPositionX() - ParentScaler_->GetDiffX()),
@@ -45,6 +45,11 @@ void Button::GUIUpdate(float deltaTime)
 void Button::Draw()
 {
     DrawBox(0, 0, static_cast<int>(floor(GetRawScreenWidth())), static_cast<int>(floor(GetRawScreenHeight())), baseColor, TRUE);
+    if (IsHoldMouse() && timerCount > 0.3f)
+    {
+        SetDrawBlendMode(DX_BLENDMODE_PMA_ALPHA, 127);
+        DrawBox(0, 0, static_cast<int>(floor(GetRawScreenWidth())), static_cast<int>(floor(GetRawScreenHeight())), animationColor, TRUE);
+    }
     if (IsOnMouse())
     {
         SetDrawBlendMode(DX_BLENDMODE_PMA_ALPHA, 20);
@@ -69,8 +74,8 @@ ButtonPushedAnimate::ButtonPushedAnimate(float x, float y, unsigned color, float
 	this->color = color;
 	Size_ = size;
 	SetTransparent(50.f);
-	hasLifespan = true;
-	lifespan = 0.5f;
+	HasLifespan_ = true;
+	Lifespan_ = 0.5f;
 }
 
 ButtonPushedAnimate::~ButtonPushedAnimate()
@@ -86,11 +91,11 @@ void ButtonPushedAnimate::PreUpdate(float deltaTime)
 
 void ButtonPushedAnimate::Draw()
 {
-	ScreenData circle;
-	circle.posX = position.x;
-	circle.posY = position.y;
-	circle.width = Size_;
-	circle.height = Size_;
-    const auto l_Fixed = ParentScaler_->Calculate(&circle);
+	ScreenData l_Circle;
+	l_Circle.posX = position.x;
+	l_Circle.posY = position.y;
+	l_Circle.width = Size_;
+	l_Circle.height = Size_;
+    const auto l_Fixed = ParentScaler_->Calculate(&l_Circle);
 	DrawCircle(static_cast<int>(floor(l_Fixed.posX)), static_cast<int>(floor(l_Fixed.posY)), static_cast<int>(floor(l_Fixed.width + l_Fixed.height / 2.0f)), color, TRUE);
 }

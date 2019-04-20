@@ -11,13 +11,24 @@
 
 TitleScene::TitleScene() : Scene("TitleScene")
 {
+    // メニュー開閉ボタン
+    MenuOpener_ = std::make_shared<Button>("おなまえ", ScreenData(40.f, 40.f, 20.f, 20.f, true), DefaultScaler_);
+    MenuOpener_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
+    MenuOpener_->baseColor = GetColor(179, 229, 252);
+    MenuOpener_->animationColor = GetColor(3, 169, 244);
+    MenuOpener_->GetTextLabelInstance()->ChangeFontThickness(1);
+    MenuOpener_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
+    MenuOpener_->SetPriority(10.f);
+    AddChildTask(std::static_pointer_cast<Task>(MenuOpener_));
+
     //メニュー項目ボタン
-    auto l_GroupScreen = ScreenData(20.f, 43.f, 50.f, 14.f);
+    auto l_GroupScreen = ScreenData(20.f, 43.f, 60.f, 14.f);
     MenuGroup_ = std::make_shared<Scene>("MenuGroup", l_GroupScreen, DefaultScaler_);
     MenuGroup_->SetTransparent(0.f);
+    MenuGroup_->SetPriority(0.f);
     AddChildTask(std::static_pointer_cast<Task>(MenuGroup_));
 
-    MenuPlay_ = std::make_shared<Button>("Play", ScreenData(0.f, 0.f, 30.f, 100.f), MenuGroup_->GetDefaultScaler());
+    MenuPlay_ = std::make_shared<Button>("Play", ScreenData(0.f, 0.f, 100.f / 3.f, 100.f), MenuGroup_->GetDefaultScaler());
     MenuPlay_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
     MenuPlay_->baseColor = GetColor(240, 98, 146);
     MenuPlay_->animationColor = GetColor(233, 30, 99);
@@ -26,7 +37,7 @@ TitleScene::TitleScene() : Scene("TitleScene")
     MenuPlay_->SetTransparent(100.f);
     MenuGroup_->AddChildTask(std::static_pointer_cast<Task>(MenuPlay_));
 
-    MenuOption_ = std::make_shared<Button>("Option", ScreenData(30.f, 0.f, 30.f, 100.f), MenuGroup_->GetDefaultScaler());
+    MenuOption_ = std::make_shared<Button>("Option", ScreenData(MenuPlay_->GetScreenWidth(), 0.f, 100.f / 3.f, 100.f), MenuGroup_->GetDefaultScaler());
     MenuOption_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
     MenuOption_->baseColor = GetColor(120, 144, 156);
     MenuOption_->animationColor = GetColor(38, 50, 56);
@@ -35,7 +46,7 @@ TitleScene::TitleScene() : Scene("TitleScene")
     MenuOption_->SetTransparent(100.f);
     MenuGroup_->AddChildTask(std::static_pointer_cast<Task>(MenuOption_));
 
-    MenuClose_ = std::make_shared<Button>("Exit", ScreenData(59.9f, 0.f, 30.f, 100.f), MenuGroup_->GetDefaultScaler());
+    MenuClose_ = std::make_shared<Button>("Exit", ScreenData(MenuPlay_->GetScreenWidth() + MenuOption_->GetScreenWidth(), 0.f, 100.f / 3.f, 100.f), MenuGroup_->GetDefaultScaler());
     MenuClose_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
     MenuClose_->baseColor = GetColor(117, 117, 117);
     MenuClose_->animationColor = GetColor(33, 33, 33);
@@ -43,16 +54,6 @@ TitleScene::TitleScene() : Scene("TitleScene")
     MenuClose_->GetTextLabelInstance()->ChangeFontThickness(1);
     MenuClose_->SetTransparent(100.f);
     MenuGroup_->AddChildTask(std::static_pointer_cast<Task>(MenuClose_));
-
-    // メニュー開閉ボタン
-    MenuOpener_ = std::make_shared<Button>("おなまえ", ScreenData(40.f, 40.f, 20.f, 20.f, true), DefaultScaler_);
-    MenuOpener_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
-    MenuOpener_->baseColor = GetColor(179, 229, 252);
-    MenuOpener_->animationColor = GetColor(3, 169, 244);
-    MenuOpener_->GetTextLabelInstance()->ChangeFontThickness(1);
-    MenuOpener_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
-    AddChildTask(std::static_pointer_cast<Task>(MenuOpener_));
-    
 }
 
 
@@ -62,7 +63,7 @@ TitleScene::~TitleScene()
 
 void TitleScene::SceneFadeIn(float deltaTime)
 {
-    float totalTime = 1.0f;
+    float totalTime = 0.5f;
     Easing::EaseFunction ease = Easing::OutExp;
 
     SetTransparent(ease(timerCount, totalTime, 100.f, 0.f));
@@ -71,6 +72,8 @@ void TitleScene::SceneFadeIn(float deltaTime)
     if (timerCount > totalTime)
     {
         IsFadingIn_ = false;
+        SetTransparent(100.f);
+        SetPositionX(0.f);
     }
 }
 
@@ -139,6 +142,7 @@ void TitleScene::SceneUpdate(float deltaTime)
         if (SettingScene_.expired())
         {
             auto setting = std::make_shared<SettingScene>();
+            setting->SetPriority(10.f);
             SettingScene_ = setting;
             TaskManager::GetInstance()->AddTask(setting);
             timerCount = 0.f;

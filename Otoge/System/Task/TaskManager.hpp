@@ -18,9 +18,9 @@ private:
     bool IsGameExit_ = false;
 	bool IsGameRestart_ = false;
 
-    int FrameCount = 0;
-    int StartCount = 0;
-    float FPS = 0.f;
+    int FrameCount_ = 0;
+    int StartCount_ = 0;
+    float Fps_ = 0.f;
 
 protected:
 	static std::shared_ptr<TaskManager> Instance_;
@@ -50,4 +50,5 @@ public:
 
     void Tick(float tickSpeed);
 	static void UpdateTasks(std::vector<Task::TaskPointer>& tasks, std::vector<Task::TaskPointer>& queues, float tickSpeed, float deltaTime);
+    static void UpdatePriority(std::vector<Task::TaskPointer>& tasks);
 };

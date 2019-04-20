@@ -8,8 +8,6 @@
 
 #include "System/Config.h"
 
-// TODO: 4/19 タスク/シーン優先度を実装する
-
 using namespace std;
 
 // 前方宣言
@@ -85,6 +83,7 @@ void Initialize()
     SetWriteZBuffer3D(TRUE);
     SetDrawScreen(DX_SCREEN_BACK);
 
+    SetDrawMode(DX_DRAWMODE_BILINEAR);
     SetMouseDispFlag(TRUE); // マウスカーソルの表示
 
     // コンポーネント初期化

@@ -17,7 +17,7 @@ Logger::Logger(const string &moduleName)
 #endif
 
     userCount++;
-    this->ModuleName = moduleName;
+    this->ModuleName_ = moduleName;
     //Debug("Logger added, logger count: " + to_string(userCount));
 }
 
@@ -41,8 +41,8 @@ void Logger::Log(const string& message, const string &tag)
     printf("[%s] ", tag.c_str());
     OutputDebugString(("[" + tag + "] ").c_str());
 
-    if (ModuleName != "")
-        printf("<%s> ", ModuleName.c_str()), OutputDebugString(("<" + ModuleName + "> ").c_str());
+    if (ModuleName_ != "")
+        printf("<%s> ", ModuleName_.c_str()), OutputDebugString(("<" + ModuleName_ + "> ").c_str());
     printf("%s", message.c_str());
     printf("\n");
     OutputDebugString(message.c_str());

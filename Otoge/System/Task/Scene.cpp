@@ -109,7 +109,7 @@ void Scene::Update(float deltaTime)
         SetDrawBlendMode(currentBlendMode, currentBlendParam);
 
         // 子タスクの更新処理
-		TaskManager::UpdateTasks(children, childrenQueues, tickSpeed, deltaTime);
+		TaskManager::UpdateTasks(children, childrenQueues, TickSpeed_, deltaTime);
 
         // デバッグ情報の描画
         if (IsDrawFrame_)
@@ -135,7 +135,7 @@ void Scene::Update(float deltaTime)
         if (1.f > Screen_.height) Screen_.height = 1.f;
 
         // シーンバッファを描画(透明度も考慮)
-		if (static_cast<int>(Transparency_) < 100)
+        if (static_cast<int>(Transparency_) < 100)
 			SetDrawBlendMode(DX_BLENDMODE_PMA_ALPHA, static_cast<int>((Transparency_ / 100.f) * 255.f));
 
         DrawRectGraph(static_cast<int>(floor(Screen_.posX)), static_cast<int>(floor(Screen_.posY)), 0, 0, static_cast<int>(floor(Screen_.posX + Screen_.width)), static_cast<int>(floor(Screen_.posY + Screen_.height)), SceneBuffer_, TRUE);
@@ -157,8 +157,8 @@ void Scene::ReCalculateScreen()
 	}
 	if (ParentScaler_ != nullptr)
 	{
-		if (ParentScaler_->Calculate(&PreLayoutScreen_).width > Screen_.width) doRefreshBuffer = true;
-		if (ParentScaler_->Calculate(&PreLayoutScreen_).height > Screen_.height) doRefreshBuffer = true;
+		if (ParentScaler_->Calculate(&PreLayoutScreen_).width != Screen_.width) doRefreshBuffer = true;
+		if (ParentScaler_->Calculate(&PreLayoutScreen_).height != Screen_.height) doRefreshBuffer = true;
 		Screen_ = ParentScaler_->Calculate(&PreLayoutScreen_);
         if (PreLayoutScreen_.lockAspectRate)
         {

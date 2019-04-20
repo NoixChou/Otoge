@@ -8,9 +8,9 @@ Task::Task(const std::string& taskName)
 
 Task::~Task()
 {
-    isLiving = false;
-    isRunning = false;
-    isInitialized = false;
+    IsLiving_ = false;
+    IsRunning_ = false;
+    IsInitialized_ = false;
 
     Logger_->Info("タスク開放");
 }
@@ -18,30 +18,30 @@ Task::~Task()
 bool Task::Initialize(int taskID)
 {
     //ID = taskID;
-    isInitialized = true;
-    isLiving = true;
-    isRunning = true;
+    IsInitialized_ = true;
+    IsLiving_ = true;
+    IsRunning_ = true;
 
     return true;
 }
 
 bool Task::Terminate()
 {
-    isTerminated = true;
+    IsTerminated_ = true;
 
-    isRunning = false;
+    IsRunning_ = false;
 
     return true;
 }
 
 void Task::Pause()
 {
-    isRunning = false;
+    IsRunning_ = false;
 }
 
 void Task::Resume()
 {
-    isRunning = true;
+    IsRunning_ = true;
 }
 
 std::string Task::GetName() const
@@ -60,58 +60,67 @@ std::string Task::GetName() const
 
 bool Task::CanRunning() const
 {
-    return isInitialized && isLiving;
+    return IsInitialized_ && IsLiving_;
 }
 
 bool Task::IsLiving() const
 {
-    return isLiving;
+    return IsLiving_;
 }
 
 bool Task::IsTerminated() const
 {
-    return isTerminated;
+    return IsTerminated_;
 }
 
 bool Task::IsInit() const
 {
-    return isInitialized;
+    return IsInitialized_;
 }
 
 bool Task::IsRunning() const
 {
-    return isRunning;
+    return IsRunning_;
 }
 
 
 float Task::GetTickSpeed() const
 {
     if (!CanRunning()) return -1;
-    return tickSpeed;
+    return TickSpeed_;
 }
 
 void Task::SetTickSpeed(float tickSpeed)
 {
-    this->tickSpeed = tickSpeed;
+    this->TickSpeed_ = tickSpeed;
 }
 
+float Task::GetPriority() const
+{
+    return RunningPriority_ - 100.f;
+}
+
+void Task::SetPriority(float priority)
+{
+    RunningPriority_ = priority + 100.f;
+}
 
 bool Task::HasLifespan() const
 {
-    return hasLifespan;
+    return HasLifespan_;
 }
 
 float Task::GetLifespan() const
 {
     if (!CanRunning()) return -1;
 
-    return lifespan;
+    return Lifespan_;
 }
 
 
 void Task::SetLifespan(float lifespan)
 {
-    this->lifespan = lifespan;
+    this->Lifespan_ = lifespan;
 }
 
 void Task::ChildUpdate(float deltaTime)

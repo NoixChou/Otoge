@@ -12,15 +12,16 @@ protected:
 
     std::shared_ptr<Logger> Logger_;
 
-    bool isLiving = false; // 生きていて、実行可能か(未使用)
-    bool isTerminated = false; // 終了中か
-    bool isInitialized = false; // 初期化されているか
-    bool isRunning = false; // Updateを実行するか
+    float RunningPriority_ = 0.f; // 実行優先順位
+    bool IsLiving_ = false; // 生きていて、実行可能か(未使用)
+    bool IsTerminated_ = false; // 終了中か
+    bool IsInitialized_ = false; // 初期化されているか
+    bool IsRunning_ = false; // Updateを実行するか
 
-    float tickSpeed = 1.0f; // 処理スピード (deltaTimeが補正される)
+    float TickSpeed_ = 1.0f; // 処理スピード (deltaTimeが補正される)
 
-    bool hasLifespan = false; // 寿命があるか
-    float lifespan = 0.f; // 寿命
+    bool HasLifespan_ = false; // 寿命があるか
+    float Lifespan_ = 0.f; // 寿命
 
 public:
     using TaskPointer = std::shared_ptr<Task>;
@@ -58,6 +59,9 @@ public:
     
     float GetTickSpeed() const;
     void SetTickSpeed(float tickSpeed);
+
+    float GetPriority() const;
+    void SetPriority(float priority);
 
     bool HasLifespan() const;
     float GetLifespan() const;
