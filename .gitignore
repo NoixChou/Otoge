@@ -246,10 +246,6 @@
 
 /DxLib/DxLibW_d.lib
 /DxLib/DxLibW.lib
-/DxLib/DxLib.txt
-/DxLib/DxLib.lib
-/DxLib/DxLib.h
-/DxLib/DxFunctionWin.h
 /DxLib/DxDrawFunc_x64_d.lib
 /DxLib/DxDrawFunc_x64.lib
 /DxLib/DxDrawFunc_vs2015_x86_MTd.lib
