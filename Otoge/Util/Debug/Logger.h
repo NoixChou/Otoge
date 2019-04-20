@@ -3,7 +3,7 @@
 class Logger
 {
 private:
-    std::string ModuleName;
+    std::string ModuleName_;
     static int userCount;
 
 public:

@@ -4,8 +4,8 @@
 class FlexibleScaler
 {
 private:
-    float OffsetX_;
-    float OffsetY_;
+    float GlobalDiffX_ = 0.f;
+    float GlobalDiffY_ = 0.f;
     float ScreenWidth_;
     float ScreenHeight_;
     float Scale_;
@@ -18,7 +18,7 @@ public:
     bool lockLeft = true;
     bool lockRight = false;
 
-    FlexibleScaler(float screenWidth, float screenHeight, float scale = 1.0f, float offsetX = 0.0f, float offsetY = 0.0f);
+    FlexibleScaler(float screenWidth, float screenHeight, float scale = 1.0f);
     ~FlexibleScaler();
 
     /// <summary>
@@ -29,17 +29,20 @@ public:
     static void CreateWindowBasedInstance();
     static void DestroyWindowBasedInstance();
 
+    void AddDiffX(float dx);
+    void AddDiffY(float dy);
+
     /// <summary>
     /// X方向のオフセットを取得
     /// </summary>
     /// <returns>X方向のオフセット</returns>
-    float GetOffsetX() const;
+    float GetDiffX() const;
 
     /// <summary>
     /// Y方向のオフセットを取得
     /// </summary>
     /// <returns>Y方向のオフセット</returns>
-    float GetOffsetY() const;
+    float GetDiffY() const;
 
     /// <summary>
     /// スクリーン幅(100%幅)を取得
@@ -63,13 +66,13 @@ public:
     /// X方向のオフセットを設定
     /// </summary>
     /// <param name="offsetX">生Xオフセット</param>
-    void SetOffsetX(float offsetX);
+    void SetDiffX(float offsetX);
 
     /// <summary>
     /// Y方向のオフセットを設定
     /// </summary>
     /// <param name="offsetY">生Yオフセット</param>
-    void SetOffsetY(float offsetY);
+    void SetDiffY(float offsetY);
 
     /// <summary>
     /// スクリーン幅(100%幅)を設定

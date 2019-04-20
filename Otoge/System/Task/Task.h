@@ -1,7 +1,8 @@
 #pragma once
 #include "../../Util/Debug/Logger.h"
+#include <cstdarg>
 
-class Task
+class Task : public std::enable_shared_from_this<Task>
 {
 private:
     //int ID = -1; // タスクID
@@ -11,22 +12,26 @@ protected:
 
     std::shared_ptr<Logger> Logger_;
 
-    bool isLiving = false; // 生きていて、実行可能か(未使用)
-    bool isTerminated = false; // 終了中か
-    bool isInitialized = false; // 初期化されているか
-    bool isRunning = false; // Updateを実行するか
+    float RunningPriority_ = 0.f; // 実行優先順位
+    bool IsLiving_ = false; // 生きていて、実行可能か(未使用)
+    bool IsTerminated_ = false; // 終了中か
+    bool IsInitialized_ = false; // 初期化されているか
+    bool IsRunning_ = false; // Updateを実行するか
 
-    float tickSpeed = 1.0f; // 処理スピード (deltaTimeが補正される)
+    float TickSpeed_ = 1.0f; // 処理スピード (deltaTimeが補正される)
 
-    bool hasLifespan = false; // 寿命があるか
-    float lifespan = 0.f; // 寿命
+    bool HasLifespan_ = false; // 寿命があるか
+    float Lifespan_ = 0.f; // 寿命
 
 public:
+    using TaskPointer = std::shared_ptr<Task>;
+    using WeakTaskPointer = std::weak_ptr<Task>;
+
     bool isAutoUpdateChildren = true; // 子タスクのUpdateを自動で実行するか
 
-    std::shared_ptr<Task> parentTask; // 親タスク
-    std::vector<std::shared_ptr<Task>> children; // 子タスク
-    std::vector<std::shared_ptr<Task>> childrenQueues;
+    WeakTaskPointer parentTask; // 親タスク
+    std::vector<TaskPointer> children; // 子タスク
+    std::vector<TaskPointer> childrenQueues;
 
     float timerCount = 0.f; // deltaTime蓄積
 
@@ -55,14 +60,16 @@ public:
     float GetTickSpeed() const;
     void SetTickSpeed(float tickSpeed);
 
+    float GetPriority() const;
+    void SetPriority(float priority);
+
     bool HasLifespan() const;
     float GetLifespan() const;
     void SetLifespan(float lifespan);
 
     // 子タスク
     void ChildUpdate(float deltaTime);
-    bool AddChildTask(const std::shared_ptr<Task> &task);
-	std::vector<std::shared_ptr<Task>>& GetChildren();
-	std::vector<std::shared_ptr<Task>>& GetChildrenQueues();
-    
+    bool AddChildTask(const TaskPointer& task);
+	std::vector<TaskPointer>& GetChildren();
+	std::vector<TaskPointer>& GetChildrenQueues();
 };

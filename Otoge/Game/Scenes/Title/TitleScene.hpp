@@ -13,10 +13,13 @@ private:
     std::shared_ptr<Button> MenuOption_;
     std::shared_ptr<Button> MenuClose_;
 
+    std::weak_ptr<Scene> SettingScene_;
+
 public:
     TitleScene();
     ~TitleScene();
 
+    void SceneFadeIn(float deltaTime) override;
     void SceneUpdate(float deltaTime) override;
     void Draw() override;
 };

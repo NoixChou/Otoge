@@ -4,10 +4,10 @@
 
 std::shared_ptr<FlexibleScaler> FlexibleScaler::GlobalInstance_ = nullptr;
 
-FlexibleScaler::FlexibleScaler(float screenWidth, float screenHeight, float scale, float offsetX, float offsetY)
+FlexibleScaler::FlexibleScaler(float screenWidth, float screenHeight, float scale)
 {
-    OffsetX_ = offsetX;
-    OffsetY_ = offsetY;
+    Logger::LowLevelLog("Scaler created, w: " + std::to_string(screenWidth) + ", h:" + std::to_string(screenHeight), "DEBUG");
+
     ScreenWidth_ = screenWidth;
     ScreenHeight_ = screenHeight;
     Scale_ = scale;
@@ -35,14 +35,24 @@ void FlexibleScaler::DestroyWindowBasedInstance()
     GlobalInstance_.reset();
 }
 
-float FlexibleScaler::GetOffsetX() const
+void FlexibleScaler::AddDiffX(float dx)
 {
-    return OffsetX_;
+    GlobalDiffX_ += dx;
 }
 
-float FlexibleScaler::GetOffsetY() const
+void FlexibleScaler::AddDiffY(float dy)
 {
-    return OffsetY_;
+    GlobalDiffY_ += dy;
+}
+
+float FlexibleScaler::GetDiffX() const
+{
+    return GlobalDiffX_;
+}
+
+float FlexibleScaler::GetDiffY() const
+{
+    return GlobalDiffY_;
 }
 
 float FlexibleScaler::GetScreenWidth() const
@@ -60,14 +70,14 @@ float FlexibleScaler::GetScale() const
     return Scale_;
 }
 
-void FlexibleScaler::SetOffsetX(float offsetX)
+void FlexibleScaler::SetDiffX(float offsetX)
 {
-    OffsetX_ = offsetX;
+    GlobalDiffX_ = offsetX;
 }
 
-void FlexibleScaler::SetOffsetY(float offsetY)
+void FlexibleScaler::SetDiffY(float offsetY)
 {
-    OffsetY_ = offsetY;
+    GlobalDiffY_ = offsetY;
 }
 
 void FlexibleScaler::SetScreenWidth(float width)
@@ -87,37 +97,39 @@ void FlexibleScaler::SetScale(float scale)
 
 float FlexibleScaler::CalculatePositionRateX(float rawX) const
 {
-	return rawX / (ScreenWidth_ - OffsetX_) * 100.f * Scale_;
+	return rawX / (ScreenWidth_) * 100.f * Scale_;
 }
 
 float FlexibleScaler::CalculatePositionRateY(float rawY) const
 {
-	return rawY / (ScreenHeight_ - OffsetY_) * 100.f * Scale_;
+	return rawY / (ScreenHeight_) * 100.f * Scale_;
 }
 
 float FlexibleScaler::CalculatePositionX(float px) const
 {
-    return OffsetX_ + ScreenWidth_ * (px / 100.f) * Scale_;
+    return ScreenWidth_ * (px / 100.f) * Scale_;
 }
 
 float FlexibleScaler::CalculatePositionY(float py) const
 {
-    return OffsetY_ + ScreenHeight_ * (py / 100.f) * Scale_;
+    return ScreenHeight_ * (py / 100.f) * Scale_;
 }
 
 float FlexibleScaler::CalculateWidth(float width) const
 {
-    return OffsetX_ + ScreenWidth_ * (width / 100.f) * Scale_;
+    return ScreenWidth_ * (width / 100.f) * Scale_;
 }
 
 float FlexibleScaler::CalculateHeight(float height) const
 {
-    return OffsetY_ + ScreenHeight_ * (height / 100.f) * Scale_;
+    return ScreenHeight_ * (height / 100.f) * Scale_;
 }
 
 ScreenData FlexibleScaler::Calculate(const ScreenData *dataOfPercent) const
 {
     ScreenData result;
+
+    result.lockAspectRate = dataOfPercent->lockAspectRate;
 
     result.posX = CalculatePositionX(dataOfPercent->posX);
     result.posY = CalculatePositionY(dataOfPercent->posY);

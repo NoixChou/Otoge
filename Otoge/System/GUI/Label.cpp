@@ -26,16 +26,16 @@ void Label::Draw()
     if ((textAlign & TextAlignment::left) == TextAlignment::left)
         textX = 0.f;
     else if ((textAlign & TextAlignment::center) == TextAlignment::center)
-        textX = Screen_.width / 2.f - FontStringCalculator::GetStringCenterHorizontal(FontHandle_, Label_);
+        textX = GetRawScreenWidth() / 2.f - FontStringCalculator::GetStringCenterHorizontal(FontHandle_, Label_);
     else if ((textAlign & TextAlignment::right) == TextAlignment::right)
-        textX = Screen_.width - FontStringCalculator::GetStringWidth(FontHandle_, Label_);
+        textX = GetRawScreenWidth() - FontStringCalculator::GetStringWidth(FontHandle_, Label_);
 
     if ((textAlign & TextAlignment::top) == TextAlignment::top)
         textY = 0.f;
     else if ((textAlign & TextAlignment::middle) == TextAlignment::middle)
-        textY = Screen_.height / 2.f - FontStringCalculator::GetStringCenterVertical(FontHandle_);
+        textY = GetRawScreenHeight() / 2.f - FontStringCalculator::GetStringCenterVertical(FontHandle_);
     else if ((textAlign & TextAlignment::bottom) == TextAlignment::bottom)
-        textY = Screen_.height - FontStringCalculator::GetStringHeight(FontHandle_);
+        textY = GetRawScreenHeight() - FontStringCalculator::GetStringHeight(FontHandle_);
 
     DrawStringToHandle(static_cast<int>(textX), static_cast<int>(textY), Label_.c_str(), baseColor, FontHandle_);
 }

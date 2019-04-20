@@ -15,6 +15,7 @@ TaskManager::TaskManager()
 
 TaskManager::~TaskManager()
 {
+    Tasks_.clear();
     Logger_->Info("タスク機能 終了");
 }
 
@@ -46,12 +47,12 @@ void TaskManager::GameExit()
 
 int TaskManager::GetTaskCount()
 {
-    return Tasks_.size();
+    return static_cast<int>(Tasks_.size());
 }
 
 float TaskManager::GetFrameRate()
 {
-    return FPS;
+    return Fps_;
 }
 
 bool TaskManager::IsGameExit()
@@ -64,9 +65,7 @@ bool TaskManager::AddTask(const shared_ptr<Task>& task)
     bool result = false;
 
     TaskQueues_.push_back(task);
-    //Logger_->Debug("タスクキュー追加 キュー数:" + to_string(TaskQueues_.size()));
-
-    task->Initialize(TaskQueues_.size() - 1);
+    task->Initialize(static_cast<int>(TaskQueues_.size()) - 1);
 
     return result;
 }
@@ -83,7 +82,7 @@ void TaskManager::Tick(float tickSpeed = 1.0f)
 
     if (fps_interval_count > 1.0f)
     {
-        FPS = 1000000.0f / duration_cast<microseconds>(ClockCount_ - PrevClockCount_).count();
+        Fps_ = 1000000.0f / duration_cast<microseconds>(ClockCount_ - PrevClockCount_).count();
         fps_interval_count = 0.0f;
     }
 
@@ -96,14 +95,20 @@ void TaskManager::Tick(float tickSpeed = 1.0f)
     ScreenFlip();
 }
 
-void TaskManager::UpdateTasks(std::vector<std::shared_ptr<Task>>& tasks, std::vector<std::shared_ptr<Task>>& queues, float tickSpeed, float deltaTime)
+void TaskManager::UpdateTasks(std::vector<Task::TaskPointer>& tasks, std::vector<Task::TaskPointer>& queues, float tickSpeed, float deltaTime)
 {
+    bool l_IsAdded = false;
 	for (auto task : queues)
 	{
 		tasks.push_back(task);
-		//Logger::LowLevelLog("タスク追加 タスク数:" + std::to_string(tasks.size()), "LOG");
+        l_IsAdded = true;
 	}
 	queues.clear();
+
+    if(l_IsAdded)
+    {
+        UpdatePriority(tasks);
+    }
 	
 	auto m_Task = tasks.begin();
 
@@ -147,4 +152,12 @@ void TaskManager::UpdateTasks(std::vector<std::shared_ptr<Task>>& tasks, std::ve
 			--m_Task;
 		}
 	}
+}
+
+void TaskManager::UpdatePriority(std::vector<Task::TaskPointer>& tasks)
+{
+    std::sort(tasks.begin(), tasks.end(), [](const Task::TaskPointer & a, const Task::TaskPointer & b)
+        {
+            return a->GetPriority() < b->GetPriority();
+        });
 }
