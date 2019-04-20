@@ -259,9 +259,6 @@
 
 /DxLib/DxDrawFunc_d.lib
 /DxLib/DxDrawFunc.lib
-/DxLib/DxDataTypeWin.h
-/DxLib/DxDataType.h
-/DxLib/DxCompileConfig.h
 /DxLib/celt_x64_d.lib
 /DxLib/celt_x64.lib
 /DxLib/celt_vs2015_x86_MTd.lib
