@@ -130,6 +130,10 @@ float MouseManager::GetMouseRateY(std::shared_ptr<FlexibleScaler> scaler)
 	return scaler->CalculatePositionRateY(MousePosY_);
 }
 
+float MouseManager::GetMouseWheelAccel()
+{
+    return MouseWheelSpeed_;
+}
 
 bool MouseManager::IsDownButton(int key)
 {

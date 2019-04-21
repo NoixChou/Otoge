@@ -44,6 +44,7 @@ public:
 
     void StartFadeIn();
     void StartFadeOut();
+    void StopFade();
     bool IsFadingIn();
     bool IsFadingOut();
 

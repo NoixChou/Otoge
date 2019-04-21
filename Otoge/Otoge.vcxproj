@@ -95,7 +95,7 @@
     <Link>
       <AdditionalLibraryDirectories>../DxLib;L:/syuto/boost_1_63_0/lib/$(PlatformTarget)</AdditionalLibraryDirectories>
       <OutputFile>$(SolutionDir)Bin\$(Configuration)\$(PlatformTarget)\$(TargetName)$(TargetExt)</OutputFile>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -119,7 +119,7 @@
     <Link>
       <AdditionalLibraryDirectories>../DxLib;L:/syuto/boost_1_63_0/lib/$(PlatformTarget)</AdditionalLibraryDirectories>
       <OutputFile>$(SolutionDir)Bin\$(Configuration)\$(PlatformTarget)\$(TargetName)$(TargetExt)</OutputFile>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -148,6 +148,7 @@
       <AdditionalLibraryDirectories>../DxLib;L:/syuto/boost_1_63_0/lib/$(PlatformTarget)</AdditionalLibraryDirectories>
       <OutputFile>$(SolutionDir)Bin\$(Configuration)\$(PlatformTarget)\$(TargetName)$(TargetExt)</OutputFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -176,6 +177,7 @@
       <AdditionalLibraryDirectories>../DxLib;L:/syuto/boost_1_63_0/lib/$(PlatformTarget)</AdditionalLibraryDirectories>
       <OutputFile>$(SolutionDir)Bin\$(Configuration)\$(PlatformTarget)\$(TargetName)$(TargetExt)</OutputFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

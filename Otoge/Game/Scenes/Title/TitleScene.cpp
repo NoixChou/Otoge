@@ -27,6 +27,7 @@ TitleScene::TitleScene() : Scene("TitleScene")
     MenuGroup_->SetTransparent(0.f);
     MenuGroup_->SetPriority(0.f);
     AddChildTask(std::static_pointer_cast<Task>(MenuGroup_));
+    MenuGroup_->SetEnable(false);
 
     MenuPlay_ = std::make_shared<Button>("Play", ScreenData(0.f, 0.f, 100.f / 3.f, 100.f), MenuGroup_->GetDefaultScaler());
     MenuPlay_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
@@ -54,6 +55,14 @@ TitleScene::TitleScene() : Scene("TitleScene")
     MenuClose_->GetTextLabelInstance()->ChangeFontThickness(1);
     MenuClose_->SetTransparent(100.f);
     MenuGroup_->AddChildTask(std::static_pointer_cast<Task>(MenuClose_));
+
+    SettingScene_ = std::make_shared<SettingScene>();
+    SettingScene_->SetPositionX(-GetScreenWidth());
+    SettingScene_->SetPriority(10.f);
+    SettingScene_->SetEnable(false);
+    TaskManager::GetInstance()->AddTask(SettingScene_);
+
+    StartFadeIn();
 }
 
 
@@ -92,10 +101,7 @@ void TitleScene::SceneUpdate(float deltaTime)
     if(isMoving)
     {
         float menuMove = 8.f / timerCount * deltaTime;
-        //MenuGroup_->SetTransparent(((MenuGroup_->GetPositionX()-20.f) / 20.f) * 100.f);
-        /*MenuPlay_->SetTransparent(((MenuGroup_->GetPositionX() - 20.f) / 20.f) * 100.f);
-        MenuOption_->SetTransparent(((MenuGroup_->GetPositionX() - 22.f) / 20.f) * 100.f);
-        MenuClose_->SetTransparent(((MenuGroup_->GetPositionX() - 24.f) / 20.f) * 100.f);*/
+
         if (MenuPlay_->GetRawPositionX() + MenuGroup_->GetRawPositionX() < MenuOpener_->GetRawPositionX())
             MenuPlay_->SetTransparent(0.f);
         else
@@ -130,6 +136,7 @@ void TitleScene::SceneUpdate(float deltaTime)
         if(timerCount > totalTime)
         {
             isMoving = false;
+            MenuGroup_->SetEnable(isOpened);
         }
     }
 
@@ -139,41 +146,20 @@ void TitleScene::SceneUpdate(float deltaTime)
     }
     if(MenuOption_->IsClickedMouse())
     {
-        if (SettingScene_.expired())
-        {
-            auto setting = std::make_shared<SettingScene>();
-            setting->SetPriority(10.f);
-            SettingScene_ = setting;
-            TaskManager::GetInstance()->AddTask(setting);
-            timerCount = 0.f;
-        }
+        SettingScene_->StartFadeIn();
     }
 
-    if (!SettingScene_.expired())
+    if (SettingScene_->IsFadingIn())
     {
-        auto l_SettingScene = SettingScene_.lock();
-        if(l_SettingScene->IsFadingIn())
-        {
-            SetTransparent(100.f - (l_SettingScene->GetTransparent() / 2.f));
-            if (timerCount >= 0.5f)
-            {
-                SetEnable(false);
-            }
-            //SetTransparent(Easing::OutExp(timerCount, 0.5f, 50.f, 100.f));
-        }else if(l_SettingScene->IsFadingOut())
-        {
-            SetTransparent(100.f - (l_SettingScene->GetTransparent() / 2.f));
-            if (timerCount >= 0.5f)
-            {
-                SetEnable(true);
-            }
-            //SetTransparent(Easing::OutExp(timerCount, 0.5f, 100.f, 50.f));
-        }
-        if (timerCount > 0.5f)
-        {
-            timerCount = 0.f;
-        }
+        SetTransparent(100.f - (SettingScene_->GetTransparent() / 2.f));
+        SetEnable(false);
     }
+    else if (SettingScene_->IsFadingOut())
+    {
+        SetTransparent(100.f - (SettingScene_->GetTransparent() / 2.f));
+    }
+    else if(!SettingScene_->IsVisible())
+        SetEnable(true);
     
 	if (IsChangedScreen())
 	{

@@ -49,6 +49,8 @@ public:
 	float GetMouseRateX(std::shared_ptr<FlexibleScaler> scaler);
 	float GetMouseRateY(std::shared_ptr<FlexibleScaler> scaler);
 
+    float GetMouseWheelAccel();
+
     bool IsDownButton(int key);
     bool IsHoldButton(int key);
     bool IsReleaseButton(int key);

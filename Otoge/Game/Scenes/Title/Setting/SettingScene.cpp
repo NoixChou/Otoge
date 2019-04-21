@@ -7,24 +7,40 @@
 #include "../../../../System/GUI/Button.hpp"
 #include "../../../../System/GUI/Label.hpp"
 #include "../../../../Util/Calculate/Animation/Easing.hpp"
+#include "../../../../System/GUI/SlideBar.hpp"
 
-SettingScene::SettingScene() : Scene("SettingScene", 40.f)
+SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
 {
-    CloseButton_ = std::make_shared<Button>("< Close", ScreenData(0.f, 0.f, 20.f, 5.f), DefaultScaler_);
+    TitleBar_ = std::make_shared<Scene>("titlebar", ScreenData(0.f, 0.f, 100.f, 5.f), DefaultScaler_);
+    AddChildTask(std::static_pointer_cast<Task>(TitleBar_));
+
+    CloseButton_ = std::make_shared<Button>("< Close", ScreenData(0.f, 0.f, 20.f, 100.f), TitleBar_->GetDefaultScaler());
     CloseButton_->baseColor = GetColor(255, 255, 255);
     CloseButton_->animationColor = GetColor(33, 33, 33);
-    CloseButton_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
+    CloseButton_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
+    CloseButton_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(2.f)));
     CloseButton_->GetTextLabelInstance()->ChangeFontThickness(1);
     CloseButton_->SetTransparent(100.f);
-    AddChildTask(std::static_pointer_cast<Task>(CloseButton_));
+    TitleBar_->AddChildTask(std::static_pointer_cast<Task>(CloseButton_));
 
-    std::shared_ptr<Label> l_TitleLabel = std::make_shared<Label>("設定", ScreenData(20.0f, 0.0f, 60.f, CloseButton_->GetScreenHeight()), DefaultScaler_);
+    auto l_TitleLabel = std::make_shared<Label>("設定", ScreenData(20.0f, 0.0f, 60.f, CloseButton_->GetScreenHeight()), TitleBar_->GetDefaultScaler());
     l_TitleLabel->SetTextAlign(Label::TextAlignment::center | Label::TextAlignment::middle);
     l_TitleLabel->baseColor = GetColor(117, 117, 117);
     l_TitleLabel->AdjustmentFontSize_ = false;
     l_TitleLabel->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
     l_TitleLabel->ChangeFontThickness(1);
-    AddChildTask(std::static_pointer_cast<Task>(l_TitleLabel));
+    TitleBar_->AddChildTask(std::static_pointer_cast<Task>(l_TitleLabel));
+
+
+    BodyPanel_ = std::make_shared<ScrollablePanel>("bodypanel", ScreenData(0.f, 5.f, 100.f, 95.f), ScreenData(0.f, 0.f, 100.f, 150.f), DefaultScaler_);
+    AddChildTask(std::static_pointer_cast<Task>(BodyPanel_));
+
+    auto testSlide = std::make_shared<SlideBar>("test", ScreenData(30.f, 0.f, 70.f, 5.f), BodyPanel_->GetDefaultScaler());
+    BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(testSlide));
+
+    auto testLabel = std::make_shared<Label>("マウス感度:", ScreenData(0.f, 0.f, 30.f, 5.f), BodyPanel_->GetDefaultScaler());
+    testLabel->textAlign = Label::TextAlignment::center | Label::TextAlignment::middle;
+    BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(testLabel));
 }
 
 
@@ -38,26 +54,27 @@ void SettingScene::SceneFadeIn(float deltaTime)
     Easing::EaseFunction ease = Easing::OutExp;
 
     SetTransparent(ease(timerCount, totalTime, 100.f, 0.f));
-    SetPositionX(ease(timerCount, totalTime, 0.f, -20.f));
+    SetPositionX(ease(timerCount, totalTime, 0.f, -GetScreenWidth()));
 
     if (timerCount > totalTime)
     {
         IsFadingIn_ = false;
+        SetEnable(true);
     }
 }
 
 void SettingScene::SceneFadeOut(float deltaTime)
 {
-    float totalTime = 0.5f;
-    Easing::EaseFunction ease = Easing::OutQuart;
+    float totalTime = 0.3f;
+    Easing::EaseFunction ease = Easing::InExp;
 
     SetTransparent(ease(timerCount, totalTime, 0.f, 100.f));
-    SetPositionX(ease(timerCount, totalTime, -20.f, 0.f));
+    SetPositionX(ease(timerCount, totalTime, -GetScreenWidth(), 0.f));
 
     if (timerCount > totalTime)
     {
         IsFadingOut_ = false;
-        Terminate();
+        SetEnable(false);
     }
 }
 

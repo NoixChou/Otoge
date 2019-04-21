@@ -43,8 +43,6 @@ Scene::Scene(const std::string& sceneName, float sceneWidth, float sceneHeight, 
     IsDrawFrame_ = SettingManager::GetGlobal()->Get<bool>(SETTINGS_DEBUG_DRAW_SCENE_FRAME).get();
 
     Logger_->Info(GetName() + " 初期化完了");
-
-    StartFadeIn();
 }
 
 Scene::Scene(const std::string& sceneName, const ScreenData& screen, std::shared_ptr<FlexibleScaler> parentScaler, Task::TaskPointer parentTask)
@@ -112,7 +110,7 @@ void Scene::Update(float deltaTime)
 		TaskManager::UpdateTasks(children, childrenQueues, TickSpeed_, deltaTime);
 
         // デバッグ情報の描画
-        if (IsDrawFrame_)
+        if (IsDrawFrame_ && IsOnMouse())
         {
             SetDrawBlendMode(DX_BLENDMODE_PMA_ALPHA, 127);
             DrawFormatString(0, 0, GetColor(0, 0, 255), "+%.2f", DefaultScaler_->GetDiffX());
@@ -185,6 +183,15 @@ void Scene::ReCalculateScreen()
 
 	if(doRefreshBuffer)
 		RefreshDrawBuffer();
+
+    for(const auto& l_Child : children)
+    {
+        auto l_ChildScene = std::dynamic_pointer_cast<Scene>(l_Child);
+        if(l_ChildScene)
+        {
+            l_ChildScene->ReCalculateScreen();
+        }
+    }
 }
 
 bool Scene::RefreshDrawBuffer()
@@ -202,6 +209,15 @@ bool Scene::RefreshDrawBuffer()
         Logger_->Critical("シーンバッファ作成に失敗しました。");
         return false;
     }
+
+    for (const auto& l_Child : children)
+    {
+        auto l_ChildScene = std::dynamic_pointer_cast<Scene>(l_Child);
+        if (l_ChildScene)
+        {
+            l_ChildScene->RefreshDrawBuffer();
+        }
+    }
     return true;
 }
 
@@ -217,6 +233,12 @@ void Scene::StartFadeOut()
     IsFadingIn_ = false;
     IsFadingOut_ = true;
     timerCount = 0.f;
+}
+
+void Scene::StopFade()
+{
+    IsFadingIn_ = false;
+    IsFadingOut_ = false;
 }
 
 bool Scene::IsFadingIn()
