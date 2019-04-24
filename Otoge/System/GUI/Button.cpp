@@ -28,8 +28,6 @@ void Button::GUIUpdate(float deltaTime)
     TextLabel_->SetLabel(Label_);
     TextLabel_->baseColor = textColor;
 
-    static float currentTrans = 0.f;
-
     if (IsDownMouse())
     {
         timerCount = 0.f;
@@ -52,6 +50,7 @@ void Button::Draw()
     }
     if (IsOnMouse())
     {
+        //Logger_->Debug("btn Draw");
         SetDrawBlendMode(DX_BLENDMODE_PMA_ALPHA, 20);
         DrawBox(0, 0, static_cast<int>(floor(GetRawScreenWidth())), static_cast<int>(floor(GetRawScreenHeight())), textColor, TRUE);
     }
@@ -96,6 +95,6 @@ void ButtonPushedAnimate::Draw()
 	l_Circle.posY = position.y;
 	l_Circle.width = Size_;
 	l_Circle.height = Size_;
-    const auto l_Fixed = ParentScaler_->Calculate(&l_Circle);
+    const auto l_Fixed = ParentScaler_->Calculate(l_Circle);
 	DrawCircle(static_cast<int>(floor(l_Fixed.posX)), static_cast<int>(floor(l_Fixed.posY)), static_cast<int>(floor(l_Fixed.width + l_Fixed.height / 2.0f)), color, TRUE);
 }

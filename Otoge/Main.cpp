@@ -46,7 +46,7 @@ void PreInitialize()
     g_SystemSettings->SetDefault(SETTINGS_AA_QUALITY, 2);
 
 	g_SystemSettings->SetDefault<std::string>(SETTINGS_FONT_NAME, GAME_APP_DEFAULT_FONT);
-	g_SystemSettings->SetDefault(SETTINGS_FONT_DRAWTYPE, DX_FONTTYPE_ANTIALIASING);
+	g_SystemSettings->SetDefault(SETTINGS_FONT_DRAWTYPE, DX_FONTTYPE_NORMAL);
 
     g_SystemSettings->SetDefault(SETTINGS_DEBUG_DRAW_SCENE_FRAME, false);
 	g_SystemSettings->SetDefault(SETTINGS_DEBUG_DRAW_DTASK_POINT, false);

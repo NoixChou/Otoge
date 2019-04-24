@@ -5,20 +5,7 @@
 
 class Scene : public Task
 {
-private:
-    int SceneBuffer_ = -1;
-    ScreenData PrevScreen_;
-    ScreenData Screen_;
-    ScreenData PreLayoutScreen_ = { 0.f, 0.f, 0.f, 0.f };
-
-    bool HasChangedScreen_ = false;
-
-    bool IsEnable_ = true;
-    bool IsVisible_ = true;
-    float Transparency_ = 100.f;
-    // デバッグ
-    bool IsDrawFrame_;
-
+    /* private は下部 */
 protected:
     bool IsFadingIn_ = false;
     bool IsFadingOut_ = false;
@@ -27,20 +14,25 @@ protected:
     std::shared_ptr<FlexibleScaler> ParentScaler_ = nullptr;
     std::shared_ptr<FlexibleScaler> DefaultScaler_ = nullptr;
 	bool IsCalculated_ = false;
+    bool IsBufferUpdate_ = true;
 
 public:
+    using DrawFunction = std::function<void()>;
+
     Scene(const std::string &sceneName, float sceneWidth = 100.f, float sceneHeight = 100.f, float sceneX = 0.f, float sceneY = 0.f, std::shared_ptr<FlexibleScaler> parentScaler = nullptr, Task::TaskPointer parentTask = nullptr);
     Scene(const std::string &sceneName, const ScreenData& screen, std::shared_ptr<FlexibleScaler> parentScaler = nullptr, Task::TaskPointer parentTask = nullptr);
     ~Scene();
 
     void Update(float deltaTime) override;
     void ReCalculateScreen();
+    bool RefreshScaler();
     bool RefreshDrawBuffer();
 
-    virtual void SceneFadeIn(float deltaTime) {};
-    virtual void SceneFadeOut(float deltaTime) {};
-    virtual void SceneUpdate(float deltaTime) {};
-    virtual void Draw() {};
+
+    virtual void SceneFadeIn(float deltaTime) {}
+    virtual void SceneFadeOut(float deltaTime) {}
+    virtual void SceneUpdate(float deltaTime) {}
+    virtual void Draw() {}
 
     void StartFadeIn();
     void StartFadeOut();
@@ -48,6 +40,7 @@ public:
     bool IsFadingIn();
     bool IsFadingOut();
 
+    void SetDrawFunction(DrawFunction func);
     std::shared_ptr<FlexibleScaler> GetDefaultScaler() const;
 	void SetScreen(ScreenData screen);
 	void SetPositionX(float px);
@@ -76,10 +69,29 @@ public:
 
     bool IsEnable() const;
     bool IsVisible() const;
-    bool IsChangedScreen() const;
+    bool IsChangedSize() const;
+    bool IsChangedPosition() const;
     bool IsOnMouse() const;
     bool IsStartOverMouse() const;
     bool IsDownMouse() const;
     bool IsHoldMouse() const;
     bool IsClickedMouse() const;
+
+private:
+    int SceneBuffer_ = -1;
+    ScreenData PrevScreen_;
+    ScreenData Screen_;
+    ScreenData PreLayoutScreen_ = { 0.f, 0.f, 0.f, 0.f };
+
+    bool IsChangedSize_ = false;
+    bool IsChangedPosition_ = false;
+
+    bool IsEnable_ = true;
+    bool IsVisible_ = true;
+    float Transparency_ = 100.f;
+
+    DrawFunction DrawerFunction_ = nullptr;
+
+    // デバッグ
+    bool IsDrawFrame_;
 };

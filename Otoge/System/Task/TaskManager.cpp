@@ -74,15 +74,16 @@ void TaskManager::Tick(float tickSpeed = 1.0f)
 {   
     PrevClockCount_ = ClockCount_;
     ClockCount_ = high_resolution_clock::now();
+    auto l_ProcessLoad = duration_cast<microseconds>(ClockCount_ - PrevClockCount_).count();
 
-    const auto m_DeltaTime = duration_cast<microseconds>(ClockCount_ - PrevClockCount_).count() / 1000000.0f;
+    const auto m_DeltaTime = l_ProcessLoad / 1000000.0f;
 
     static float fps_interval_count = 0.0f;
     fps_interval_count += m_DeltaTime;
 
     if (fps_interval_count > 1.0f)
     {
-        Fps_ = 1000000.0f / duration_cast<microseconds>(ClockCount_ - PrevClockCount_).count();
+        Fps_ = 1000000.0f / l_ProcessLoad;
         fps_interval_count = 0.0f;
     }
 
@@ -114,7 +115,8 @@ void TaskManager::UpdateTasks(std::vector<Task::TaskPointer>& tasks, std::vector
 
 	for (m_Task; m_Task != tasks.end(); ++m_Task)
 	{
-		//Logger::LowLevelLog("処理", (*m_Task)->GetName());
+        const auto l_BeginTime = high_resolution_clock::now();
+
 		// タイマー更新
 		float fixedDeltaTime = deltaTime * tickSpeed * (*m_Task)->GetTickSpeed();
 		(*m_Task)->timerCount += fixedDeltaTime;
@@ -141,6 +143,9 @@ void TaskManager::UpdateTasks(std::vector<Task::TaskPointer>& tasks, std::vector
 			(*m_Task)->SetLifespan((*m_Task)->GetLifespan() - fixedDeltaTime);
 			if ((*m_Task)->GetLifespan() < 0.0f) (*m_Task)->Terminate();
 		}
+        
+        if (duration_cast<milliseconds>(high_resolution_clock::now() - l_BeginTime).count() > 3.f)
+            Logger::LowLevelLog("Task [" + (*m_Task)->GetName() + "] is too late. 3ms<", "WARN");
 	}
 
 	m_Task = tasks.begin();

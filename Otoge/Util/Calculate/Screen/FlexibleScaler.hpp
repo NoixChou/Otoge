@@ -140,7 +140,7 @@ public:
     /// </summary>
     /// <param name="dataOfPercent">各割合を保持したScreenData</param>
     /// <returns>直描画できる座標を保持したScreenData</returns>
-    ScreenData Calculate(const ScreenData *dataOfPercent) const;
+    ScreenData Calculate(const ScreenData& dataOfPercent) const;
 
     /// <summary>
     /// 割合座標から描画スクリーンデータを算出

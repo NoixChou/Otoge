@@ -125,32 +125,32 @@ float FlexibleScaler::CalculateHeight(float height) const
     return ScreenHeight_ * (height / 100.f) * Scale_;
 }
 
-ScreenData FlexibleScaler::Calculate(const ScreenData *dataOfPercent) const
+ScreenData FlexibleScaler::Calculate(const ScreenData& dataOfPercent) const
 {
     ScreenData result;
 
-    result.lockAspectRate = dataOfPercent->lockAspectRate;
+    result.lockAspectRate = dataOfPercent.lockAspectRate;
 
-    result.posX = CalculatePositionX(dataOfPercent->posX);
-    result.posY = CalculatePositionY(dataOfPercent->posY);
+    result.posX = CalculatePositionX(dataOfPercent.posX);
+    result.posY = CalculatePositionY(dataOfPercent.posY);
 
     if(lockTop && !lockBottom)
     {
-        result.height = CalculateHeight(dataOfPercent->height);
+        result.height = CalculateHeight(dataOfPercent.height);
     }
     if(!lockTop && lockBottom)
     {
-        result.height = CalculateHeight(dataOfPercent->height);
+        result.height = CalculateHeight(dataOfPercent.height);
         result.posY -= result.height;
     }
 
     if(lockLeft && !lockRight)
     {
-        result.width = CalculateWidth(dataOfPercent->width);
+        result.width = CalculateWidth(dataOfPercent.width);
     }
     if(!lockLeft && lockRight)
     {
-        result.width = CalculateWidth(dataOfPercent->width);
+        result.width = CalculateWidth(dataOfPercent.width);
         result.posX -= result.width;
     }
 
@@ -160,5 +160,5 @@ ScreenData FlexibleScaler::Calculate(const ScreenData *dataOfPercent) const
 ScreenData FlexibleScaler::Calculate(float px, float py, float width, float height) const
 {
     ScreenData data(px, py, width, height);
-    return Calculate(&data);
+    return Calculate(data);
 }

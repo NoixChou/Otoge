@@ -17,17 +17,19 @@ GUI::~GUI()
 
 void GUI::SceneUpdate(float deltaTime)
 {
-    if(IsChangedScreen() && AdjustmentFontSize_)
+    if(IsChangedSize() && AdjustmentFontSize_)
     {
         ChangeFontSize(static_cast<int>(floor(GetRawScreenHeight())));
         if (FontStringCalculator::GetStringWidth(FontHandle_, Label_) > GetRawScreenWidth()) ChangeFontSize(static_cast<int>(floor(GetRawScreenWidth() * 1.5f)) / static_cast<int>(Label_.length()));
     }
 
     GUIUpdate(deltaTime);
+    IsChangedLabel_ = false;
 }
 
 void GUI::SetLabel(const std::string& label)
 {
+    IsChangedLabel_ = true;
     Label_ = label;
 }
 

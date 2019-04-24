@@ -4,6 +4,7 @@
 class Label : public GUI
 {
 private:
+    float TextX_ = 0.f, TextY_ = 0.f;
 
 public:
     enum class TextAlignment : int

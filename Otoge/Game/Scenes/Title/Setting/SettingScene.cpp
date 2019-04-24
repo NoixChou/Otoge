@@ -12,6 +12,12 @@
 SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
 {
     TitleBar_ = std::make_shared<Scene>("titlebar", ScreenData(0.f, 0.f, 100.f, 5.f), DefaultScaler_);
+    TitleBar_->SetDrawFunction([&]
+        {
+            ScreenData l_FixedTitlebar = DefaultScaler_->Calculate(0.f, 0.f, 100.f, 100.f);
+            DrawBox(l_FixedTitlebar.posX, l_FixedTitlebar.posY, l_FixedTitlebar.width, l_FixedTitlebar.height, GetColor(255, 255, 255), TRUE);
+        });
+
     AddChildTask(std::static_pointer_cast<Task>(TitleBar_));
 
     CloseButton_ = std::make_shared<Button>("< Close", ScreenData(0.f, 0.f, 20.f, 100.f), TitleBar_->GetDefaultScaler());
@@ -20,7 +26,6 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
     CloseButton_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
     CloseButton_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(2.f)));
     CloseButton_->GetTextLabelInstance()->ChangeFontThickness(1);
-    CloseButton_->SetTransparent(100.f);
     TitleBar_->AddChildTask(std::static_pointer_cast<Task>(CloseButton_));
 
     auto l_TitleLabel = std::make_shared<Label>("Ý’è", ScreenData(20.0f, 0.0f, 60.f, CloseButton_->GetScreenHeight()), TitleBar_->GetDefaultScaler());
@@ -33,6 +38,12 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
 
 
     BodyPanel_ = std::make_shared<ScrollablePanel>("bodypanel", ScreenData(0.f, 5.f, 100.f, 95.f), ScreenData(0.f, 0.f, 100.f, 150.f), DefaultScaler_);
+    BodyPanel_->SetDrawFunction([&]
+        {
+            ScreenData l_FixedContentField = DefaultScaler_->Calculate(0.f, 0.f, 100.f, 100.f);
+            DrawBox(l_FixedContentField.posX, l_FixedContentField.posY, l_FixedContentField.width, l_FixedContentField.height, GetColor(240, 240, 240), TRUE);
+        });
+
     AddChildTask(std::static_pointer_cast<Task>(BodyPanel_));
 
     auto testSlide = std::make_shared<SlideBar>("test", ScreenData(30.f, 0.f, 70.f, 5.f), BodyPanel_->GetDefaultScaler());
@@ -58,6 +69,8 @@ void SettingScene::SceneFadeIn(float deltaTime)
 
     if (timerCount > totalTime)
     {
+        SetTransparent(100.f);
+        SetPositionX(0.f);
         IsFadingIn_ = false;
         SetEnable(true);
     }
@@ -89,19 +102,5 @@ void SettingScene::SceneUpdate(float deltaTime)
 
 void SettingScene::Draw()
 {
-    ScreenData l_TitleBar;
-    l_TitleBar.posX = 0.f;
-    l_TitleBar.posY = 0.f;
-    l_TitleBar.width = 100.f;
-    l_TitleBar.height = CloseButton_->GetScreenHeight();
-    ScreenData l_ContentField;
-    l_ContentField.posX = 0.f;
-    l_ContentField.posY = l_TitleBar.posY + l_TitleBar.height;
-    l_ContentField.width = 100.f;
-    l_ContentField.height = 100.f;
 
-    ScreenData l_FixedTitlebar = DefaultScaler_->Calculate(&l_TitleBar);
-    ScreenData l_FixedContentField = DefaultScaler_->Calculate(&l_ContentField);
-    DrawBox(l_FixedTitlebar.posX, l_FixedTitlebar.posY, l_FixedTitlebar.width, l_FixedTitlebar.height, GetColor(255, 255, 255), TRUE);
-    DrawBox(l_FixedContentField.posX, l_FixedContentField.posY, l_FixedContentField.width, l_FixedContentField.height, GetColor(127, 127, 127), TRUE);
 }

@@ -57,7 +57,7 @@ TitleScene::TitleScene() : Scene("TitleScene")
     MenuGroup_->AddChildTask(std::static_pointer_cast<Task>(MenuClose_));
 
     SettingScene_ = std::make_shared<SettingScene>();
-    SettingScene_->SetPositionX(-GetScreenWidth());
+    SettingScene_->SetPositionX(-SettingScene_->GetScreenWidth());
     SettingScene_->SetPriority(10.f);
     SettingScene_->SetEnable(false);
     TaskManager::GetInstance()->AddTask(SettingScene_);
@@ -100,8 +100,6 @@ void TitleScene::SceneUpdate(float deltaTime)
     
     if(isMoving)
     {
-        float menuMove = 8.f / timerCount * deltaTime;
-
         if (MenuPlay_->GetRawPositionX() + MenuGroup_->GetRawPositionX() < MenuOpener_->GetRawPositionX())
             MenuPlay_->SetTransparent(0.f);
         else
@@ -161,7 +159,7 @@ void TitleScene::SceneUpdate(float deltaTime)
     else if(!SettingScene_->IsVisible())
         SetEnable(true);
     
-	if (IsChangedScreen())
+	if (IsChangedSize())
 	{
 		ReCalculateScreen();
 		RefreshDrawBuffer();
@@ -175,6 +173,6 @@ void TitleScene::Draw()
     d.posY = 0.f;
     d.width = 100.f;
     d.height = 100.f;
-    ScreenData fixed = DefaultScaler_->Calculate(&d);
+    ScreenData fixed = DefaultScaler_->Calculate(d);
     DrawBox(fixed.posX, fixed.posY, fixed.width, fixed.height, GetColor(117, 117, 117), TRUE);
 }

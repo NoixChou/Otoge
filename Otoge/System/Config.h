@@ -2,7 +2,10 @@
 
 // アプリケーション
 #define GAME_APP_NAME "おとげー" // アプリ名
+
+#ifndef BUILD_BY_CI
 #define GAME_APP_VER "0.0.1" // バージョン
+#endif
 
 // 画面
 #define GAME_SCREEN_WIDTH 1024

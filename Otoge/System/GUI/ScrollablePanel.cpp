@@ -54,6 +54,7 @@ void ScrollablePanel::GUIUpdate(float deltaTime)
 
 void ScrollablePanel::Draw()
 {
+    ScreenData d = DefaultScaler_->Calculate(0.f, ScrollPosition_ / Panel_->GetScreenHeight(), 2.f, 5.f);
 }
 
 std::shared_ptr<Scene> ScrollablePanel::GetPanelInstance()
