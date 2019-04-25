@@ -3,11 +3,13 @@
 #include "../Config.h"
 #include "../../Util/Calculate/Screen/FontStringCalculator.hpp"
 #include "../../Util/Setting/SettingManager.h"
+#include "../GlobalMethod.hpp"
 
 GUI::GUI(const std::string& guiName, const ScreenData& layoutScreen, std::shared_ptr<FlexibleScaler> parentScaler) : Scene(guiName, layoutScreen, parentScaler)
 {
+    baseColor = GetColor(255, 255, 255);
+    ChangeFont(SettingManager::GetGlobal()->Get<std::string>(game_config::SETTINGS_FONT_NAME).get().c_str(), -1, 1, SettingManager::GetGlobal()->Get<int>(game_config::SETTINGS_FONT_DRAWTYPE).get());
     Logger_->Debug("GUI初期化 完了");
-    ChangeFont(SettingManager::GetGlobal()->Get<std::string>(SETTINGS_FONT_NAME).get().c_str(), -1, 1, SettingManager::GetGlobal()->Get<int>(SETTINGS_FONT_DRAWTYPE).get());
 }
 
 GUI::~GUI()
@@ -19,8 +21,8 @@ void GUI::SceneUpdate(float deltaTime)
 {
     if(IsChangedSize() && AdjustmentFontSize_)
     {
-        ChangeFontSize(static_cast<int>(floor(GetRawScreenHeight())));
-        if (FontStringCalculator::GetStringWidth(FontHandle_, Label_) > GetRawScreenWidth()) ChangeFontSize(static_cast<int>(floor(GetRawScreenWidth() * 1.5f)) / static_cast<int>(Label_.length()));
+        ChangeFontSize(engine::CastToInt(GetRawScreenHeight()));
+        if (FontStringCalculator::GetStringWidth(FontHandle_, Label_) > GetRawScreenWidth()) ChangeFontSize(engine::CastToInt(GetRawScreenWidth() * 1.5f) / static_cast<int>(Label_.length()));
     }
 
     GUIUpdate(deltaTime);

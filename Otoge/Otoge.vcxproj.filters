@@ -161,5 +161,8 @@
     <ClInclude Include="System\GUI\SlideBar.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="System\GlobalMethod.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

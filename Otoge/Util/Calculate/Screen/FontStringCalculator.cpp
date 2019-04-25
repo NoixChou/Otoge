@@ -1,4 +1,5 @@
 ﻿#include "FontStringCalculator.hpp"
+#include "../../../System/GlobalMethod.hpp"
 
 /* このクラスをインスタンス化する必要性がないためコメントアウト
 std::shared_ptr<FontStringCalculator> FontStringCalculator::Instance_ = nullptr;
@@ -29,18 +30,20 @@ void FontStringCalculator::DestroyInstance()
 
 float FontStringCalculator::GetStringWidth(int fontHandle, const std::string& string)
 {
-    if (fontHandle != -1)
-        return static_cast<float>(GetDrawStringWidthToHandle(string.c_str(), string.length(), fontHandle));
+    const int l_Length = static_cast<int>(string.length());
 
-    return static_cast<float>(GetDrawStringWidth(string.c_str(), string.length()));
+    if (fontHandle != -1)
+        return engine::CastToFloat(GetDrawStringWidthToHandle(string.c_str(), l_Length, fontHandle));
+
+    return engine::CastToFloat(GetDrawStringWidth(string.c_str(), l_Length));
 }
 
 float FontStringCalculator::GetStringHeight(int fontHandle)
 {
     if (fontHandle != -1)
-        return static_cast<float>(GetFontLineSpaceToHandle(fontHandle));
+        return engine::CastToFloat(GetFontLineSpaceToHandle(fontHandle));
 
-    return static_cast<float>(GetFontLineSpace());
+    return engine::CastToFloat(GetFontLineSpace());
 }
 
 float FontStringCalculator::GetStringCenterHorizontal(int fontHandle, const std::string& string)

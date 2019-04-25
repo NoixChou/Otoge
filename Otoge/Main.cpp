@@ -38,28 +38,28 @@ void PreInitialize()
     g_Logger = make_shared<Logger>();
     g_SystemSettings = make_shared<SettingManager>("config.json");
     g_SystemSettings->Load(true);
-    g_SystemSettings->SetDefault(SETTINGS_FULLSCREEN, false);
-    g_SystemSettings->SetDefault(SETTINGS_VSYNC, false);
-    g_SystemSettings->SetDefault(SETTINGS_RES_WIDTH, 1024);
-    g_SystemSettings->SetDefault(SETTINGS_RES_HEIGHT, 720);
-    g_SystemSettings->SetDefault(SETTINGS_AA_SAMPLE, 2);
-    g_SystemSettings->SetDefault(SETTINGS_AA_QUALITY, 2);
+    g_SystemSettings->SetDefault(game_config::SETTINGS_FULLSCREEN, false);
+    g_SystemSettings->SetDefault(game_config::SETTINGS_VSYNC, false);
+    g_SystemSettings->SetDefault(game_config::SETTINGS_RES_WIDTH, 1024);
+    g_SystemSettings->SetDefault(game_config::SETTINGS_RES_HEIGHT, 720);
+    g_SystemSettings->SetDefault(game_config::SETTINGS_AA_SAMPLE, 2);
+    g_SystemSettings->SetDefault(game_config::SETTINGS_AA_QUALITY, 2);
 
-	g_SystemSettings->SetDefault<std::string>(SETTINGS_FONT_NAME, GAME_APP_DEFAULT_FONT);
-	g_SystemSettings->SetDefault(SETTINGS_FONT_DRAWTYPE, DX_FONTTYPE_NORMAL);
+	g_SystemSettings->SetDefault<std::string>(game_config::SETTINGS_FONT_NAME, game_config::GAME_APP_DEFAULT_FONT);
+	g_SystemSettings->SetDefault(game_config::SETTINGS_FONT_DRAWTYPE, DX_FONTTYPE_NORMAL);
 
-    g_SystemSettings->SetDefault(SETTINGS_DEBUG_DRAW_SCENE_FRAME, false);
-	g_SystemSettings->SetDefault(SETTINGS_DEBUG_DRAW_DTASK_POINT, false);
+    g_SystemSettings->SetDefault(game_config::SETTINGS_DEBUG_DRAW_SCENE_FRAME, false);
+	g_SystemSettings->SetDefault(game_config::SETTINGS_DEBUG_DRAW_DTASK_POINT, false);
     g_SystemSettings->Save();
     g_SystemSettings->SetGlobal();
 
-    ChangeWindowMode(!g_SystemSettings->Get<bool>(SETTINGS_FULLSCREEN).get()); // ウィンドウモード/フルスクリーン
-    SetMainWindowText(GAME_APP_NAME " v" GAME_APP_VER); // ウィンドウのタイトル
+    ChangeWindowMode(!g_SystemSettings->Get<bool>(game_config::SETTINGS_FULLSCREEN).get()); // ウィンドウモード/フルスクリーン
+    SetMainWindowText((static_cast<std::string>(game_config::GAME_APP_NAME) + " v" + static_cast<std::string>(game_config::GAME_APP_VER)).c_str()); // ウィンドウのタイトル
     SetAlwaysRunFlag(TRUE); // 常に処理
-    SetWaitVSyncFlag(static_cast<int>(g_SystemSettings->Get<bool>(SETTINGS_VSYNC).get())); // 垂直同期
+    SetWaitVSyncFlag(static_cast<int>(g_SystemSettings->Get<bool>(game_config::SETTINGS_VSYNC).get())); // 垂直同期
     SetUseFPUPreserveFlag(TRUE);
-    SetGraphMode(g_SystemSettings->Get<int>(SETTINGS_RES_WIDTH).get(), g_SystemSettings->Get<int>(SETTINGS_RES_HEIGHT).get(), 32);
-    SetFullSceneAntiAliasingMode(g_SystemSettings->Get<int>(SETTINGS_AA_SAMPLE).get(), g_SystemSettings->Get<int>(SETTINGS_AA_QUALITY).get());
+    SetGraphMode(g_SystemSettings->Get<int>(game_config::SETTINGS_RES_WIDTH).get(), g_SystemSettings->Get<int>(game_config::SETTINGS_RES_HEIGHT).get(), 32);
+    SetFullSceneAntiAliasingMode(g_SystemSettings->Get<int>(game_config::SETTINGS_AA_SAMPLE).get(), g_SystemSettings->Get<int>(game_config::SETTINGS_AA_QUALITY).get());
 
 	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
 }

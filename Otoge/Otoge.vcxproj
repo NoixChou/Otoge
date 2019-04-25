@@ -212,6 +212,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Scenes\Title\Setting\SettingScene.hpp" />
+    <ClInclude Include="System\GlobalMethod.hpp" />
     <ClInclude Include="System\GUI\ScrollablePanel.hpp" />
     <ClInclude Include="System\GUI\SlideBar.hpp" />
     <ClInclude Include="Util\Calculate\Animation\Easing.hpp" />

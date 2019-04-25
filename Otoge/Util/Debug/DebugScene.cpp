@@ -4,6 +4,7 @@
 #include "../../System/Config.h"
 #include "../../System/Input/KeyboardManager.hpp"
 #include "../../System/GUI/Button.hpp"
+#include "../../System/GlobalMethod.hpp"
 
 DebugScene::DebugScene() : Scene("DebugScene")
 {
@@ -21,10 +22,10 @@ DebugScene::DebugScene() : Scene("DebugScene")
                 l_FpsScreen.height = GetRawScreenHeight();
 
                 SetDrawBlendMode(DX_BLENDMODE_PMA_ALPHA, 230);
-                DrawBox(static_cast<int>(floor(l_FpsScreen.posX)),
-                    static_cast<int>(floor(l_FpsScreen.posY)),
-                    static_cast<int>(floor(l_FpsScreen.posX + l_FpsScreen.width)),
-                    static_cast<int>(floor(l_FpsScreen.posY + l_FpsScreen.height)),
+                DrawBox(engine::CastToInt(l_FpsScreen.posX),
+                    engine::CastToInt(l_FpsScreen.posY),
+                    engine::CastToInt(l_FpsScreen.posX + l_FpsScreen.width),
+                    engine::CastToInt(l_FpsScreen.posY + l_FpsScreen.height),
                     GetColor(0, 180, 255), TRUE
                 );
             });
@@ -54,10 +55,10 @@ DebugScene::DebugScene() : Scene("DebugScene")
                 l_DeltaTimeScreen.height = GetRawScreenHeight();
 
                 SetDrawBlendMode(DX_BLENDMODE_PMA_ALPHA, 230);
-                DrawBox(static_cast<int>(floor(l_DeltaTimeScreen.posX)),
-                    static_cast<int>(floor(l_DeltaTimeScreen.posY)),
-                    static_cast<int>(floor(l_DeltaTimeScreen.posX + l_DeltaTimeScreen.width)),
-                    static_cast<int>(floor(l_DeltaTimeScreen.posY + l_DeltaTimeScreen.height)),
+                DrawBox(engine::CastToInt(l_DeltaTimeScreen.posX),
+                    engine::CastToInt(l_DeltaTimeScreen.posY),
+                    engine::CastToInt(l_DeltaTimeScreen.posX + l_DeltaTimeScreen.width),
+                    engine::CastToInt(l_DeltaTimeScreen.posY + l_DeltaTimeScreen.height),
                     GetColor(120, 220, 0), TRUE
                 );
             });
@@ -95,7 +96,7 @@ void DebugScene::SceneUpdate(float deltaTime)
 
     
 
-    FpsLabel_->SetLabel(std::to_string(static_cast<int>(floor(TaskManager::GetInstance()->GetFrameRate()))));
+    FpsLabel_->SetLabel(std::to_string(engine::CastToInt(TaskManager::GetInstance()->GetFrameRate())));
     if(timerCount > 0.1f)
         DeltaTimeLabel_->SetLabel(std::_Floating_to_string("%.2f", deltaTime * 1000.f)), timerCount = 0.f;
 }

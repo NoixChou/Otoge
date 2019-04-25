@@ -1,6 +1,7 @@
 ﻿#include "FlexibleScaler.hpp"
 #include "../../Setting/SettingManager.h"
 #include "../../../System/Config.h"
+#include "../../../System/GlobalMethod.hpp"
 
 std::shared_ptr<FlexibleScaler> FlexibleScaler::GlobalInstance_ = nullptr;
 
@@ -26,7 +27,7 @@ void FlexibleScaler::CreateWindowBasedInstance()
 {
     if (!GlobalInstance_)
     {
-        GlobalInstance_.reset(new FlexibleScaler(static_cast<float>(SettingManager::GetGlobal()->Get<int>(SETTINGS_RES_WIDTH).get()), static_cast<float>(SettingManager::GetGlobal()->Get<int>(SETTINGS_RES_HEIGHT).get()), 1.f));
+        GlobalInstance_.reset(new FlexibleScaler(engine::CastToFloat(SettingManager::GetGlobal()->Get<int>(game_config::SETTINGS_RES_WIDTH).get()), engine::CastToFloat(SettingManager::GetGlobal()->Get<int>(game_config::SETTINGS_RES_HEIGHT).get()), 1.f));
     }
 }
 

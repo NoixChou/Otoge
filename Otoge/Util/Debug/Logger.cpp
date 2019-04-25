@@ -11,8 +11,12 @@ Logger::Logger(const string &moduleName)
     {
         AllocConsole();
 
-        freopen("CONOUT$", "w", stdout);
-        freopen("CONIN$", "r", stdin);
+        auto l_ConOutResult = freopen("CONOUT$", "w", stdout);
+        auto l_ConInResult = freopen("CONIN$", "r", stdin);
+        if(l_ConOutResult == nullptr || l_ConInResult == nullptr)
+        {
+            Critical("標準I/Oストリームの取得に失敗しました");
+        }
     }
 #endif
 

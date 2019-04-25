@@ -8,6 +8,7 @@
 #include "../../../System/GUI/Label.hpp"
 #include "../../../Util/Calculate/Animation/Easing.hpp"
 #include "Setting/SettingScene.hpp"
+#include "../../../System/GlobalMethod.hpp"
 
 TitleScene::TitleScene() : Scene("TitleScene")
 {
@@ -75,8 +76,8 @@ void TitleScene::SceneFadeIn(float deltaTime)
     float totalTime = 0.5f;
     Easing::EaseFunction ease = Easing::OutExp;
 
-    SetTransparent(ease(timerCount, totalTime, 100.f, 0.f));
-    SetPositionX(ease(timerCount, totalTime, 0.f, -20.f));
+    SetTransparent(engine::CastToFloat(ease(timerCount, totalTime, 100.f, 0.f)));
+    SetPositionX(engine::CastToFloat(ease(timerCount, totalTime, 0.f, -20.f)));
 
     if (timerCount > totalTime)
     {
@@ -120,14 +121,14 @@ void TitleScene::SceneUpdate(float deltaTime)
 
         if(isOpened)
         {
-            MenuOpener_->SetPositionX(ease(timerCount, totalTime, 20.f, 40.f));
-            MenuGroup_->SetPositionX(ease(timerCount, totalTime, 40.f, 20.f));
-            MenuGroup_->SetTransparent(ease(timerCount, totalTime, 99.f, 0.f));
+            MenuOpener_->SetPositionX(engine::CastToFloat(ease(timerCount, totalTime, 20.f, 40.f)));
+            MenuGroup_->SetPositionX(engine::CastToFloat(ease(timerCount, totalTime, 40.f, 20.f)));
+            MenuGroup_->SetTransparent(engine::CastToFloat(ease(timerCount, totalTime, 99.f, 0.f)));
         }else
         {
-            MenuOpener_->SetPositionX(ease(timerCount, totalTime, 40.f, 20.f));
-            MenuGroup_->SetPositionX(ease(timerCount, totalTime, 20.f, 40.f));
-            MenuGroup_->SetTransparent(ease(timerCount, totalTime, 0.f, 99.f));
+            MenuOpener_->SetPositionX(engine::CastToFloat(ease(timerCount, totalTime, 40.f, 20.f)));
+            MenuGroup_->SetPositionX(engine::CastToFloat(ease(timerCount, totalTime, 20.f, 40.f)));
+            MenuGroup_->SetTransparent(engine::CastToFloat(ease(timerCount, totalTime, 0.f, 99.f)));
 
         }
 
@@ -174,5 +175,8 @@ void TitleScene::Draw()
     d.width = 100.f;
     d.height = 100.f;
     ScreenData fixed = DefaultScaler_->Calculate(d);
-    DrawBox(fixed.posX, fixed.posY, fixed.width, fixed.height, GetColor(117, 117, 117), TRUE);
+    DrawBox(engine::CastToInt(fixed.posX),
+            engine::CastToInt(fixed.posY),
+            engine::CastToInt(fixed.width),
+            engine::CastToInt(fixed.height), GetColor(117, 117, 117), TRUE);
 }

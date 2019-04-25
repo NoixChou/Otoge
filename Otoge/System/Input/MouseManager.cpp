@@ -1,5 +1,5 @@
 ﻿#include "MouseManager.hpp"
-
+#include "../GlobalMethod.hpp"
 std::shared_ptr<MouseManager> MouseManager::Instance_ = nullptr;
 
 MouseManager::MouseManager() : Task("MouseManager")
@@ -70,12 +70,12 @@ int MouseManager::GetMouseY()
 
 float MouseManager::GetMouseXf()
 {
-    return static_cast<float>(MousePosX_);
+    return engine::CastToFloat(MousePosX_);
 }
 
 float MouseManager::GetMouseYf()
 {
-    return static_cast<float>(MousePosY_);
+    return engine::CastToFloat(MousePosY_);
 }
 
 
@@ -91,12 +91,12 @@ int MouseManager::GetDownPosY()
 
 float MouseManager::GetDownPosXf()
 {
-    return static_cast<float>(MouseDownPosX_);
+    return engine::CastToFloat(MouseDownPosX_);
 }
 
 float MouseManager::GetDownPosYf()
 {
-    return static_cast<float>(MouseDownPosY_);
+    return engine::CastToFloat(MouseDownPosY_);
 }
 
 
@@ -112,22 +112,22 @@ int MouseManager::GetReleasePosY()
 
 float MouseManager::GetReleasePosXf()
 {
-    return static_cast<float>(MouseReleasePosX_);
+    return engine::CastToFloat(MouseReleasePosX_);
 }
 
 float MouseManager::GetReleasePosYf()
 {
-    return static_cast<float>(MouseReleasePosY_);
+    return engine::CastToFloat(MouseReleasePosY_);
 }
 
 float MouseManager::GetMouseRateX(std::shared_ptr<FlexibleScaler> scaler)
 {
-	return scaler->CalculatePositionRateX(MousePosX_);
+	return scaler->CalculatePositionRateX(engine::CastToFloat(MousePosX_));
 }
 
 float MouseManager::GetMouseRateY(std::shared_ptr<FlexibleScaler> scaler)
 {
-	return scaler->CalculatePositionRateY(MousePosY_);
+	return scaler->CalculatePositionRateY(engine::CastToFloat(MousePosY_));
 }
 
 float MouseManager::GetMouseWheelAccel()

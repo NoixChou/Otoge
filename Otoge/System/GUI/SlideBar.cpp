@@ -2,12 +2,14 @@
 #include "../Input/KeyboardManager.hpp"
 #include "../Input/MouseManager.hpp"
 #include "../../Util/Calculate/Animation/Easing.hpp"
+#include "../GlobalMethod.hpp"
 
 SlideBar::SlideBar(const std::string& label, const ScreenData& layoutScreen, std::shared_ptr<FlexibleScaler> parentScaler) : GUI(label + "\"<SlideBar>\"", layoutScreen, parentScaler)
 {
     Label_ = label;
     barColor = GetColor(88, 88, 88);
     baseColor = GetColor(230, 230, 230);
+    animationColor = GetColor(190, 190, 190);
 }
 
 SlideBar::~SlideBar()
@@ -22,7 +24,7 @@ void SlideBar::GUIUpdate(float deltaTime)
     float l_BarLen = GetRawScreenWidth() - DefaultScaler_->CalculatePositionX(ballSize);
     float l_CurrentPosition = DefaultScaler_->CalculatePositionX((ballSize / 2.f)) + ((l_BarLen * (GetValueRate() / 100.f)));
 
-    BallPosition_ = Easing::OutExp(timerCount, l_TotalTime, l_CurrentPosition, BeforeChangePosition_);
+    BallPosition_ = engine::CastToFloat(Easing::OutExp(timerCount, l_TotalTime, l_CurrentPosition, BeforeChangePosition_));
 
 
     if (IsOnMouse())
@@ -68,32 +70,32 @@ void SlideBar::GUIUpdate(float deltaTime)
 void SlideBar::Draw()
 {
     DrawLine(
-        static_cast<int>(floor(DefaultScaler_->CalculatePositionX(ballSize / 2.f))),
-        static_cast<int>(floor(GetRawScreenHeight() / 2.f)),
-        static_cast<int>(floor(GetRawScreenWidth() - DefaultScaler_->CalculatePositionX((ballSize / 2.f)))),
-        static_cast<int>(floor(GetRawScreenHeight() / 2.f)),
-        barColor, static_cast<int>(floor(DefaultScaler_->CalculateHeight(4.0f))));
+        engine::CastToInt(DefaultScaler_->CalculatePositionX(ballSize / 2.f)),
+        engine::CastToInt(GetRawScreenHeight() / 2.f),
+        engine::CastToInt(GetRawScreenWidth() - DefaultScaler_->CalculatePositionX((ballSize / 2.f))),
+        engine::CastToInt(GetRawScreenHeight() / 2.f),
+        barColor, engine::CastToInt(DefaultScaler_->CalculateHeight(4.0f)));
     DrawCircle(
-        static_cast<int>(floor(DefaultScaler_->CalculatePositionX((ballSize / 2.f)))),
-        static_cast<int>(floor(GetRawScreenHeight() / 2.f)),
-        static_cast<int>(floor(DefaultScaler_->CalculateHeight(8.0f))),
+        engine::CastToInt(DefaultScaler_->CalculatePositionX((ballSize / 2.f))),
+        engine::CastToInt(GetRawScreenHeight() / 2.f),
+        engine::CastToInt(DefaultScaler_->CalculateHeight(8.0f)),
         barColor, TRUE);
     DrawCircle(
-        static_cast<int>(floor(GetRawScreenWidth() - DefaultScaler_->CalculatePositionX((ballSize / 2.f)))),
-        static_cast<int>(floor(GetRawScreenHeight() / 2.f)),
-        static_cast<int>(floor(DefaultScaler_->CalculateHeight(8.0f))),
+        engine::CastToInt(GetRawScreenWidth() - DefaultScaler_->CalculatePositionX((ballSize / 2.f))),
+        engine::CastToInt(GetRawScreenHeight() / 2.f),
+        engine::CastToInt(DefaultScaler_->CalculateHeight(8.0f)),
         barColor, TRUE);
 
     DrawCircle(
-        static_cast<int>(floor(BallPosition_)),
-        static_cast<int>(floor(GetRawScreenHeight() / 2.0f)),
-        static_cast<int>(floor(DefaultScaler_->CalculateHeight(ballSize * 2.f))),
+        engine::CastToInt(BallPosition_),
+        engine::CastToInt(GetRawScreenHeight() / 2.0f),
+        engine::CastToInt(DefaultScaler_->CalculateHeight(ballSize * 2.f)),
         baseColor, TRUE
     );
     DrawCircle(
-        static_cast<int>(floor(BallPosition_)),
-        static_cast<int>(floor(GetRawScreenHeight() / 2.0f)),
-        static_cast<int>(floor(DefaultScaler_->CalculateHeight(ballSize * 2.f))),
+        engine::CastToInt(BallPosition_),
+        engine::CastToInt(GetRawScreenHeight() / 2.0f),
+        engine::CastToInt(DefaultScaler_->CalculateHeight(ballSize * 2.f)),
         barColor, FALSE
     );
 }

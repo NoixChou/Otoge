@@ -4,13 +4,13 @@
 #include "../Input/MouseManager.hpp"
 #include "../../Util/Calculate/Screen/FontStringCalculator.hpp"
 #include "TaskManager.hpp"
-
+#include "../GlobalMethod.hpp"
 
 Scene::Scene(const std::string& sceneName, float sceneWidth, float sceneHeight, float sceneX, float sceneY, std::shared_ptr<FlexibleScaler> parentScaler, Task::TaskPointer parentTask) : Task(sceneName)
 {
     isAutoUpdateChildren = false;
-    //if (sceneWidth == -1.f) sceneWidth = static_cast<float>(SettingManager::GetGlobal()->Get<int>(SETTINGS_RES_WIDTH).get());
-    //if (sceneHeight == -1.f) sceneHeight = static_cast<float>(SettingManager::GetGlobal()->Get<int>(SETTINGS_RES_HEIGHT).get());
+    //if (sceneWidth == -1.f) sceneWidth = engine::CastToFloat(SettingManager::GetGlobal()->Get<int>(SETTINGS_RES_WIDTH).get());
+    //if (sceneHeight == -1.f) sceneHeight = engine::CastToFloat(SettingManager::GetGlobal()->Get<int>(SETTINGS_RES_HEIGHT).get());
 
     // parentScalerがnullの場合 ウィンドウベースのスケーラをセット
     if (parentScaler == nullptr)
@@ -40,7 +40,7 @@ Scene::Scene(const std::string& sceneName, float sceneWidth, float sceneHeight, 
 
 	ReCalculateScreen();
 
-    IsDrawFrame_ = SettingManager::GetGlobal()->Get<bool>(SETTINGS_DEBUG_DRAW_SCENE_FRAME).get();
+    IsDrawFrame_ = SettingManager::GetGlobal()->Get<bool>(game_config::SETTINGS_DEBUG_DRAW_SCENE_FRAME).get();
 
     Logger_->Info(GetName() + " 初期化完了");
 }
@@ -136,8 +136,8 @@ void Scene::Update(float deltaTime)
         // デバッグ用の枠を描画
         if (IsDrawFrame_)
         {
-            DrawBox(static_cast<int>(floor(Screen_.posX)), static_cast<int>(floor(Screen_.posY)), static_cast<int>(floor(Screen_.posX + Screen_.width)), static_cast<int>(floor(Screen_.posY + Screen_.height)), GetColor(255, 0, 0), FALSE);
-            DrawCircle(static_cast<int>(floor(DefaultScaler_->GetDiffX())), static_cast<int>(floor(DefaultScaler_->GetDiffY())), 3.f, GetColor(0, 255, 255));
+            DrawBox(engine::CastToInt(Screen_.posX), engine::CastToInt(Screen_.posY), engine::CastToInt(Screen_.posX + Screen_.width), engine::CastToInt(Screen_.posY + Screen_.height), GetColor(255, 0, 0), FALSE);
+            DrawCircle(engine::CastToInt(DefaultScaler_->GetDiffX()), engine::CastToInt(DefaultScaler_->GetDiffY()), 3, GetColor(0, 255, 255));
         }
 
         // 不正バッファ防止
@@ -171,7 +171,7 @@ void Scene::Update(float deltaTime)
             l_DrawWidth -= l_DrawWidth - ParentScaler_->GetScreenWidth();
         if (l_DrawHeight > ParentScaler_->GetScreenHeight())
             l_DrawHeight -= l_DrawHeight - ParentScaler_->GetScreenHeight();
-        DrawRectGraph(static_cast<int>(floor(l_DrawPosX)), static_cast<int>(floor(l_DrawPosY)), static_cast<int>(floor(l_DrawSrcX)), static_cast<int>(floor(l_DrawSrcY)), static_cast<int>(floor(l_DrawWidth)), static_cast<int>(floor(l_DrawHeight)), SceneBuffer_, TRUE);
+        DrawRectGraph(engine::CastToInt(l_DrawPosX), engine::CastToInt(l_DrawPosY), engine::CastToInt(l_DrawSrcX), engine::CastToInt(l_DrawSrcY), engine::CastToInt(l_DrawWidth), engine::CastToInt(l_DrawHeight), SceneBuffer_, TRUE);
 
         // 元の描画設定に戻す
         SetDrawBlendMode(currentBlendMode, currentBlendParam);
@@ -249,7 +249,7 @@ bool Scene::RefreshDrawBuffer()
         SceneBuffer_ = -1;
     }
 
-    SceneBuffer_ = MakeScreen(static_cast<int>(floor(Screen_.width)), static_cast<int>(floor(Screen_.height)), TRUE);
+    SceneBuffer_ = MakeScreen(engine::CastToInt(Screen_.width), engine::CastToInt(Screen_.height), TRUE);
 
     if (SceneBuffer_ == -1)
     {
@@ -448,7 +448,7 @@ bool Scene::IsVisible() const
         }
     }
 
-    return IsVisible_ && (static_cast<int>(floor(Transparency_)) > 0);
+    return IsVisible_ && (engine::CastToInt(Transparency_) > 0);
 }
 
 bool Scene::IsChangedSize() const

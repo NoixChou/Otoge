@@ -15,11 +15,11 @@ DrawableTask::DrawableTask(const std::string& sceneName, float x, float y, float
 	if(TemporaryDrawBuffer_ == -1)
 	{
 		if(BufferWidth_ == -1)
-			BufferWidth_ = SettingManager::GetGlobal()->Get<int>(SETTINGS_RES_WIDTH).get();
+			BufferWidth_ = SettingManager::GetGlobal()->Get<int>(game_config::SETTINGS_RES_WIDTH).get();
 		if(BufferHeight_ == -1)
-			BufferHeight_ = SettingManager::GetGlobal()->Get<int>(SETTINGS_RES_HEIGHT).get();
+			BufferHeight_ = SettingManager::GetGlobal()->Get<int>(game_config::SETTINGS_RES_HEIGHT).get();
 
-		IsDrawPoint_ = SettingManager::GetGlobal()->Get<bool>(SETTINGS_DEBUG_DRAW_DTASK_POINT).get();
+		IsDrawPoint_ = SettingManager::GetGlobal()->Get<bool>(game_config::SETTINGS_DEBUG_DRAW_DTASK_POINT).get();
 		SettingManager::GetGlobal()->SetDefault<float>("system.debug.drawable.drawPointSize", DrawPointSize_);
 		SettingManager::GetGlobal()->Save();
 

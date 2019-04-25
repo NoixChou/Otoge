@@ -8,6 +8,7 @@
 #include "../../../../System/GUI/Label.hpp"
 #include "../../../../Util/Calculate/Animation/Easing.hpp"
 #include "../../../../System/GUI/SlideBar.hpp"
+#include "../../../../System/GlobalMethod.hpp"
 
 SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
 {
@@ -15,7 +16,7 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
     TitleBar_->SetDrawFunction([&]
         {
             ScreenData l_FixedTitlebar = DefaultScaler_->Calculate(0.f, 0.f, 100.f, 100.f);
-            DrawBox(l_FixedTitlebar.posX, l_FixedTitlebar.posY, l_FixedTitlebar.width, l_FixedTitlebar.height, GetColor(255, 255, 255), TRUE);
+            DrawBox(static_cast<int>(l_FixedTitlebar.posX), static_cast<int>(l_FixedTitlebar.posY), static_cast<int>(l_FixedTitlebar.width), static_cast<int>(l_FixedTitlebar.height), GetColor(255, 255, 255), TRUE);
         });
 
     AddChildTask(std::static_pointer_cast<Task>(TitleBar_));
@@ -41,7 +42,8 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
     BodyPanel_->SetDrawFunction([&]
         {
             ScreenData l_FixedContentField = DefaultScaler_->Calculate(0.f, 0.f, 100.f, 100.f);
-            DrawBox(l_FixedContentField.posX, l_FixedContentField.posY, l_FixedContentField.width, l_FixedContentField.height, GetColor(240, 240, 240), TRUE);
+            DrawBox(engine::CastToInt(l_FixedContentField.posX), engine::CastToInt(l_FixedContentField.posY),
+                    engine::CastToInt(l_FixedContentField.width), engine::CastToInt(l_FixedContentField.height), GetColor(240, 240, 240), TRUE);
         });
 
     AddChildTask(std::static_pointer_cast<Task>(BodyPanel_));
@@ -64,8 +66,8 @@ void SettingScene::SceneFadeIn(float deltaTime)
     float totalTime = 0.5f;
     Easing::EaseFunction ease = Easing::OutExp;
 
-    SetTransparent(ease(timerCount, totalTime, 100.f, 0.f));
-    SetPositionX(ease(timerCount, totalTime, 0.f, -GetScreenWidth()));
+    SetTransparent(engine::CastToFloat(ease(timerCount, totalTime, 100.f, 0.f)));
+    SetPositionX(engine::CastToFloat(ease(timerCount, totalTime, 0.f, -GetScreenWidth())));
 
     if (timerCount > totalTime)
     {
@@ -81,8 +83,8 @@ void SettingScene::SceneFadeOut(float deltaTime)
     float totalTime = 0.3f;
     Easing::EaseFunction ease = Easing::InExp;
 
-    SetTransparent(ease(timerCount, totalTime, 0.f, 100.f));
-    SetPositionX(ease(timerCount, totalTime, -GetScreenWidth(), 0.f));
+    SetTransparent(engine::CastToFloat(ease(timerCount, totalTime, 0.f, 100.f)));
+    SetPositionX(engine::CastToFloat(ease(timerCount, totalTime, -GetScreenWidth(), 0.f)));
 
     if (timerCount > totalTime)
     {

@@ -1,11 +1,13 @@
 ﻿#include "ScrollablePanel.hpp"
 #include "../Input/MouseManager.hpp"
 #include "../../Util/Calculate/Animation/Easing.hpp"
+#include "../GlobalMethod.hpp"
 
 ScrollablePanel::ScrollablePanel(const std::string& label, const ScreenData& layoutScreen, const ScreenData& panelScreen, std::shared_ptr<FlexibleScaler> parentScaler) : GUI(label + "<ScrollablePanel>", layoutScreen, parentScaler)
 {
     Label_ = label;
     baseColor = GetColor(230, 230, 230);
+    animationColor = GetColor(180, 180, 180);
 
     Panel_ = std::make_shared<Scene>(label + "<panel>", panelScreen, DefaultScaler_);
     AddChildTask(std::static_pointer_cast<Task>(Panel_));
@@ -33,7 +35,7 @@ void ScrollablePanel::GUIUpdate(float deltaTime)
         RefreshDrawBuffer();
     }
 
-    Panel_->SetPositionY(Easing::OutExp(timerCount, l_TotalTime, ScrollPosition_, BeforeChangePosition_));
+    Panel_->SetPositionY(engine::CastToFloat(Easing::OutExp(timerCount, l_TotalTime, ScrollPosition_, BeforeChangePosition_)));
 
     if(ScrollPosition_ < -GetScreenHeight())
     {
