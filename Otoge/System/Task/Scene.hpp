@@ -13,14 +13,14 @@ protected:
     float CurrentParentWidth_ = 0.f, CurrentParentHeight_ = 0.f;
     std::shared_ptr<FlexibleScaler> ParentScaler_ = nullptr;
     std::shared_ptr<FlexibleScaler> DefaultScaler_ = nullptr;
-	bool IsCalculated_ = false;
+    bool IsCalculated_ = false;
     bool IsBufferUpdate_ = true;
 
 public:
     using DrawFunction = std::function<void()>;
 
-    Scene(const std::string &sceneName, float sceneWidth = 100.f, float sceneHeight = 100.f, float sceneX = 0.f, float sceneY = 0.f, std::shared_ptr<FlexibleScaler> parentScaler = nullptr, Task::TaskPointer parentTask = nullptr);
-    Scene(const std::string &sceneName, const ScreenData& screen, std::shared_ptr<FlexibleScaler> parentScaler = nullptr, Task::TaskPointer parentTask = nullptr);
+    Scene(const std::string& sceneName, float sceneWidth = 100.f, float sceneHeight = 100.f, float sceneX = 0.f, float sceneY = 0.f, std::shared_ptr<FlexibleScaler> parentScaler = nullptr, Task::TaskPointer parentTask = nullptr);
+    Scene(const std::string& sceneName, const ScreenData& screen, std::shared_ptr<FlexibleScaler> parentScaler = nullptr, Task::TaskPointer parentTask = nullptr);
     ~Scene();
 
     void Update(float deltaTime) override;
@@ -42,20 +42,20 @@ public:
 
     void SetDrawFunction(DrawFunction func);
     std::shared_ptr<FlexibleScaler> GetDefaultScaler() const;
-	void SetScreen(ScreenData screen);
-	void SetPositionX(float px);
-	void SetPositionY(float py);
-	void SetScreenWidth(float width);
-	void SetScreenHeight(float height);
+    void SetScreen(ScreenData screen);
+    void SetPositionX(float px);
+    void SetPositionY(float py);
+    void SetScreenWidth(float width);
+    void SetScreenHeight(float height);
     void AddPositionX(float px);
     void AddPositionY(float py);
     void AddScreenWidth(float width);
     void AddScreenHeight(float height);
 
-	float GetPositionX() const;
-	float GetPositionY() const;
-	float GetScreenWidth() const;
-	float GetScreenHeight() const;
+    float GetPositionX() const;
+    float GetPositionY() const;
+    float GetScreenWidth() const;
+    float GetScreenHeight() const;
 
     float GetRawPositionX() const;
     float GetRawPositionY() const;
