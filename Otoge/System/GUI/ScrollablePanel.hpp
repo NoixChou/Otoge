@@ -19,4 +19,6 @@ public:
     void Draw() override;
 
     std::shared_ptr<Scene> GetPanelInstance();
+
+    void ResetAnimation();
 };
