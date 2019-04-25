@@ -211,14 +211,7 @@ void Scene::ReCalculateScreen()
 	if(doRefreshBuffer)
 		RefreshDrawBuffer();
 
-    for(const auto& l_Child : children)
-    {
-        auto l_ChildScene = std::dynamic_pointer_cast<Scene>(l_Child);
-        if(l_ChildScene)
-        {
-            l_ChildScene->ReCalculateScreen();
-        }
-    }
+    RefreshChildren();
 }
 
 bool Scene::RefreshScaler()
@@ -229,14 +222,7 @@ bool Scene::RefreshScaler()
     DefaultScaler_->SetDiffX(ParentScaler_->GetDiffX() + Screen_.posX);
     DefaultScaler_->SetDiffY(ParentScaler_->GetDiffY() + Screen_.posY);
 
-    for (const auto& l_Child : children)
-    {
-        auto l_ChildScene = std::dynamic_pointer_cast<Scene>(l_Child);
-        if (l_ChildScene)
-        {
-            l_ChildScene->RefreshScaler();
-        }
-    }
+    RefreshChildren();
 
     return true;
 }
@@ -257,6 +243,13 @@ bool Scene::RefreshDrawBuffer()
         return false;
     }
 
+    RefreshChildren();
+    
+    return true;
+}
+
+void Scene::RefreshChildren()
+{
     for (const auto& l_Child : children)
     {
         auto l_ChildScene = std::dynamic_pointer_cast<Scene>(l_Child);
@@ -265,7 +258,6 @@ bool Scene::RefreshDrawBuffer()
             l_ChildScene->ReCalculateScreen();
         }
     }
-    return true;
 }
 
 void Scene::StartFadeIn()

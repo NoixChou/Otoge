@@ -32,4 +32,7 @@ namespace game_config
 
     constexpr auto SETTINGS_DEBUG_DRAW_SCENE_FRAME = "system.debug.scene.isDrawFrame";
     constexpr auto SETTINGS_DEBUG_DRAW_DTASK_POINT = "system.debug.drawable.isDrawPoint";
+
+    constexpr auto SETTINGS_MOUSE_AREA_LIMIT = "input.mouse.area_limit";
+    constexpr auto SETTINGS_MOUSE_USEORIGINAL = "input.mouse.use_original";
 }

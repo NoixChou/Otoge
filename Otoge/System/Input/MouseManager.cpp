@@ -1,9 +1,16 @@
 ﻿#include "MouseManager.hpp"
 #include "../GlobalMethod.hpp"
+#include "../../Util/Setting/SettingManager.h"
+#include "../Config.h"
+#include "../../Util/Window/DxSettings.hpp"
 std::shared_ptr<MouseManager> MouseManager::Instance_ = nullptr;
 
 MouseManager::MouseManager() : Task("MouseManager")
 {
+    MouseAreaLimit_ = SettingManager::GetGlobal()->Get<bool>(game_config::SETTINGS_MOUSE_AREA_LIMIT).get();
+    if(DxSettings::useOriginalCursor)
+        HideCursor();
+
     Logger_->Info("マウス入力管理 初期化完了");
 }
 
@@ -41,6 +48,12 @@ void MouseManager::Update(float deltaTime)
     GetMousePoint(&MousePosX_, &MousePosY_);
     MouseWheelSpeed_ = GetMouseWheelRotVolF();
     MouseInput_ = GetMouseInput();
+
+    if (MouseAreaLimit_)
+    {
+        MousePosX_ = engine::LimitRange(MousePosX_, 0, DxSettings::windowWidth);
+        MousePosY_ = engine::LimitRange(MousePosY_, 0, DxSettings::windowHeight);
+    }
     
     if (MouseInput_ != 0 && PrevMouseInput_ == 0)
     {
@@ -51,6 +64,21 @@ void MouseManager::Update(float deltaTime)
         MouseReleasePosX_ = MousePosX_;
         MouseReleasePosY_ = MousePosY_;
     }
+}
+
+void MouseManager::ShowCursor()
+{
+    SetMouseDispFlag(TRUE);
+}
+
+void MouseManager::HideCursor()
+{
+    SetMouseDispFlag(FALSE);
+}
+
+bool MouseManager::IsVisibleCursor() const
+{
+    return GetMouseDispFlag();
 }
 
 bool MouseManager::IsMovedMouse()

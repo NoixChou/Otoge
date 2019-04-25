@@ -13,4 +13,10 @@ namespace engine
     {
         return static_cast<int>(floor(value));
     }
+
+    template<typename T>
+    inline T LimitRange(T value, T minimum, T maximum)
+    {
+        return max(minimum, min(value, maximum));
+    }
 }

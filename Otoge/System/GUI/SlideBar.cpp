@@ -46,8 +46,7 @@ void SlideBar::GUIUpdate(float deltaTime)
         SlideValue_ = (MaxValue_) * ( (( MouseManager::GetInstance()->GetMouseRateX(DefaultScaler_) - DefaultScaler_->CalculatePositionRateX(DefaultScaler_->GetDiffX()) ) / (100.f - ballSize)) - ((ballSize / 2.0f) / 100.f));
     }
 
-    if (SlideValue_ > MaxValue_) SlideValue_ = MaxValue_;
-    if (SlideValue_ < MinValue_) SlideValue_ = MinValue_;
+    SlideValue_ = engine::LimitRange(SlideValue_, MinValue_, MaxValue_);
 
     //Logger_->Debug("SlideValue: " + std::to_string(SlideValue_) + ", Old: " + std::to_string(OldSlideValue_));
 

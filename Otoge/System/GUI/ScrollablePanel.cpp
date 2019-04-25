@@ -31,8 +31,6 @@ void ScrollablePanel::GUIUpdate(float deltaTime)
             timerCount = 0.f;
         }
         ScrollPosition_ += mouseVel * 12.f;
-        ReCalculateScreen();
-        RefreshDrawBuffer();
     }
 
     Panel_->SetPositionY(engine::CastToFloat(Easing::OutExp(timerCount, l_TotalTime, ScrollPosition_, BeforeChangePosition_)));
@@ -40,13 +38,15 @@ void ScrollablePanel::GUIUpdate(float deltaTime)
     if(ScrollPosition_ < -GetScreenHeight())
     {
         BeforeChangePosition_ = ScrollPosition_;
-        ScrollPosition_  = -GetScreenHeight();
+        //ScrollPosition_  = -GetScreenHeight();
     }
     if(ScrollPosition_ > 0.f)
     {
         BeforeChangePosition_ = ScrollPosition_;
-        ScrollPosition_ = 0.f;
+        //ScrollPosition_ = 0.f;
     }
+
+    ScrollPosition_ = engine::LimitRange(ScrollPosition_, -GetScreenHeight(), 0.f);
 
     if(timerCount > l_TotalTime)
     {

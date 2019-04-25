@@ -102,23 +102,3 @@ SettingManager* SettingManager::GetGlobal()
 {
     return GlobalSettings_;
 }
-
-/*template <class T> void SettingManager::SetDefault(const std::string &dataPath, T value)
-{
-    DefaultTree_.put(dataPath, value);
-}
-
-template<class T> T SettingManager::Get(const std::string &dataPath)
-{
-    if (boost::optional<T> value = SettingsTree_.get_optional<T>(dataPath))
-    {
-        return value.get();
-    }
-    return nullptr;
-}
-
-template <class T> void SettingManager::Set(const std::string &dataPath, T value)
-{
-    SettingsTree_.put(dataPath, value);
-}
-*/

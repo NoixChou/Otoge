@@ -27,6 +27,7 @@ public:
     void ReCalculateScreen();
     bool RefreshScaler();
     bool RefreshDrawBuffer();
+    void RefreshChildren();
 
 
     virtual void SceneFadeIn(float deltaTime) {}
