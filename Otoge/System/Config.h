@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // アプリケーション
 #define GAME_APP_NAME "おとげー" // アプリ名

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../../Util/Debug/Logger.h"
 #include <cstdarg>
 

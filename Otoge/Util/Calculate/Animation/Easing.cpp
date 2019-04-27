@@ -1,4 +1,4 @@
-#include "Easing.hpp"
+﻿#include "Easing.hpp"
 
 double Easing::InQuad(double t, double totaltime, double max, double min)
 {

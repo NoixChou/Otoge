@@ -1,4 +1,4 @@
-#include "SettingScene.hpp"
+﻿#include "SettingScene.hpp"
 #include "../../../../Util/Setting/SettingManager.h"
 #include "../../../../System/Config.h"
 #include "../../../../System/Input/KeyboardManager.hpp"
@@ -18,7 +18,7 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f)
     CloseButton_->SetTransparent(100.f);
     AddChildTask(std::static_pointer_cast<Task>(CloseButton_));
 
-    std::shared_ptr<Label> l_TitleLabel = std::make_shared<Label>("�ݒ�", ScreenData(20.0f, 0.0f, 60.f, CloseButton_->GetScreenHeight()), DefaultScaler_);
+    std::shared_ptr<Label> l_TitleLabel = std::make_shared<Label>(u8"設定", ScreenData(20.0f, 0.0f, 60.f, CloseButton_->GetScreenHeight()), DefaultScaler_);
     l_TitleLabel->SetTextAlign(Label::TextAlignment::center | Label::TextAlignment::middle);
     l_TitleLabel->baseColor = GetColor(117, 117, 117);
     l_TitleLabel->AdjustmentFontSize_ = false;

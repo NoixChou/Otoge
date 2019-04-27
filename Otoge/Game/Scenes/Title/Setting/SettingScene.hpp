@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../../../../System/Task/Scene.hpp"
 #include "../../../../Util/Calculate/Screen/FlexibleScaler.hpp"
 #include "../../../../System/GUI/Button.hpp"

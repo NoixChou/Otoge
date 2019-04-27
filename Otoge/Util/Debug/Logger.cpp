@@ -1,4 +1,4 @@
-#include "Logger.h"
+Ôªø#include "Logger.h"
 
 using namespace std;
 
@@ -38,30 +38,30 @@ Logger::~Logger()
 void Logger::Log(const string& message, const string &tag)
 {
 #ifdef _DEBUG
-    printf("[%s] ", tag.c_str());
-    OutputDebugString(("[" + tag + "] ").c_str());
+    printf(u8"[%s] ", tag.c_str());
+    OutputDebugString((u8"[" + tag + "] ").c_str());
 
     if (ModuleName_ != "")
-        printf("<%s> ", ModuleName_.c_str()), OutputDebugString(("<" + ModuleName_ + "> ").c_str());
-    printf("%s", message.c_str());
+        printf(u8"<%s> ", ModuleName_.c_str()), OutputDebugString(("<" + ModuleName_ + "> ").c_str());
+    printf(u8"%s", message.c_str());
     printf("\n");
     OutputDebugString(message.c_str());
     OutputDebugString("\n");
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN); //èâä˙êF
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN); //ÂàùÊúüËâ≤
 #endif
 }
 
 void Logger::LowLevelLog(const std::string& message, const std::string& tag)
 {
 #ifdef _DEBUG
-    printf("[%s] ", tag.c_str());
+    printf(u8"[%s] ", tag.c_str());
     OutputDebugString(("[" + tag + "] ").c_str());
 
-    printf("%s", message.c_str());
+    printf(u8"%s", message.c_str());
     printf("\n");
     OutputDebugString(message.c_str());
     OutputDebugString("\n");
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN); //èâä˙êF
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN); //ÂàùÊúüËâ≤
 #endif
 }
 

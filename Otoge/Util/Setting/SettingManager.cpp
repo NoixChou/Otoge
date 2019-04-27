@@ -1,4 +1,4 @@
-#include "SettingManager.h"
+﻿#include "SettingManager.h"
 
 using namespace std;
 

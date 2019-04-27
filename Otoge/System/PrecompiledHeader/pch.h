@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // コンパイラ設定
 #define _CRT_SECURE_NO_WARNINGS
