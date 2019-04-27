@@ -2,6 +2,7 @@
 #include "../../Util/Calculate/Screen/FontStringCalculator.hpp"
 #include "../Task/TaskManager.hpp"
 #include "../Input/MouseManager.hpp"
+#include "../GlobalMethod.hpp"
 
 Button::Button(const std::string& label, const ScreenData& layoutScreen, std::shared_ptr<FlexibleScaler> parentScaler) : GUI(label + "\"<Button>\"", layoutScreen, parentScaler)
 {
@@ -28,8 +29,6 @@ void Button::GUIUpdate(float deltaTime)
     TextLabel_->SetLabel(Label_);
     TextLabel_->baseColor = textColor;
 
-    static float currentTrans = 0.f;
-
     if (IsDownMouse())
     {
         timerCount = 0.f;
@@ -44,16 +43,17 @@ void Button::GUIUpdate(float deltaTime)
 
 void Button::Draw()
 {
-    DrawBox(0, 0, static_cast<int>(floor(GetRawScreenWidth())), static_cast<int>(floor(GetRawScreenHeight())), baseColor, TRUE);
+    DrawBox(0, 0, engine::CastToInt(GetRawScreenWidth()), engine::CastToInt(GetRawScreenHeight()), baseColor, TRUE);
     if (IsHoldMouse() && timerCount > 0.3f)
     {
         SetDrawBlendMode(DX_BLENDMODE_PMA_ALPHA, 127);
-        DrawBox(0, 0, static_cast<int>(floor(GetRawScreenWidth())), static_cast<int>(floor(GetRawScreenHeight())), animationColor, TRUE);
+        DrawBox(0, 0, engine::CastToInt(GetRawScreenWidth()), engine::CastToInt(GetRawScreenHeight()), animationColor, TRUE);
     }
     if (IsOnMouse())
     {
+        //Logger_->Debug("btn Draw");
         SetDrawBlendMode(DX_BLENDMODE_PMA_ALPHA, 20);
-        DrawBox(0, 0, static_cast<int>(floor(GetRawScreenWidth())), static_cast<int>(floor(GetRawScreenHeight())), textColor, TRUE);
+        DrawBox(0, 0, engine::CastToInt(GetRawScreenWidth()), engine::CastToInt(GetRawScreenHeight()), textColor, TRUE);
     }
 }
 
@@ -96,6 +96,6 @@ void ButtonPushedAnimate::Draw()
 	l_Circle.posY = position.y;
 	l_Circle.width = Size_;
 	l_Circle.height = Size_;
-    const auto l_Fixed = ParentScaler_->Calculate(&l_Circle);
-	DrawCircle(static_cast<int>(floor(l_Fixed.posX)), static_cast<int>(floor(l_Fixed.posY)), static_cast<int>(floor(l_Fixed.width + l_Fixed.height / 2.0f)), color, TRUE);
+    const auto l_Fixed = ParentScaler_->Calculate(l_Circle);
+	DrawCircle(engine::CastToInt(l_Fixed.posX), engine::CastToInt(l_Fixed.posY), engine::CastToInt(l_Fixed.width + l_Fixed.height / 2.0f), color, TRUE);
 }

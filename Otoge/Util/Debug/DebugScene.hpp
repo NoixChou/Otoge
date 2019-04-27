@@ -6,7 +6,9 @@ class DebugScene : public Scene
 {
 private:
     std::shared_ptr<Label> FpsLabel_;
+    std::shared_ptr<Label> FpsDescLabel_;
     std::shared_ptr<Label> DeltaTimeLabel_;
+    std::shared_ptr<Label> DeltaTimeDescLabel_;
 
 public:
     DebugScene();

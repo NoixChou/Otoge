@@ -11,6 +11,7 @@ private:
     std::vector< Task::TaskPointer > Tasks_;
     std::vector< Task::TaskPointer > TaskQueues_;
     std::vector< Task::TaskPointer >::iterator ProcessingTask_;
+    Task::WeakTaskPointer ModalTask_;
 
     std::chrono::high_resolution_clock::time_point ClockCount_ = std::chrono::high_resolution_clock::now();
     std::chrono::high_resolution_clock::time_point PrevClockCount_ = std::chrono::high_resolution_clock::now();
@@ -37,18 +38,21 @@ public:
     bool IsGameExit();
     void GameExit();
 
+    Task::WeakTaskPointer GetModalTask() const;
+    void SetModalTask();
+    void SetModalTask(Task::WeakTaskPointer task);
+    void UnsetModalTask();
+
     int GetTaskCount();
-    bool AddTask(const Task::TaskPointer &task);
+    bool AddTask(const Task::TaskPointer& task);
     template<class T> bool AddTaskByTypename()
     {
         return AddTask(std::make_shared<T>());
-        /*Logger_->Debug("タスク追加 ID:" + std::to_string(Tasks_.size()));
-        T t = new T;
-        Tasks_.push_back(t);
-        return t->Initialize(Tasks_.size() - 1);*/
     }
 
     void Tick(float tickSpeed);
+
 	static void UpdateTasks(std::vector<Task::TaskPointer>& tasks, std::vector<Task::TaskPointer>& queues, float tickSpeed, float deltaTime);
+    static bool PushQueues(std::vector<Task::TaskPointer>& tasks, std::vector<Task::TaskPointer>& queues);
     static void UpdatePriority(std::vector<Task::TaskPointer>& tasks);
 };

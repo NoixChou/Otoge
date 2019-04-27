@@ -4,13 +4,13 @@
 #include "../Input/MouseManager.hpp"
 #include "../../Util/Calculate/Screen/FontStringCalculator.hpp"
 #include "TaskManager.hpp"
-
+#include "../GlobalMethod.hpp"
 
 Scene::Scene(const std::string& sceneName, float sceneWidth, float sceneHeight, float sceneX, float sceneY, std::shared_ptr<FlexibleScaler> parentScaler, Task::TaskPointer parentTask) : Task(sceneName)
 {
     isAutoUpdateChildren = false;
-    //if (sceneWidth == -1.f) sceneWidth = static_cast<float>(SettingManager::GetGlobal()->Get<int>(SETTINGS_RES_WIDTH).get());
-    //if (sceneHeight == -1.f) sceneHeight = static_cast<float>(SettingManager::GetGlobal()->Get<int>(SETTINGS_RES_HEIGHT).get());
+    //if (sceneWidth == -1.f) sceneWidth = engine::CastToFloat(SettingManager::GetGlobal()->Get<int>(SETTINGS_RES_WIDTH).get());
+    //if (sceneHeight == -1.f) sceneHeight = engine::CastToFloat(SettingManager::GetGlobal()->Get<int>(SETTINGS_RES_HEIGHT).get());
 
     // parentScalerがnullの場合 ウィンドウベースのスケーラをセット
     if (parentScaler == nullptr)
@@ -36,15 +36,13 @@ Scene::Scene(const std::string& sceneName, float sceneWidth, float sceneHeight, 
 
     this->parentTask = parentTask;
 
-    Screen_ = ParentScaler_->Calculate(&PreLayoutScreen_);
+    Screen_ = ParentScaler_->Calculate(PreLayoutScreen_);
 
 	ReCalculateScreen();
 
-    IsDrawFrame_ = SettingManager::GetGlobal()->Get<bool>(SETTINGS_DEBUG_DRAW_SCENE_FRAME).get();
+    IsDrawFrame_ = SettingManager::GetGlobal()->Get<bool>(game_config::SETTINGS_DEBUG_DRAW_SCENE_FRAME).get();
 
     Logger_->Info(GetName() + " 初期化完了");
-
-    StartFadeIn();
 }
 
 Scene::Scene(const std::string& sceneName, const ScreenData& screen, std::shared_ptr<FlexibleScaler> parentScaler, Task::TaskPointer parentTask)
@@ -59,18 +57,17 @@ Scene::~Scene()
 void Scene::Update(float deltaTime)
 {
     // シーンサイズに変更があるか
-    if (PrevScreen_.posX != Screen_.posX) HasChangedScreen_ = true;
-    else if (PrevScreen_.posY != Screen_.posY) HasChangedScreen_ = true;
-    else if (PrevScreen_.width != Screen_.width) HasChangedScreen_ = true;
-    else if (PrevScreen_.height != Screen_.height) HasChangedScreen_ = true;
-    else HasChangedScreen_ = false;
+    if (PrevScreen_.width != Screen_.width) IsChangedSize_ = true;
+    else if (PrevScreen_.height != Screen_.height) IsChangedSize_ = true;
+
+    // シーン位置に変更があるか
+    if (PrevScreen_.posX != Screen_.posX || PrevScreen_.posY != Screen_.posY) IsChangedPosition_ = true;
 
     // スケーラサイズに変更があるか
-    if (CurrentParentWidth_ != ParentScaler_->GetScreenWidth()) HasChangedScreen_ = true;
-    if (CurrentParentHeight_ != ParentScaler_->GetScreenHeight()) HasChangedScreen_ = true;
+    if (CurrentParentWidth_ != ParentScaler_->GetScreenWidth()) IsChangedSize_ = true;
+    if (CurrentParentHeight_ != ParentScaler_->GetScreenHeight()) IsChangedSize_ = true;
     CurrentParentWidth_ = ParentScaler_->GetScreenWidth();
     CurrentParentHeight_ = ParentScaler_->GetScreenHeight();
-
 
     PrevScreen_ = Screen_;
 
@@ -84,9 +81,16 @@ void Scene::Update(float deltaTime)
     SceneUpdate(deltaTime);
 
     // 変更がある場合 描画スクリーンの再計算
-    if (HasChangedScreen_)
+    if (IsChangedSize_)
     {
 		ReCalculateScreen();
+        IsChangedSize_ = false;
+    }
+    // 変更がある場合 スケーラ再計算
+    if(IsChangedPosition_)
+    {
+        RefreshScaler();
+        IsChangedPosition_ = false;
     }
 
     // Visibleか、透明度が0%以上の場合 描画処理
@@ -100,9 +104,15 @@ void Scene::Update(float deltaTime)
         // 描画
         SetDrawScreen(SceneBuffer_);
         SetDrawBlendMode(currentBlendMode, currentBlendParam);
-        ClearDrawScreen();
 
-        Draw();
+        if (IsBufferUpdate_ || IsChangedSize_)
+        {
+            ClearDrawScreen();
+            Draw();
+
+            if(DrawerFunction_ != nullptr)
+                DrawerFunction_();
+        }
 
         // 元の描画設定に戻す
         //SetDrawScreen(currentBuffer);
@@ -112,11 +122,11 @@ void Scene::Update(float deltaTime)
 		TaskManager::UpdateTasks(children, childrenQueues, TickSpeed_, deltaTime);
 
         // デバッグ情報の描画
-        if (IsDrawFrame_)
+        if (IsDrawFrame_ && IsOnMouse())
         {
             SetDrawBlendMode(DX_BLENDMODE_PMA_ALPHA, 127);
             DrawFormatString(0, 0, GetColor(0, 0, 255), "+%.2f", DefaultScaler_->GetDiffX());
-            SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+            SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
         }
 
         // 元の描画設定に戻す
@@ -126,8 +136,8 @@ void Scene::Update(float deltaTime)
         // デバッグ用の枠を描画
         if (IsDrawFrame_)
         {
-            DrawBox(static_cast<int>(floor(Screen_.posX)), static_cast<int>(floor(Screen_.posY)), static_cast<int>(floor(Screen_.posX + Screen_.width)), static_cast<int>(floor(Screen_.posY + Screen_.height)), GetColor(255, 0, 0), FALSE);
-            DrawCircle(static_cast<int>(floor(DefaultScaler_->GetDiffX())), static_cast<int>(floor(DefaultScaler_->GetDiffY())), 3.f, GetColor(0, 255, 255));
+            DrawBox(engine::CastToInt(Screen_.posX), engine::CastToInt(Screen_.posY), engine::CastToInt(Screen_.posX + Screen_.width), engine::CastToInt(Screen_.posY + Screen_.height), GetColor(255, 0, 0), FALSE);
+            DrawCircle(engine::CastToInt(DefaultScaler_->GetDiffX()), engine::CastToInt(DefaultScaler_->GetDiffY()), 3, GetColor(0, 255, 255));
         }
 
         // 不正バッファ防止
@@ -136,9 +146,32 @@ void Scene::Update(float deltaTime)
 
         // シーンバッファを描画(透明度も考慮)
         if (static_cast<int>(Transparency_) < 100)
-			SetDrawBlendMode(DX_BLENDMODE_PMA_ALPHA, static_cast<int>((Transparency_ / 100.f) * 255.f));
+            SetDrawBlendMode(DX_BLENDMODE_PMA_ALPHA, static_cast<int>((Transparency_ / 100.f) * 255.f));
+        else
+            SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-        DrawRectGraph(static_cast<int>(floor(Screen_.posX)), static_cast<int>(floor(Screen_.posY)), 0, 0, static_cast<int>(floor(Screen_.posX + Screen_.width)), static_cast<int>(floor(Screen_.posY + Screen_.height)), SceneBuffer_, TRUE);
+        //  親よりはみ出た部分を描画しないように調整
+        float l_DrawPosX = Screen_.posX, l_DrawPosY = Screen_.posY;
+        float l_DrawWidth = l_DrawPosX + Screen_.width, l_DrawHeight = l_DrawPosY + Screen_.height;
+        float l_DrawSrcX = 0.f, l_DrawSrcY = 0.f;
+
+        if (Screen_.posX < 0.f)
+        {
+            l_DrawWidth -= Screen_.posX;
+            l_DrawPosX = 0.f;
+            l_DrawSrcX += -Screen_.posX;
+        }
+        if (Screen_.posY < 0.f)
+        {
+            l_DrawHeight -= Screen_.posY;
+            l_DrawPosY = 0.f;
+            l_DrawSrcY += -Screen_.posY;
+        }
+        if (l_DrawWidth > ParentScaler_->GetScreenWidth())
+            l_DrawWidth -= l_DrawWidth - ParentScaler_->GetScreenWidth();
+        if (l_DrawHeight > ParentScaler_->GetScreenHeight())
+            l_DrawHeight -= l_DrawHeight - ParentScaler_->GetScreenHeight();
+        DrawRectGraph(engine::CastToInt(l_DrawPosX), engine::CastToInt(l_DrawPosY), engine::CastToInt(l_DrawSrcX), engine::CastToInt(l_DrawSrcY), engine::CastToInt(l_DrawWidth), engine::CastToInt(l_DrawHeight), SceneBuffer_, TRUE);
 
         // 元の描画設定に戻す
         SetDrawBlendMode(currentBlendMode, currentBlendParam);
@@ -155,36 +188,43 @@ void Scene::ReCalculateScreen()
 		IsCalculated_ = true;
 		doRefreshBuffer = true;
 	}
-	if (ParentScaler_ != nullptr)
+
+	if (ParentScaler_->Calculate(PreLayoutScreen_).width != Screen_.width) doRefreshBuffer = true;
+	if (ParentScaler_->Calculate(PreLayoutScreen_).height != Screen_.height) doRefreshBuffer = true;
+
+	if (DefaultScaler_ == nullptr)
 	{
-		if (ParentScaler_->Calculate(&PreLayoutScreen_).width != Screen_.width) doRefreshBuffer = true;
-		if (ParentScaler_->Calculate(&PreLayoutScreen_).height != Screen_.height) doRefreshBuffer = true;
-		Screen_ = ParentScaler_->Calculate(&PreLayoutScreen_);
+        Screen_ = ParentScaler_->Calculate(PreLayoutScreen_);
         if (PreLayoutScreen_.lockAspectRate)
         {
             Screen_.height = Screen_.width;
             PreLayoutScreen_.height = Screen_.height;
         }
-	}
 
-	if (DefaultScaler_ == nullptr)
-	{
+
 		DefaultScaler_ = std::make_shared<FlexibleScaler>(Screen_.width, Screen_.height, 1.0f);
-        DefaultScaler_->SetDiffX(ParentScaler_->GetDiffX() + Screen_.posX);
-        DefaultScaler_->SetDiffY(ParentScaler_->GetDiffY() + Screen_.posY);
 		doRefreshBuffer = true;
 	}
-	else
-	{
-		DefaultScaler_->SetScreenWidth(Screen_.width);
-		DefaultScaler_->SetScreenHeight(Screen_.height);
-		DefaultScaler_->SetScale(1.0f);
-        DefaultScaler_->SetDiffX(ParentScaler_->GetDiffX() + Screen_.posX);
-        DefaultScaler_->SetDiffY(ParentScaler_->GetDiffY() + Screen_.posY);
-	}
+
+    RefreshScaler();
 
 	if(doRefreshBuffer)
 		RefreshDrawBuffer();
+
+    RefreshChildren();
+}
+
+bool Scene::RefreshScaler()
+{
+    DefaultScaler_->SetScreenWidth(Screen_.width);
+    DefaultScaler_->SetScreenHeight(Screen_.height);
+    DefaultScaler_->SetScale(1.0f);
+    DefaultScaler_->SetDiffX(ParentScaler_->GetDiffX() + Screen_.posX);
+    DefaultScaler_->SetDiffY(ParentScaler_->GetDiffY() + Screen_.posY);
+
+    RefreshChildren();
+
+    return true;
 }
 
 bool Scene::RefreshDrawBuffer()
@@ -195,14 +235,29 @@ bool Scene::RefreshDrawBuffer()
         SceneBuffer_ = -1;
     }
 
-    SceneBuffer_ = MakeScreen(static_cast<int>(floor(Screen_.width)), static_cast<int>(floor(Screen_.height)), TRUE);
+    SceneBuffer_ = MakeScreen(engine::CastToInt(Screen_.width), engine::CastToInt(Screen_.height), TRUE);
 
     if (SceneBuffer_ == -1)
     {
         Logger_->Critical("シーンバッファ作成に失敗しました。");
         return false;
     }
+
+    RefreshChildren();
+    
     return true;
+}
+
+void Scene::RefreshChildren()
+{
+    for (const auto& l_Child : children)
+    {
+        auto l_ChildScene = std::dynamic_pointer_cast<Scene>(l_Child);
+        if (l_ChildScene)
+        {
+            l_ChildScene->ReCalculateScreen();
+        }
+    }
 }
 
 void Scene::StartFadeIn()
@@ -210,6 +265,7 @@ void Scene::StartFadeIn()
     IsFadingIn_ = true;
     IsFadingOut_ = false;
     timerCount = 0.f;
+    OnStartedFadeIn();
 }
 
 void Scene::StartFadeOut()
@@ -217,6 +273,18 @@ void Scene::StartFadeOut()
     IsFadingIn_ = false;
     IsFadingOut_ = true;
     timerCount = 0.f;
+    OnStartedFadeOut();
+}
+
+void Scene::StopFade()
+{
+    if (IsFadingIn_)
+        OnStoppedFadeIn();
+    if (IsFadingOut_)
+        OnStartedFadeOut();
+
+    IsFadingIn_ = false;
+    IsFadingOut_ = false;
 }
 
 bool Scene::IsFadingIn()
@@ -227,6 +295,11 @@ bool Scene::IsFadingIn()
 bool Scene::IsFadingOut()
 {
     return IsFadingOut_;
+}
+
+void Scene::SetDrawFunction(DrawFunction func)
+{
+    DrawerFunction_ = func;
 }
 
 std::shared_ptr<FlexibleScaler> Scene::GetDefaultScaler() const
@@ -328,11 +401,6 @@ float Scene::GetRawScreenHeight() const
 	return Screen_.height;
 }
 
-void Scene::SetEnable(bool enable)
-{
-    IsEnable_ = enable;
-}
-
 void Scene::SetVisible(bool visible)
 {
     IsVisible_ = visible;
@@ -348,20 +416,6 @@ float Scene::GetTransparent() const
     return Transparency_;
 }
 
-bool Scene::IsEnable() const
-{
-    if (!parentTask.expired())
-    {
-        auto parent = std::dynamic_pointer_cast<Scene>(parentTask.lock());
-        if (parent != nullptr)
-        {
-            if (!parent->IsEnable()) return false;
-        }
-    }
-
-    return IsEnable_;
-}
-
 bool Scene::IsVisible() const
 {
     
@@ -374,12 +428,17 @@ bool Scene::IsVisible() const
         }
     }
 
-    return IsVisible_ && (static_cast<int>(floor(Transparency_)) > 0);
+    return IsVisible_ && (engine::CastToInt(Transparency_) > 0);
 }
 
-bool Scene::IsChangedScreen() const
+bool Scene::IsChangedSize() const
 {
-    return HasChangedScreen_;
+    return IsChangedSize_;
+}
+
+bool Scene::IsChangedPosition() const
+{
+    return IsChangedPosition_;
 }
 
 bool Scene::IsOnMouse() const

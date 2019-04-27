@@ -13,7 +13,7 @@ private:
     std::shared_ptr<Button> MenuOption_;
     std::shared_ptr<Button> MenuClose_;
 
-    std::weak_ptr<Scene> SettingScene_;
+    std::shared_ptr<Scene> SettingScene_;
 
 public:
     TitleScene();

@@ -1,7 +1,8 @@
 ﻿#include "FlexibleScaler.hpp"
 #include "../../Setting/SettingManager.h"
 #include "../../../System/Config.h"
-
+#include "../../../System/GlobalMethod.hpp"
+#include "../../Window/DxSettings.hpp"
 std::shared_ptr<FlexibleScaler> FlexibleScaler::GlobalInstance_ = nullptr;
 
 FlexibleScaler::FlexibleScaler(float screenWidth, float screenHeight, float scale)
@@ -26,7 +27,7 @@ void FlexibleScaler::CreateWindowBasedInstance()
 {
     if (!GlobalInstance_)
     {
-        GlobalInstance_.reset(new FlexibleScaler(static_cast<float>(SettingManager::GetGlobal()->Get<int>(SETTINGS_RES_WIDTH).get()), static_cast<float>(SettingManager::GetGlobal()->Get<int>(SETTINGS_RES_HEIGHT).get()), 1.f));
+        GlobalInstance_.reset(new FlexibleScaler(engine::CastToFloat(DxSettings::windowWidth), engine::CastToFloat(DxSettings::windowHeight), 1.f));
     }
 }
 
@@ -125,32 +126,32 @@ float FlexibleScaler::CalculateHeight(float height) const
     return ScreenHeight_ * (height / 100.f) * Scale_;
 }
 
-ScreenData FlexibleScaler::Calculate(const ScreenData *dataOfPercent) const
+ScreenData FlexibleScaler::Calculate(const ScreenData& dataOfPercent) const
 {
     ScreenData result;
 
-    result.lockAspectRate = dataOfPercent->lockAspectRate;
+    result.lockAspectRate = dataOfPercent.lockAspectRate;
 
-    result.posX = CalculatePositionX(dataOfPercent->posX);
-    result.posY = CalculatePositionY(dataOfPercent->posY);
+    result.posX = CalculatePositionX(dataOfPercent.posX);
+    result.posY = CalculatePositionY(dataOfPercent.posY);
 
     if(lockTop && !lockBottom)
     {
-        result.height = CalculateHeight(dataOfPercent->height);
+        result.height = CalculateHeight(dataOfPercent.height);
     }
     if(!lockTop && lockBottom)
     {
-        result.height = CalculateHeight(dataOfPercent->height);
+        result.height = CalculateHeight(dataOfPercent.height);
         result.posY -= result.height;
     }
 
     if(lockLeft && !lockRight)
     {
-        result.width = CalculateWidth(dataOfPercent->width);
+        result.width = CalculateWidth(dataOfPercent.width);
     }
     if(!lockLeft && lockRight)
     {
-        result.width = CalculateWidth(dataOfPercent->width);
+        result.width = CalculateWidth(dataOfPercent.width);
         result.posX -= result.width;
     }
 
@@ -160,5 +161,5 @@ ScreenData FlexibleScaler::Calculate(const ScreenData *dataOfPercent) const
 ScreenData FlexibleScaler::Calculate(float px, float py, float width, float height) const
 {
     ScreenData data(px, py, width, height);
-    return Calculate(&data);
+    return Calculate(data);
 }

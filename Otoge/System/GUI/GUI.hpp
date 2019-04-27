@@ -8,6 +8,7 @@ private:
 
 protected:
     std::string Label_;
+    bool IsChangedLabel_ = false;
     int FontHandle_ = -1;
 
 public:

@@ -95,7 +95,7 @@
     <Link>
       <AdditionalLibraryDirectories>../DxLib;L:/syuto/boost_1_63_0/lib/$(PlatformTarget)</AdditionalLibraryDirectories>
       <OutputFile>$(SolutionDir)Bin\$(Configuration)\$(PlatformTarget)\$(TargetName)$(TargetExt)</OutputFile>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -119,7 +119,7 @@
     <Link>
       <AdditionalLibraryDirectories>../DxLib;L:/syuto/boost_1_63_0/lib/$(PlatformTarget)</AdditionalLibraryDirectories>
       <OutputFile>$(SolutionDir)Bin\$(Configuration)\$(PlatformTarget)\$(TargetName)$(TargetExt)</OutputFile>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -148,6 +148,7 @@
       <AdditionalLibraryDirectories>../DxLib;L:/syuto/boost_1_63_0/lib/$(PlatformTarget)</AdditionalLibraryDirectories>
       <OutputFile>$(SolutionDir)Bin\$(Configuration)\$(PlatformTarget)\$(TargetName)$(TargetExt)</OutputFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -176,12 +177,14 @@
       <AdditionalLibraryDirectories>../DxLib;L:/syuto/boost_1_63_0/lib/$(PlatformTarget)</AdditionalLibraryDirectories>
       <OutputFile>$(SolutionDir)Bin\$(Configuration)\$(PlatformTarget)\$(TargetName)$(TargetExt)</OutputFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Game\Scenes\Title\Setting\SettingScene.cpp" />
     <ClCompile Include="System\GUI\ScrollablePanel.cpp" />
     <ClCompile Include="System\GUI\SlideBar.cpp" />
+    <ClCompile Include="System\Task\CursorDrawer.cpp" />
     <ClCompile Include="Util\Calculate\Animation\Easing.cpp" />
     <ClCompile Include="System\Buffer\BufferManager.cpp" />
     <ClCompile Include="System\Font\FontManager.cpp" />
@@ -207,11 +210,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Util\Window\DxSettings.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Scenes\Title\Setting\SettingScene.hpp" />
+    <ClInclude Include="System\GlobalMethod.hpp" />
     <ClInclude Include="System\GUI\ScrollablePanel.hpp" />
     <ClInclude Include="System\GUI\SlideBar.hpp" />
+    <ClInclude Include="System\Task\CursorDrawer.hpp" />
     <ClInclude Include="Util\Calculate\Animation\Easing.hpp" />
     <ClInclude Include="System\Buffer\BufferManager.hpp" />
     <ClInclude Include="System\DefineSettings.h" />
@@ -234,6 +240,7 @@
     <ClInclude Include="Util\Debug\DebugScene.hpp" />
     <ClInclude Include="Util\Debug\Logger.h" />
     <ClInclude Include="System\PrecompiledHeader\pch.h" />
+    <ClInclude Include="Util\Window\DxSettings.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

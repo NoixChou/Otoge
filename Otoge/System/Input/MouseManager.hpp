@@ -19,6 +19,8 @@ private:
     int PrevMouseInput_ = 0;
     float MouseWheelSpeed_ = 0.f;
 
+    bool MouseAreaLimit_;
+
     static std::shared_ptr<MouseManager> Instance_;
     MouseManager();
 
@@ -30,6 +32,11 @@ public:
     static void DestroyInstance();
 
     void Update(float deltaTime) override;
+
+    void ShowCursor();
+    void HideCursor();
+    bool IsVisibleCursor() const;
+
     bool IsMovedMouse();
     int GetMouseX();
     int GetMouseY();
@@ -48,6 +55,8 @@ public:
 
 	float GetMouseRateX(std::shared_ptr<FlexibleScaler> scaler);
 	float GetMouseRateY(std::shared_ptr<FlexibleScaler> scaler);
+
+    float GetMouseWheelAccel();
 
     bool IsDownButton(int key);
     bool IsHoldButton(int key);
