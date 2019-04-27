@@ -265,6 +265,7 @@ void Scene::StartFadeIn()
     IsFadingIn_ = true;
     IsFadingOut_ = false;
     timerCount = 0.f;
+    OnStartedFadeIn();
 }
 
 void Scene::StartFadeOut()
@@ -272,10 +273,16 @@ void Scene::StartFadeOut()
     IsFadingIn_ = false;
     IsFadingOut_ = true;
     timerCount = 0.f;
+    OnStartedFadeOut();
 }
 
 void Scene::StopFade()
 {
+    if (IsFadingIn_)
+        OnStoppedFadeIn();
+    if (IsFadingOut_)
+        OnStartedFadeOut();
+
     IsFadingIn_ = false;
     IsFadingOut_ = false;
 }
@@ -394,11 +401,6 @@ float Scene::GetRawScreenHeight() const
 	return Screen_.height;
 }
 
-void Scene::SetEnable(bool enable)
-{
-    IsEnable_ = enable;
-}
-
 void Scene::SetVisible(bool visible)
 {
     IsVisible_ = visible;
@@ -412,20 +414,6 @@ void Scene::SetTransparent(float transparent)
 float Scene::GetTransparent() const
 {
     return Transparency_;
-}
-
-bool Scene::IsEnable() const
-{
-    if (!parentTask.expired())
-    {
-        auto parent = std::dynamic_pointer_cast<Scene>(parentTask.lock());
-        if (parent != nullptr)
-        {
-            if (!parent->IsEnable()) return false;
-        }
-    }
-
-    return IsEnable_;
 }
 
 bool Scene::IsVisible() const

@@ -151,14 +151,14 @@ void TitleScene::SceneUpdate(float deltaTime)
     if (SettingScene_->IsFadingIn())
     {
         SetTransparent(100.f - (SettingScene_->GetTransparent() / 2.f));
-        SetEnable(false);
+        //SetEnable(false);
     }
     else if (SettingScene_->IsFadingOut())
     {
         SetTransparent(100.f - (SettingScene_->GetTransparent() / 2.f));
     }
-    else if(!SettingScene_->IsVisible())
-        SetEnable(true);
+    /*else if(!SettingScene_->IsVisible())
+        SetEnable(true);*/
     
 	if (IsChangedSize())
 	{

@@ -29,7 +29,10 @@ public:
     bool RefreshDrawBuffer();
     void RefreshChildren();
 
-
+    virtual void OnStartedFadeIn() {}
+    virtual void OnStoppedFadeIn() {}
+    virtual void OnStartedFadeOut() {}
+    virtual void OnStoppedFadeOut() {}
     virtual void SceneFadeIn(float deltaTime) {}
     virtual void SceneFadeOut(float deltaTime) {}
     virtual void SceneUpdate(float deltaTime) {}
@@ -63,12 +66,10 @@ public:
     float GetRawScreenWidth() const;
     float GetRawScreenHeight() const;
 
-    void SetEnable(bool enable);
     void SetVisible(bool visible);
     void SetTransparent(float transparent);
     float GetTransparent() const;
 
-    bool IsEnable() const;
     bool IsVisible() const;
     bool IsChangedSize() const;
     bool IsChangedPosition() const;
@@ -87,7 +88,6 @@ private:
     bool IsChangedSize_ = false;
     bool IsChangedPosition_ = false;
 
-    bool IsEnable_ = true;
     bool IsVisible_ = true;
     float Transparency_ = 100.f;
 

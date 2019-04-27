@@ -25,6 +25,7 @@ public:
     SettingScene();
     ~SettingScene();
 
+    void OnStartedFadeIn() override;
     void SceneFadeIn(float deltaTime) override;
     void SceneFadeOut(float deltaTime) override;
 

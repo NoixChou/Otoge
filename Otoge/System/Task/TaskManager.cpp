@@ -45,6 +45,31 @@ void TaskManager::GameExit()
     Logger_->Warn("ゲームが終了します...");
 }
 
+Task::WeakTaskPointer TaskManager::GetModalTask() const
+{
+    return ModalTask_;
+}
+
+void TaskManager::SetModalTask()
+{
+    SetModalTask(*ProcessingTask_);
+}
+
+void TaskManager::SetModalTask(Task::WeakTaskPointer task)
+{
+    task.lock()->SetEnable(true);
+    ModalTask_ = task;
+}
+
+void TaskManager::UnsetModalTask()
+{
+    if (ModalTask_.expired()) return;
+
+    auto l_lockedModalTask = ModalTask_.lock();
+    l_lockedModalTask->SetEnable(l_lockedModalTask->GetOldEnables());
+    ModalTask_.reset();
+}
+
 int TaskManager::GetTaskCount()
 {
     return static_cast<int>(Tasks_.size());
@@ -98,65 +123,70 @@ void TaskManager::Tick(float tickSpeed = 1.0f)
 
 void TaskManager::UpdateTasks(std::vector<Task::TaskPointer>& tasks, std::vector<Task::TaskPointer>& queues, float tickSpeed, float deltaTime)
 {
-    bool l_IsAdded = false;
-	for (auto task : queues)
-	{
-		tasks.push_back(task);
-        l_IsAdded = true;
-	}
-	queues.clear();
-
-    if(l_IsAdded)
+    if(PushQueues(tasks, queues))
     {
         UpdatePriority(tasks);
     }
 	
-	auto m_Task = tasks.begin();
+	auto l_Task = tasks.begin();
 
-	for (m_Task; m_Task != tasks.end(); ++m_Task)
+	for (l_Task; l_Task != tasks.end(); ++l_Task)
 	{
         const auto l_BeginTime = high_resolution_clock::now();
 
 		// タイマー更新
-		float fixedDeltaTime = deltaTime * tickSpeed * (*m_Task)->GetTickSpeed();
-		(*m_Task)->timerCount += fixedDeltaTime;
+		float fixedDeltaTime = deltaTime * tickSpeed * (*l_Task)->GetTickSpeed();
+		(*l_Task)->timerCount += fixedDeltaTime;
 
 		// タスク処理
-		if ((*m_Task)->CanRunning() && (*m_Task)->IsRunning())
+		if ((*l_Task)->CanRunning() && (*l_Task)->IsRunning())
 		{
-			(*m_Task)->Update(fixedDeltaTime);
+			(*l_Task)->Update(fixedDeltaTime);
 
-            for (auto m_Child : (*m_Task)->GetChildren())
+            for (auto m_Child : (*l_Task)->GetChildren())
             {
-                m_Child->parentTask = (*m_Task);
+                m_Child->parentTask = (*l_Task);
             }
 
-            if ((*m_Task)->isAutoUpdateChildren)
+            if ((*l_Task)->isAutoUpdateChildren)
             {
-                UpdateTasks((*m_Task)->GetChildren(), (*m_Task)->GetChildrenQueues(), (*m_Task)->GetTickSpeed(), fixedDeltaTime);
+                UpdateTasks((*l_Task)->GetChildren(), (*l_Task)->GetChildrenQueues(), (*l_Task)->GetTickSpeed(), fixedDeltaTime);
             }
 		}
 
 		// 寿命の処理
-		if ((*m_Task)->HasLifespan())
+		if ((*l_Task)->HasLifespan())
 		{
-			(*m_Task)->SetLifespan((*m_Task)->GetLifespan() - fixedDeltaTime);
-			if ((*m_Task)->GetLifespan() < 0.0f) (*m_Task)->Terminate();
+			(*l_Task)->SetLifespan((*l_Task)->GetLifespan() - fixedDeltaTime);
+			if ((*l_Task)->GetLifespan() < 0.0f) (*l_Task)->Terminate();
 		}
         
         if (duration_cast<milliseconds>(high_resolution_clock::now() - l_BeginTime).count() > 3.f)
-            Logger::LowLevelLog("Task [" + (*m_Task)->GetName() + "] is too late. 3ms<", "WARN");
+            Logger::LowLevelLog("Task [" + (*l_Task)->GetName() + "] is too late. 3ms<", "WARN");
 	}
 
-	m_Task = tasks.begin();
-	for (m_Task; m_Task != tasks.end(); ++m_Task)
+	l_Task = tasks.begin();
+	for (l_Task; l_Task != tasks.end(); ++l_Task)
 	{
-		if ((*m_Task)->IsTerminated())
+		if ((*l_Task)->IsTerminated())
 		{
-			m_Task = tasks.erase(m_Task);
-			--m_Task;
+			l_Task = tasks.erase(l_Task);
+			--l_Task;
 		}
 	}
+}
+
+bool TaskManager::PushQueues(std::vector<Task::TaskPointer>& tasks, std::vector<Task::TaskPointer>& queues)
+{
+    bool l_IsAdded = false;
+    for (auto task : queues)
+    {
+        tasks.push_back(task);
+        l_IsAdded = true;
+    }
+    queues.clear();
+
+    return l_IsAdded;
 }
 
 void TaskManager::UpdatePriority(std::vector<Task::TaskPointer>& tasks)

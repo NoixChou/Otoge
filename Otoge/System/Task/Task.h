@@ -13,6 +13,8 @@ protected:
     std::shared_ptr<Logger> Logger_;
 
     float RunningPriority_ = 0.f; // 実行優先順位
+    bool OldIsEnable_ = true; // 変更前の有効性
+    bool IsEnable_ = true; // 有効か(各タスクで使用)
     bool IsLiving_ = false; // 生きていて、実行可能か(未使用)
     bool IsTerminated_ = false; // 終了中か
     bool IsInitialized_ = false; // 初期化されているか
@@ -51,7 +53,12 @@ public:
     std::string GetName() const;
 
     bool CanRunning() const;
-    
+
+    void SetEnable(bool enable);
+    bool GetOldEnables() const;
+    bool IsEnable() const;
+    bool IsRawEnable() const;
+    bool IsOnModal() const;
     bool IsLiving() const;
     bool IsTerminated() const;
     bool IsInit() const;

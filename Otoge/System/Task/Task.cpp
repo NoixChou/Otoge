@@ -1,4 +1,5 @@
 #include "Task.h"
+#include "TaskManager.hpp"
 
 Task::Task(const std::string& taskName)
 {
@@ -61,6 +62,52 @@ std::string Task::GetName() const
 bool Task::CanRunning() const
 {
     return IsInitialized_ && IsLiving_;
+}
+
+void Task::SetEnable(bool enable)
+{
+    OldIsEnable_ = IsEnable_;
+    IsEnable_ = enable;
+}
+
+bool Task::GetOldEnables() const
+{
+    return OldIsEnable_;
+}
+
+bool Task::IsEnable() const
+{
+    auto l_ModalTask = TaskManager::GetInstance()->GetModalTask();
+
+    if (!l_ModalTask.expired())
+    {
+        return IsOnModal();
+    }
+    return IsRawEnable();
+}
+
+bool Task::IsRawEnable() const
+{
+    if (!parentTask.expired())
+    {
+        if (!parentTask.lock()->IsEnable()) return false;
+    }
+
+    return IsEnable_;
+}
+
+
+bool Task::IsOnModal() const
+{
+    if (TaskManager::GetInstance()->GetModalTask().lock() == shared_from_this())
+    {
+        return true;
+    }
+
+    if (!parentTask.expired())
+        return parentTask.lock()->IsOnModal();
+
+    return false;
 }
 
 bool Task::IsLiving() const

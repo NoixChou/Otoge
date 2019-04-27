@@ -82,6 +82,11 @@ SettingScene::~SettingScene()
 {
 }
 
+void SettingScene::OnStartedFadeIn()
+{
+    TaskManager::GetInstance()->SetModalTask(weak_from_this());
+}
+
 void SettingScene::SceneFadeIn(float deltaTime)
 {
     float totalTime = 0.5f;
@@ -95,7 +100,6 @@ void SettingScene::SceneFadeIn(float deltaTime)
         SetTransparent(100.f);
         SetPositionX(0.f);
         IsFadingIn_ = false;
-        SetEnable(true);
     }
 }
 
@@ -110,7 +114,7 @@ void SettingScene::SceneFadeOut(float deltaTime)
     if (timerCount > totalTime)
     {
         IsFadingOut_ = false;
-        SetEnable(false);
+        TaskManager::GetInstance()->UnsetModalTask();
     }
 }
 
@@ -118,7 +122,6 @@ void SettingScene::SceneUpdate(float deltaTime)
 {
     if(CloseButton_->IsClickedMouse() || (!IsOnMouse() && MouseManager::GetInstance()->IsDownButton(MOUSE_INPUT_LEFT) && IsEnable()))
     {
-        SetEnable(false);
         StartFadeOut();
     }
 }
