@@ -30,7 +30,7 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
     CloseButton_->SetPriority(5.f);
     TitleBar_->AddChildTask(std::static_pointer_cast<Task>(CloseButton_));
 
-    auto l_TitleLabel = std::make_shared<Label>(u8"設定", ScreenData(0.0f, 0.0f, 100.f, CloseButton_->GetScreenHeight()), TitleBar_->GetDefaultScaler());
+    auto l_TitleLabel = std::make_shared<Label>("設定", ScreenData(0.0f, 0.0f, 100.f, CloseButton_->GetScreenHeight()), TitleBar_->GetDefaultScaler());
     l_TitleLabel->SetTextAlign(Label::TextAlignment::center | Label::TextAlignment::middle);
     l_TitleLabel->baseColor = GetColor(117, 117, 117);
     l_TitleLabel->AdjustmentFontSize_ = false;
@@ -50,12 +50,12 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
     AddChildTask(std::static_pointer_cast<Task>(BodyPanel_));
 
     {
-        DisplaySectionLabel_ = std::make_shared<Label>(u8"ディスプレイ", ScreenData(0.f, 0.f, 100.f, 2.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
+        DisplaySectionLabel_ = std::make_shared<Label>("ディスプレイ", ScreenData(0.f, 0.f, 100.f, 2.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
         DisplaySectionLabel_->textAlign = Label::TextAlignment::center | Label::TextAlignment::middle;
         BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(DisplaySectionLabel_));
 
         {
-            WindowWidthDescription_ = std::make_shared<Label>(u8"幅:", ScreenData(0.f, DisplaySectionLabel_->GetScreenHeight(), 12.f, 2.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
+            WindowWidthDescription_ = std::make_shared<Label>("幅:", ScreenData(0.f, DisplaySectionLabel_->GetScreenHeight(), 12.f, 2.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
             WindowWidthDescription_->textAlign = Label::TextAlignment::right | Label::TextAlignment::middle;
             WindowWidthDescription_->AdjustmentFontSize_ = false;
             WindowWidthDescription_->ChangeFontSize(engine::CastToInt(WindowWidthDescription_->GetDefaultScaler()->CalculateHeight(50.f)));
@@ -65,7 +65,7 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
             BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(WindowWidthSlider_));
         }
         {
-            WindowHeightDescription_ = std::make_shared<Label>(u8"高さ:", ScreenData(0.f, WindowWidthSlider_->GetPositionY() + WindowWidthSlider_->GetScreenHeight(), WindowWidthDescription_->GetScreenWidth(), WindowWidthDescription_->GetScreenHeight()), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
+            WindowHeightDescription_ = std::make_shared<Label>("高さ:", ScreenData(0.f, WindowWidthSlider_->GetPositionY() + WindowWidthSlider_->GetScreenHeight(), WindowWidthDescription_->GetScreenWidth(), WindowWidthDescription_->GetScreenHeight()), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
             WindowHeightDescription_->textAlign = Label::TextAlignment::right | Label::TextAlignment::middle;
             WindowHeightDescription_->AdjustmentFontSize_ = false;
             WindowHeightDescription_->ChangeFontSize(engine::CastToInt(WindowHeightDescription_->GetDefaultScaler()->CalculateHeight(50.f)));

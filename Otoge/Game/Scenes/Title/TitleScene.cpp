@@ -13,7 +13,7 @@
 TitleScene::TitleScene() : Scene("TitleScene")
 {
     // メニュー開閉ボタン
-    MenuOpener_ = std::make_shared<Button>(u8"おなまえ", ScreenData(40.f, 40.f, 20.f, 20.f, true), DefaultScaler_);
+    MenuOpener_ = std::make_shared<Button>("おなまえ", ScreenData(40.f, 40.f, 20.f, 20.f, true), DefaultScaler_);
     MenuOpener_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
     MenuOpener_->baseColor = GetColor(179, 229, 252);
     MenuOpener_->animationColor = GetColor(3, 169, 244);

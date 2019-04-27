@@ -176,5 +176,8 @@
     <ClInclude Include="System\Task\CursorDrawer.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Util\Encoding\EncodingConverter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

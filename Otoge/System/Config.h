@@ -3,10 +3,10 @@
 namespace game_config
 {
     // アプリケーション
-    constexpr auto GAME_APP_NAME = u8"おとげー"; // アプリ名
+    constexpr auto GAME_APP_NAME = "おとげー"; // アプリ名
 
 #ifndef BUILD_BY_CI
-    constexpr auto GAME_APP_VER = u8"0.0.1"; // バージョン
+    constexpr auto GAME_APP_VER = "0.0.1"; // バージョン
 #else
     constexpr std::string GAME_APP_VER = APP_VER;
 #endif
@@ -15,7 +15,7 @@ namespace game_config
     constexpr auto GAME_SCREEN_WIDTH = 1024;
     constexpr auto GAME_SCREEN_HEIGHT = 720;
 
-    constexpr auto GAME_APP_DEFAULT_FONT = u8"Noto Sans CJK JP Thin"; // デフォルトのフォント
+    constexpr auto GAME_APP_DEFAULT_FONT = "Noto Sans CJK JP Thin"; // デフォルトのフォント
 
     // 設定ファイル
     constexpr auto SETTINGS_PATH = "system.";

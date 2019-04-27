@@ -1,4 +1,4 @@
-#include "DxSettings.hpp"
+﻿#include "DxSettings.hpp"
 
 int DxSettings::windowWidth;
 int DxSettings::windowHeight;

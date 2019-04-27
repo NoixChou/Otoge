@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 // コンパイラ設定
+#pragma execution_character_set("utf-8")
 #define _CRT_SECURE_NO_WARNINGS
 
 // Windows api
@@ -43,6 +44,9 @@
 #include <future>
 #include <thread>
 #include <numeric>
+#include <string>
+#include <locale>
+#include <codecvt>
 
 // Boostライブラリ
 #include <boost/property_tree/ptree.hpp>

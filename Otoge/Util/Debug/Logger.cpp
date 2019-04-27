@@ -1,5 +1,5 @@
 Ôªø#include "Logger.h"
-
+#include "../Encoding/EncodingConverter.h"
 using namespace std;
 
 int Logger::userCount = 0;
@@ -15,7 +15,7 @@ Logger::Logger(const string &moduleName)
         auto l_ConInResult = freopen("CONIN$", "r", stdin);
         if(l_ConOutResult == nullptr || l_ConInResult == nullptr)
         {
-            Critical("ïWèÄI/OÉXÉgÉäÅ[ÉÄÇÃéÊìæÇ…é∏îsÇµÇ‹ÇµÇΩ");
+            Critical("Ê®ôÊ∫ñI/O„Çπ„Éà„É™„Éº„É†„ÅÆÂèñÂæó„Å´Â§±Êïó„Åó„Åæ„Åó„Åü");
         }
     }
 #endif
@@ -42,30 +42,30 @@ Logger::~Logger()
 void Logger::Log(const string& message, const string &tag)
 {
 #ifdef _DEBUG
-    printf(u8"[%s] ", tag.c_str());
-    OutputDebugString((u8"[" + tag + "] ").c_str());
+    printf("[%s]", encoding::ConvertUtf8ToSJIS(tag).c_str());
+    OutputDebugString(("[" + tag + "] ").c_str());
 
     if (ModuleName_ != "")
-        printf(u8"<%s> ", ModuleName_.c_str()), OutputDebugString(("<" + ModuleName_ + "> ").c_str());
-    printf(u8"%s", message.c_str());
+        printf("<%s> ", encoding::ConvertUtf8ToSJIS(ModuleName_).c_str()), OutputDebugString(encoding::ConvertUtf8ToSJIS("<" + ModuleName_ + "> ").c_str());
+    printf(encoding::ConvertUtf8ToSJIS(message).c_str());
     printf("\n");
-    OutputDebugString(message.c_str());
+    OutputDebugString(encoding::ConvertUtf8ToSJIS(message).c_str());
     OutputDebugString("\n");
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN); //ÂàùÊúüËâ≤
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
 #endif
 }
 
 void Logger::LowLevelLog(const std::string& message, const std::string& tag)
 {
 #ifdef _DEBUG
-    printf(u8"[%s] ", tag.c_str());
-    OutputDebugString(("[" + tag + "] ").c_str());
+    printf("[%s] ", encoding::ConvertUtf8ToSJIS(tag).c_str());
+    OutputDebugString(encoding::ConvertUtf8ToSJIS("[" + tag + "] ").c_str());
 
-    printf(u8"%s", message.c_str());
+    printf("%s", encoding::ConvertUtf8ToSJIS(message).c_str());
     printf("\n");
-    OutputDebugString(message.c_str());
+    OutputDebugString(encoding::ConvertUtf8ToSJIS(message).c_str());
     OutputDebugString("\n");
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN); //ÂàùÊúüËâ≤
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
 #endif
 }
 

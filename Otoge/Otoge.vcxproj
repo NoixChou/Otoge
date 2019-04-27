@@ -233,6 +233,7 @@
     <ClInclude Include="Util\Calculate\ScreenData.h" />
     <ClInclude Include="Util\Calculate\Screen\FontStringCalculator.hpp" />
     <ClInclude Include="Util\Calculate\Screen\FlexibleScaler.hpp" />
+    <ClInclude Include="Util\Encoding\EncodingConverter.h" />
     <ClInclude Include="Util\Setting\SettingManager.h" />
     <ClInclude Include="System\Config.h" />
     <ClInclude Include="System\Task\Task.h" />
