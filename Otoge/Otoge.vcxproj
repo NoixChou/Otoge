@@ -104,7 +104,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../DxLib; $(BOOST_DIR) ;System/PrecompiledHeader</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../DxLib;C:\Program Files\boost\boost_1_68_0;System/PrecompiledHeader</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>

@@ -54,6 +54,7 @@ void PreInitialize()
     g_SystemSettings->SetGlobal();
 
     ChangeWindowMode(!g_SystemSettings->Get<bool>(SETTINGS_FULLSCREEN).get()); // ウィンドウモード/フルスクリーン
+	SetUseCharCodeFormat(DX_CHARCODEFORMAT_UTF8);
     SetMainWindowText(GAME_APP_NAME " v" GAME_APP_VER); // ウィンドウのタイトル
     SetAlwaysRunFlag(TRUE); // 常に処理
     SetWaitVSyncFlag(static_cast<int>(g_SystemSettings->Get<bool>(SETTINGS_VSYNC).get())); // 垂直同期

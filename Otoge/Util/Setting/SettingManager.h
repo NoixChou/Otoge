@@ -30,11 +30,11 @@ public:
 
     template<typename T> void SetDefault(const std::string &dataPath, T value)
     {
-        Logger_->Debug("‰Šú’lƒZƒbƒg: " + dataPath + " = " + std::to_string(value));
+        Logger_->Debug("åˆæœŸå€¤ã‚»ãƒƒãƒˆ: " + dataPath + " = " + std::to_string(value));
 
         if(SettingsTree_.get_optional<T>(dataPath) == boost::none)
         {
-            Logger_->Info("‰Šú‰»: " + dataPath);
+            Logger_->Info("åˆæœŸåŒ–: " + dataPath);
             Set(dataPath, value);
         }
         
@@ -42,11 +42,11 @@ public:
     }
 	template<> void SetDefault<std::string>(const std::string& dataPath, std::string value)
     {
-		Logger_->Debug("‰Šú’lƒZƒbƒg: " + dataPath + " = " + value);
+		Logger_->Debug("åˆæœŸå€¤ã‚»ãƒƒãƒˆ: " + dataPath + " = " + value);
 
 		if (SettingsTree_.get_optional<std::string>(dataPath) == boost::none)
 		{
-			Logger_->Info("‰Šú‰»: " + dataPath);
+			Logger_->Info("åˆæœŸåŒ–: " + dataPath);
 			Set(dataPath, value);
 		}
     }
@@ -55,22 +55,22 @@ public:
     {
         if (boost::optional<T> value = SettingsTree_.get_optional<T>(dataPath))
         {
-            Logger_->Debug( "æ“¾¬Œ÷: " + dataPath + " = " + std::to_string(value.get()));
+            Logger_->Debug( "å–å¾—æˆåŠŸ: " + dataPath + " = " + std::to_string(value.get()));
             return value;
         }
 
-        Logger_->Error("æ“¾¸”s: " + dataPath);
+        Logger_->Error("å–å¾—å¤±æ•—: " + dataPath);
         return boost::none;
     }
 	template<> boost::optional<std::string> Get(const std::string& dataPath)
 	{
 		if (boost::optional<std::string> value = SettingsTree_.get_optional<std::string>(dataPath))
 		{
-			Logger_->Debug("æ“¾¬Œ÷: " + dataPath + " = " + value.get());
+			Logger_->Debug("å–å¾—æˆåŠŸ: " + dataPath + " = " + value.get());
 			return value;
 		}
         
-        Logger_->Error("æ“¾¸”s: " + dataPath);
+        Logger_->Error("å–å¾—å¤±æ•—: " + dataPath);
         return boost::none;
     }
 

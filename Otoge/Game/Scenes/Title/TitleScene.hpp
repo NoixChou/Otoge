@@ -23,4 +23,3 @@ public:
     void SceneUpdate(float deltaTime) override;
     void Draw() override;
 };
-
