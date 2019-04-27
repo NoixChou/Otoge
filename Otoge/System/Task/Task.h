@@ -5,35 +5,35 @@
 class Task : public std::enable_shared_from_this<Task>
 {
 private:
-    //int ID = -1; // ƒ^ƒXƒNID
+    //int ID = -1; // ã‚¿ã‚¹ã‚¯ID
 
 protected:
-    std::string TaskName_ = ""; // –¼‘O
+    std::string TaskName_ = ""; // åå‰
 
     std::shared_ptr<Logger> Logger_;
 
-    float RunningPriority_ = 0.f; // Às—Dæ‡ˆÊ
-    bool IsLiving_ = false; // ¶‚«‚Ä‚¢‚ÄAÀs‰Â”\‚©(–¢g—p)
-    bool IsTerminated_ = false; // I—¹’†‚©
-    bool IsInitialized_ = false; // ‰Šú‰»‚³‚ê‚Ä‚¢‚é‚©
-    bool IsRunning_ = false; // Update‚ğÀs‚·‚é‚©
+    float RunningPriority_ = 0.f; // å®Ÿè¡Œå„ªå…ˆé †ä½
+    bool IsLiving_ = false; // ç”Ÿãã¦ã„ã¦ã€å®Ÿè¡Œå¯èƒ½ã‹(æœªä½¿ç”¨)
+    bool IsTerminated_ = false; // çµ‚äº†ä¸­ã‹
+    bool IsInitialized_ = false; // åˆæœŸåŒ–ã•ã‚Œã¦ã„ã‚‹ã‹
+    bool IsRunning_ = false; // Updateã‚’å®Ÿè¡Œã™ã‚‹ã‹
 
-    float TickSpeed_ = 1.0f; // ˆ—ƒXƒs[ƒh (deltaTime‚ª•â³‚³‚ê‚é)
+    float TickSpeed_ = 1.0f; // å‡¦ç†ã‚¹ãƒ”ãƒ¼ãƒ‰ (deltaTimeãŒè£œæ­£ã•ã‚Œã‚‹)
 
-    bool HasLifespan_ = false; // õ–½‚ª‚ ‚é‚©
-    float Lifespan_ = 0.f; // õ–½
+    bool HasLifespan_ = false; // å¯¿å‘½ãŒã‚ã‚‹ã‹
+    float Lifespan_ = 0.f; // å¯¿å‘½
 
 public:
     using TaskPointer = std::shared_ptr<Task>;
     using WeakTaskPointer = std::weak_ptr<Task>;
 
-    bool isAutoUpdateChildren = true; // qƒ^ƒXƒN‚ÌUpdate‚ğ©“®‚ÅÀs‚·‚é‚©
+    bool isAutoUpdateChildren = true; // å­ã‚¿ã‚¹ã‚¯ã®Updateã‚’è‡ªå‹•ã§å®Ÿè¡Œã™ã‚‹ã‹
 
-    WeakTaskPointer parentTask; // eƒ^ƒXƒN
-    std::vector<TaskPointer> children; // qƒ^ƒXƒN
+    WeakTaskPointer parentTask; // è¦ªã‚¿ã‚¹ã‚¯
+    std::vector<TaskPointer> children; // å­ã‚¿ã‚¹ã‚¯
     std::vector<TaskPointer> childrenQueues;
 
-    float timerCount = 0.f; // deltaTime’~Ï
+    float timerCount = 0.f; // deltaTimeè“„ç©
 
     Task(const std::string &taskName);
     virtual ~Task();
@@ -67,7 +67,7 @@ public:
     float GetLifespan() const;
     void SetLifespan(float lifespan);
 
-    // qƒ^ƒXƒN
+    // å­ã‚¿ã‚¹ã‚¯
     void ChildUpdate(float deltaTime);
     bool AddChildTask(const TaskPointer& task);
 	std::vector<TaskPointer>& GetChildren();

@@ -11,8 +11,8 @@
 
 TitleScene::TitleScene() : Scene("TitleScene")
 {
-    // ƒƒjƒ…[ŠJ•Âƒ{ƒ^ƒ“
-    MenuOpener_ = std::make_shared<Button>("‚¨‚È‚Ü‚¦", ScreenData(40.f, 40.f, 20.f, 20.f, true), DefaultScaler_);
+    // ãƒ¡ãƒ‹ãƒ¥ãƒ¼é–‹é–‰ãƒœã‚¿ãƒ³
+    MenuOpener_ = std::make_shared<Button>("ãŠãªã¾ãˆ", ScreenData(40.f, 40.f, 20.f, 20.f, true), DefaultScaler_);
     MenuOpener_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
     MenuOpener_->baseColor = GetColor(179, 229, 252);
     MenuOpener_->animationColor = GetColor(3, 169, 244);
@@ -21,7 +21,7 @@ TitleScene::TitleScene() : Scene("TitleScene")
     MenuOpener_->SetPriority(10.f);
     AddChildTask(std::static_pointer_cast<Task>(MenuOpener_));
 
-    //ƒƒjƒ…[€–Úƒ{ƒ^ƒ“
+    //ãƒ¡ãƒ‹ãƒ¥ãƒ¼é …ç›®ãƒœã‚¿ãƒ³
     auto l_GroupScreen = ScreenData(20.f, 43.f, 60.f, 14.f);
     MenuGroup_ = std::make_shared<Scene>("MenuGroup", l_GroupScreen, DefaultScaler_);
     MenuGroup_->SetTransparent(0.f);

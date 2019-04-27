@@ -12,7 +12,7 @@ Task::~Task()
     IsRunning_ = false;
     IsInitialized_ = false;
 
-    Logger_->Info("タスク開放");
+    Logger_->Info("繧ｿ繧ｹ繧ｯ髢区叛");
 }
 
 bool Task::Initialize(int taskID)
@@ -132,7 +132,7 @@ bool Task::AddChildTask(const TaskPointer& task)
 {
     childrenQueues.push_back(task);
     task->parentTask = weak_from_this();
-    //Logger_->Debug(TaskName_ + "タスクキュー追加 キュー数:" + std::to_string(childrenQueues.size()));
+    //Logger_->Debug(TaskName_ + "繧ｿ繧ｹ繧ｯ繧ｭ繝･繝ｼ霑ｽ蜉 繧ｭ繝･繝ｼ謨ｰ:" + std::to_string(childrenQueues.size()));
     return task->Initialize(static_cast<int>(childrenQueues.size()) - 1);
 }
 

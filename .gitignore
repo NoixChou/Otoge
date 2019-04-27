@@ -194,10 +194,11 @@
 /DxLib/celt_vs2012_x64_d.lib
 /DxLib/celt_vs2012_x64.lib
 
-/work_dir/config.json
 /Otoge.sln.DotSettings.user
+/Otoge.vcxproj.user
 /Bin
-/WorkDir
+/WorkDir/*
+!/WorkDir/.gitkeep
 /PDB
 /Otoge/x64
 /x64/Debug

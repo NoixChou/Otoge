@@ -1,6 +1,6 @@
 #pragma once
 
-// ƒRƒ“ƒpƒCƒ‰İ’è
+// ã‚³ãƒ³ãƒ‘ã‚¤ãƒ©è¨­å®š
 #define _CRT_SECURE_NO_WARNINGS
 
 // Windows api
@@ -10,7 +10,7 @@
 #include <intrin.h>
 
 
-// ƒ‰ƒ“ƒ^ƒCƒ€
+// ãƒ©ãƒ³ã‚¿ã‚¤ãƒ 
 #include <cstdio>
 #include <cstdlib>
 #include <cstdint>
@@ -18,7 +18,7 @@
 #include <cstring>
 #include <cmath>
 
-// •W€ƒ‰ƒCƒuƒ‰ƒŠ
+// æ¨™æº–ãƒ©ã‚¤ãƒ–ãƒ©ãƒª
 #include <string>
 #include <iostream>
 #include <iomanip>
@@ -44,9 +44,9 @@
 #include <thread>
 #include <numeric>
 
-// Boostƒ‰ƒCƒuƒ‰ƒŠ
+// Boostãƒ©ã‚¤ãƒ–ãƒ©ãƒª
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
-// DXƒ‰ƒCƒuƒ‰ƒŠ
+// DXãƒ©ã‚¤ãƒ–ãƒ©ãƒª
 #include <DxLib.h>

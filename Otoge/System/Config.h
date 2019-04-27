@@ -1,16 +1,16 @@
 #pragma once
 
-// ƒAƒvƒŠƒP[ƒVƒ‡ƒ“
-#define GAME_APP_NAME "‚¨‚Æ‚°[" // ƒAƒvƒŠ–¼
-#define GAME_APP_VER "0.0.1" // ƒo[ƒWƒ‡ƒ“
+// ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³
+#define GAME_APP_NAME "ãŠã¨ã’ãƒ¼" // ã‚¢ãƒ—ãƒªå
+#define GAME_APP_VER "0.0.1" // ãƒãƒ¼ã‚¸ãƒ§ãƒ³
 
-// ‰æ–Ê
+// ç”»é¢
 #define GAME_SCREEN_WIDTH 1024
 #define GAME_SCREEN_HEIGHT 720
 
-constexpr auto GAME_APP_DEFAULT_FONT = "Noto Sans CJK JP Thin"; // ƒfƒtƒHƒ‹ƒg‚ÌƒtƒHƒ“ƒg
+constexpr auto GAME_APP_DEFAULT_FONT = "Noto Sans CJK JP Thin"; // ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆ
 
-// İ’èƒtƒ@ƒCƒ‹
+// è¨­å®šãƒ•ã‚¡ã‚¤ãƒ«
 constexpr auto SETTINGS_PATH = "system.";
 
 constexpr auto SETTINGS_FULLSCREEN = "system.graphic.fullscreen";

@@ -21,18 +21,18 @@ SettingManager::~SettingManager()
 
 bool SettingManager::Load(const std::string &fileName, bool autoCreate)
 {
-    Logger_->Info(fileName + " �ǂݍ��ݒ�...");
+    Logger_->Info(fileName + " 読み込み中...");
 
     try {
         read_json(fileName, SettingsTree_);
-        Logger_->Info("�ǂݍ��ݐ����B");
+        Logger_->Info("読み込み成功。");
         return true;
     }catch(boost::property_tree::json_parser::json_parser_error e)
     {
-        Logger_->Critical(fileName + "�̓ǂݍ��݂Ɏ��s���܂����B\n�ڍ�: " + e.what());
+        Logger_->Critical(fileName + "の読み込みに失敗しました。\n詳細: " + e.what());
         if(autoCreate)
         {
-            Logger_->Warn("�t�@�C����������Ȃ��̂ō쐬���܂�...");
+            Logger_->Warn("ファイルが見つからないので作成します...");
             std::ofstream f(fileName);
             f.write("{}", 2);
             f.close();
@@ -41,7 +41,7 @@ bool SettingManager::Load(const std::string &fileName, bool autoCreate)
             {
                 //SettingsTree_.push_back(std::make_pair("", DefaultTree_));
                 Save();
-                Logger_->Warn("�t�@�C�����쐬���܂����B");
+                Logger_->Warn("ファイルを作成しました。");
                 return true;
             }
         }
@@ -57,7 +57,7 @@ bool SettingManager::Load(bool autoCreate)
 
 bool SettingManager::Reload()
 {
-    Logger_->Debug(FileName_ + " �ēǍ�");
+    Logger_->Debug(FileName_ + " 再読込");
     return Load(FileName_);
 }
 
@@ -68,15 +68,15 @@ bool SettingManager::Save()
 
 bool SettingManager::Save(const std::string &fileName)
 {
-    Logger_->Info(fileName + "�ۑ���...");
+    Logger_->Info(fileName + "保存中...");
 
     try {
         write_json(fileName, SettingsTree_);
-        Logger_->Info(FileName_ + " �ۑ�");
+        Logger_->Info(FileName_ + " 保存");
         return true;
     } catch(boost::property_tree::json_parser::json_parser_error e)
     {
-        Logger_->Critical(fileName + "�̕ۑ��Ɏ��s���܂����B\n�ڍ�: " + e.what());
+        Logger_->Critical(fileName + "の保存に失敗しました。\n詳細: " + e.what());
     }
     return false;
 }
@@ -91,10 +91,10 @@ void SettingManager::SetGlobal()
     if(!GlobalSettings_)
     {
         GlobalSettings_ = this;
-        Logger_->Warn("�O���[�o���ݒ�ɂȂ�܂����B");
+        Logger_->Warn("グローバル設定になりました。");
     }else
     {
-        Logger_->Error("���ɃO���[�o���ݒ肪���݂���̂�SetGlobal()���Ă΂�܂���");
+        Logger_->Error("既にグローバル設定が存在するのにSetGlobal()が呼ばれました");
     }
 }
 
