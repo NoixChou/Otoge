@@ -15,7 +15,7 @@ namespace game_config
     constexpr auto GAME_SCREEN_WIDTH = 1024;
     constexpr auto GAME_SCREEN_HEIGHT = 720;
 
-    constexpr auto GAME_APP_DEFAULT_FONT = "Noto Sans CJK JP Thin"; // デフォルトのフォント
+    constexpr auto GAME_APP_DEFAULT_FONT = "ＭＳ　ゴシック"; // デフォルトのフォント
 
     // 設定ファイル
     constexpr auto SETTINGS_PATH = "system.";
@@ -28,10 +28,10 @@ namespace game_config
     constexpr auto SETTINGS_AA_QUALITY = "system.graphic.antialiasing.quality";
 
     constexpr auto SETTINGS_FONT_NAME = "system.display.font.default";
-    constexpr auto SETTINGS_FONT_DRAWTYPE = "system.display.font.drawType";
+    constexpr auto SETTINGS_FONT_DRAWTYPE = "system.display.font.draw_type";
 
-    constexpr auto SETTINGS_DEBUG_DRAW_SCENE_FRAME = "system.debug.scene.isDrawFrame";
-    constexpr auto SETTINGS_DEBUG_DRAW_DTASK_POINT = "system.debug.drawable.isDrawPoint";
+    constexpr auto SETTINGS_DEBUG_DRAW_SCENE_FRAME = "system.debug.scene.draw_frame";
+    constexpr auto SETTINGS_DEBUG_DRAW_DTASK_POINT = "system.debug.drawable.draw_point";
 
     constexpr auto SETTINGS_MOUSE_AREA_LIMIT = "input.mouse.area_limit";
     constexpr auto SETTINGS_MOUSE_USEORIGINAL = "input.mouse.use_original";
