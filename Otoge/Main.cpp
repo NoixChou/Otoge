@@ -73,6 +73,7 @@ void PreInitialize()
     SetMainWindowText((static_cast<std::string>(game_config::GAME_APP_NAME) + " v" + static_cast<std::string>(game_config::GAME_APP_VER)).c_str()); // ウィンドウのタイトル
     SetAlwaysRunFlag(TRUE); // 常に処理
     SetWaitVSyncFlag(engine::CastToInt(DxSettings::doVSync)); // 垂直同期
+    SetFontUseAdjustSizeFlag(FALSE);
     SetUseFPUPreserveFlag(TRUE);
     SetGraphMode(DxSettings::windowWidth, DxSettings::windowHeight, 32);
     SetFullSceneAntiAliasingMode(DxSettings::antialiasingSample, DxSettings::antialiasingQuality);

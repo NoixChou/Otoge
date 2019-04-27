@@ -216,6 +216,7 @@ void Scene::ReCalculateScreen()
 
 bool Scene::RefreshScaler()
 {
+    Screen_ = ParentScaler_->Calculate(PreLayoutScreen_);
     DefaultScaler_->SetScreenWidth(Screen_.width);
     DefaultScaler_->SetScreenHeight(Screen_.height);
     DefaultScaler_->SetScale(1.0f);
@@ -244,7 +245,7 @@ bool Scene::RefreshDrawBuffer()
     }
 
     RefreshChildren();
-    
+
     return true;
 }
 

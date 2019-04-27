@@ -1,7 +1,7 @@
 ﻿#include "Label.hpp"
 #include "../Config.h"
 #include "../../Util/Calculate/Screen/FontStringCalculator.hpp"
-
+#include "../GlobalMethod.hpp"
 
 Label::Label(const std::string& label, const ScreenData& layoutScreen, std::shared_ptr<FlexibleScaler> parentScaler) : GUI(label + "\"<Label>\"", layoutScreen, parentScaler)
 {
@@ -19,6 +19,7 @@ void Label::GUIUpdate(float deltaTime)
 {
     if (IsChangedSize() || IsChangedLabel_)
     {
+        //Logger_->Debug("Ascent: " + std::to_string(GetFontAscentToHandle(FontHandle_)));
         if ((textAlign & TextAlignment::left) == TextAlignment::left)
             TextX_ = 0.f;
         else if ((textAlign & TextAlignment::center) == TextAlignment::center)

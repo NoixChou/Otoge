@@ -22,7 +22,7 @@ void GUI::SceneUpdate(float deltaTime)
     if(IsChangedSize() && AdjustmentFontSize_)
     {
         ChangeFontSize(engine::CastToInt(GetRawScreenHeight()));
-        if (FontStringCalculator::GetStringWidth(FontHandle_, Label_) > GetRawScreenWidth()) ChangeFontSize(engine::CastToInt(GetRawScreenWidth() * 1.5f) / static_cast<int>(Label_.length()));
+        if (FontStringCalculator::GetStringWidth(FontHandle_, Label_) > GetRawScreenWidth()) ChangeFontSize(engine::CastToInt(GetRawScreenWidth()) / static_cast<int>(Label_.length()));
     }
 
     GUIUpdate(deltaTime);

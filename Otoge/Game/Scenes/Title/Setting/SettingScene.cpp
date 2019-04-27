@@ -52,6 +52,9 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
     {
         DisplaySectionLabel_ = std::make_shared<Label>("ディスプレイ", ScreenData(0.f, 0.f, 100.f, 2.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
         DisplaySectionLabel_->textAlign = Label::TextAlignment::center | Label::TextAlignment::middle;
+        DisplaySectionLabel_->AdjustmentFontSize_ = false;
+        DisplaySectionLabel_->ChangeFontSize(DisplaySectionLabel_->GetDefaultScaler()->CalculateHeight(80.f));
+        DisplaySectionLabel_->ChangeFontThickness(2);
         BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(DisplaySectionLabel_));
 
         {
@@ -59,9 +62,11 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
             WindowWidthDescription_->textAlign = Label::TextAlignment::right | Label::TextAlignment::middle;
             WindowWidthDescription_->AdjustmentFontSize_ = false;
             WindowWidthDescription_->ChangeFontSize(engine::CastToInt(WindowWidthDescription_->GetDefaultScaler()->CalculateHeight(50.f)));
+            WindowWidthDescription_->ChangeFontThickness(4);
             BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(WindowWidthDescription_));
 
             WindowWidthSlider_ = std::make_shared<SlideBar>("windowWidth", ScreenData(WindowWidthDescription_->GetScreenWidth(), DisplaySectionLabel_->GetScreenHeight(), 100.f - WindowWidthDescription_->GetScreenWidth(), WindowWidthDescription_->GetScreenHeight()), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
+            WindowWidthSlider_->SetMaxValue(1920.f);
             BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(WindowWidthSlider_));
         }
         {
@@ -69,9 +74,11 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
             WindowHeightDescription_->textAlign = Label::TextAlignment::right | Label::TextAlignment::middle;
             WindowHeightDescription_->AdjustmentFontSize_ = false;
             WindowHeightDescription_->ChangeFontSize(engine::CastToInt(WindowHeightDescription_->GetDefaultScaler()->CalculateHeight(50.f)));
+            WindowHeightDescription_->ChangeFontThickness(4);
             BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(WindowHeightDescription_));
 
             WindowHeightSlider_ = std::make_shared<SlideBar>("windowHeight", ScreenData(WindowWidthSlider_->GetPositionX(), WindowHeightDescription_->GetPositionY(), WindowWidthSlider_->GetScreenWidth(), WindowHeightDescription_->GetScreenHeight()), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
+            WindowHeightSlider_->SetMaxValue(1080.f);
             BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(WindowHeightSlider_));
         }
     }
@@ -85,6 +92,8 @@ SettingScene::~SettingScene()
 void SettingScene::OnStartedFadeIn()
 {
     TaskManager::GetInstance()->SetModalTask(weak_from_this());
+    WindowWidthSlider_->SetValue(engine::CastToFloat(SettingManager::GetGlobal()->Get<int>(game_config::SETTINGS_RES_WIDTH).get()));
+    WindowHeightSlider_->SetValue(engine::CastToFloat(SettingManager::GetGlobal()->Get<int>(game_config::SETTINGS_RES_HEIGHT).get()));
 }
 
 void SettingScene::SceneFadeIn(float deltaTime)
@@ -122,7 +131,14 @@ void SettingScene::SceneUpdate(float deltaTime)
 {
     if(CloseButton_->IsClickedMouse() || (!IsOnMouse() && MouseManager::GetInstance()->IsDownButton(MOUSE_INPUT_LEFT) && IsEnable()))
     {
+        SettingManager::GetGlobal()->Save();
         StartFadeOut();
+    }
+
+    if(WindowWidthSlider_->IsChanged() || WindowHeightSlider_->IsChanged())
+    {
+        SettingManager::GetGlobal()->Set(game_config::SETTINGS_RES_WIDTH, engine::CastToInt(WindowWidthSlider_->GetValue()));
+        SettingManager::GetGlobal()->Set(game_config::SETTINGS_RES_HEIGHT, engine::CastToInt(WindowHeightSlider_->GetValue()));
     }
 }
 
