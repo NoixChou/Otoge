@@ -195,7 +195,6 @@
 /DxLib/celt_vs2012_x64.lib
 
 /Otoge.sln.DotSettings.user
-/Otoge.vcxproj.user
 /Bin
 /WorkDir/*
 !/WorkDir/.gitkeep
