@@ -15,6 +15,7 @@ protected:
     std::shared_ptr<FlexibleScaler> DefaultScaler_ = nullptr;
     bool IsCalculated_ = false;
     bool IsBufferUpdate_ = true;
+    int AlphaBlendMode_ = DX_BLENDMODE_PMA_ALPHA;
 
 public:
     using DrawFunction = std::function<void()>;
@@ -69,6 +70,8 @@ public:
     void SetVisible(bool visible);
     void SetTransparent(float transparent);
     float GetTransparent() const;
+    void SetAlphaBlendMode(int blendMode);
+    int GetAlphaBlendMode() const;
 
     bool IsVisible() const;
     bool IsChangedSize() const;

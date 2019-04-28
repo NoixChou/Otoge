@@ -35,6 +35,11 @@ void GUI::SetLabel(const std::string& label)
     Label_ = label;
 }
 
+std::string GUI::GetLabel()
+{
+    return Label_;
+}
+
 bool GUI::ChangeFont(const char* fontName, int size, int thickness, int fontType)
 {
     RemoveFont();

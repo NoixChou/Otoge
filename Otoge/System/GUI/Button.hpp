@@ -9,6 +9,8 @@ private:
     std::shared_ptr<Label> TextLabel_;
 
 public:
+    bool isDrawBase = true;
+
     unsigned textColor;
 	unsigned animationColor;
 

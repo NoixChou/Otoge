@@ -23,6 +23,7 @@ public:
     virtual void Draw() = 0;
 
     void SetLabel(const std::string& label);
+    std::string GetLabel();
 
     bool ChangeFont(const char *fontName = nullptr, int size = -1, int thickness = -1, int fontType = -1);
     bool ChangeFontSize(int size = -1);

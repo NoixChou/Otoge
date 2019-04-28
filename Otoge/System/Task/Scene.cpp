@@ -124,7 +124,7 @@ void Scene::Update(float deltaTime)
         // デバッグ情報の描画
         if (IsDrawFrame_ && IsOnMouse())
         {
-            SetDrawBlendMode(DX_BLENDMODE_PMA_ALPHA, 127);
+            SetDrawBlendMode(AlphaBlendMode_, 127);
             DrawFormatString(0, 0, GetColor(0, 0, 255), "+%.2f", DefaultScaler_->GetDiffX());
             SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
         }
@@ -140,13 +140,9 @@ void Scene::Update(float deltaTime)
             DrawCircle(engine::CastToInt(DefaultScaler_->GetDiffX()), engine::CastToInt(DefaultScaler_->GetDiffY()), 3, GetColor(0, 255, 255));
         }
 
-        // 不正バッファ防止
-        if (1.f > Screen_.width) Screen_.width = 1.f;
-        if (1.f > Screen_.height) Screen_.height = 1.f;
-
         // シーンバッファを描画(透明度も考慮)
         if (static_cast<int>(Transparency_) < 100)
-            SetDrawBlendMode(DX_BLENDMODE_PMA_ALPHA, static_cast<int>((Transparency_ / 100.f) * 255.f));
+            SetDrawBlendMode(AlphaBlendMode_, static_cast<int>((Transparency_ / 100.f) * 255.f));
         else
             SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
@@ -230,6 +226,10 @@ bool Scene::RefreshScaler()
 
 bool Scene::RefreshDrawBuffer()
 {
+    // 不正バッファ防止
+    if (1.f > Screen_.width) Screen_.width = 1.f;
+    if (1.f > Screen_.height) Screen_.height = 1.f;
+
     if (SceneBuffer_ != -1)
     {
         DeleteGraph(SceneBuffer_);
@@ -415,6 +415,16 @@ void Scene::SetTransparent(float transparent)
 float Scene::GetTransparent() const
 {
     return Transparency_;
+}
+
+void Scene::SetAlphaBlendMode(int blendMode)
+{
+    AlphaBlendMode_ = blendMode;
+}
+
+int Scene::GetAlphaBlendMode() const
+{
+    return AlphaBlendMode_;
 }
 
 bool Scene::IsVisible() const

@@ -43,16 +43,18 @@ void Button::GUIUpdate(float deltaTime)
 
 void Button::Draw()
 {
-    DrawBox(0, 0, engine::CastToInt(GetRawScreenWidth()), engine::CastToInt(GetRawScreenHeight()), baseColor, TRUE);
+    if(isDrawBase)
+        DrawBox(0, 0, engine::CastToInt(GetRawScreenWidth()), engine::CastToInt(GetRawScreenHeight()), baseColor, TRUE);
+
     if (IsHoldMouse() && timerCount > 0.3f)
     {
-        SetDrawBlendMode(DX_BLENDMODE_PMA_ALPHA, 127);
+        SetDrawBlendMode(AlphaBlendMode_, 127);
         DrawBox(0, 0, engine::CastToInt(GetRawScreenWidth()), engine::CastToInt(GetRawScreenHeight()), animationColor, TRUE);
     }
     if (IsOnMouse())
     {
         //Logger_->Debug("btn Draw");
-        SetDrawBlendMode(DX_BLENDMODE_PMA_ALPHA, 20);
+        SetDrawBlendMode(AlphaBlendMode_, 20);
         DrawBox(0, 0, engine::CastToInt(GetRawScreenWidth()), engine::CastToInt(GetRawScreenHeight()), textColor, TRUE);
     }
 }
