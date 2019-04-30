@@ -3,7 +3,7 @@
 #include "../../Util/Setting/SettingManager.h"
 #include "../Input/MouseManager.hpp"
 #include "../../Util/Calculate/Screen/FontStringCalculator.hpp"
-
+#include "../../Util/Visual/Color.hpp"
 int DrawableTask::TemporaryDrawBuffer_ = -1;
 int DrawableTask::BufferWidth_ = -1;
 int DrawableTask::BufferHeight_ = -1;
@@ -68,7 +68,7 @@ void DrawableTask::Update(float deltaTime)
 			float y = ParentScaler_->CalculatePositionY(position.y);
 			float rx = ParentScaler_->CalculateWidth(DrawPointSize_);
 			float ry = ParentScaler_->CalculateHeight(DrawPointSize_);
-			DrawOvalAA(x, y, rx, ry, 50, GetColor(0, 255, 0), TRUE);
+			DrawOvalAA(x, y, rx, ry, 50, color_preset::LIGHT_GREEN, TRUE);
 		}
 
 		/* 描画終わり */

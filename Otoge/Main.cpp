@@ -11,6 +11,7 @@
 #include "System/GlobalMethod.hpp"
 #include "System/Task/CursorDrawer.hpp"
 #include "Util/Calculate/Animation/Easing.hpp"
+#include "Util/Visual/Color.hpp"
 using namespace std;
 
 // 前方宣言
@@ -137,15 +138,15 @@ void Initialize()
                 if (MouseManager::GetInstance()->IsHoldButton(MOUSE_INPUT_LEFT))
                     cursorSize = ease(cursorDrawer->timerCount, totalTime, cursorDrawer->GetDefaultScaler()->CalculateHeight(HoldingSize), currentSize);
                 else
-                    cursorSize = Easing::OutBounce(cursorDrawer->timerCount, totalTime, cursorDrawer->GetDefaultScaler()->CalculateHeight(ReleasedSize), currentSize);
+                    cursorSize = Easing::OutExp(cursorDrawer->timerCount, totalTime, cursorDrawer->GetDefaultScaler()->CalculateHeight(ReleasedSize), currentSize);
 
                 if(cursorDrawer->timerCount > totalTime)
                 {
                     cursorDrawer->timerCount = totalTime;
                 }
                 
-                DrawCircle(MouseManager::GetInstance()->GetMouseX(), MouseManager::GetInstance()->GetMouseY(), engine::CastToInt(cursorSize) - 1, GetColor(255, 240, 240), TRUE);
-                DrawCircle(MouseManager::GetInstance()->GetMouseX(), MouseManager::GetInstance()->GetMouseY(), engine::CastToInt(cursorSize), GetColor(0, 0, 0), FALSE);
+                DrawCircle(MouseManager::GetInstance()->GetMouseX(), MouseManager::GetInstance()->GetMouseY(), engine::CastToInt(cursorSize) - 1, color_preset::WHITE, TRUE);
+                DrawCircle(MouseManager::GetInstance()->GetMouseX(), MouseManager::GetInstance()->GetMouseY(), engine::CastToInt(cursorSize), color_preset::BLACK, FALSE);
             });
         TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(cursorDrawer));
 

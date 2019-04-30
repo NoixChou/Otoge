@@ -243,6 +243,7 @@
     <ClInclude Include="Util\Debug\DebugScene.hpp" />
     <ClInclude Include="Util\Debug\Logger.h" />
     <ClInclude Include="System\PrecompiledHeader\pch.h" />
+    <ClInclude Include="Util\Visual\Color.hpp" />
     <ClInclude Include="Util\Window\DxSettings.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

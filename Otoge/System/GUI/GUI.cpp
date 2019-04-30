@@ -4,10 +4,12 @@
 #include "../../Util/Calculate/Screen/FontStringCalculator.hpp"
 #include "../../Util/Setting/SettingManager.h"
 #include "../GlobalMethod.hpp"
+#include "../../Util/Visual/Color.hpp"
+#include "../../Util/Window/DxSettings.hpp"
 
 GUI::GUI(const std::string& guiName, const ScreenData& layoutScreen, std::shared_ptr<FlexibleScaler> parentScaler) : Scene(guiName, layoutScreen, parentScaler)
 {
-    baseColor = GetColor(255, 255, 255);
+    baseColor = color_preset::WHITE;
     ChangeFont(SettingManager::GetGlobal()->Get<std::string>(game_config::SETTINGS_FONT_NAME).get().c_str(), -1, 1, SettingManager::GetGlobal()->Get<int>(game_config::SETTINGS_FONT_DRAWTYPE).get());
     Logger_->Debug("GUI初期化 完了");
 }
@@ -46,6 +48,9 @@ bool GUI::ChangeFont(const char* fontName, int size, int thickness, int fontType
 
     if(FontHandle_ == -1)
     {
+        Logger_->Debug("thickness: " + std::to_string(thickness) + ", size: " + std::to_string(size));
+        if (thickness != -1 && (thickness < 6 && size < 10)) fontType = DX_FONTTYPE_NORMAL;
+        else fontType = SettingManager::GetGlobal()->Get<int>(game_config::SETTINGS_FONT_DRAWTYPE).get();
         FontHandle_ = CreateFontToHandle(fontName, size, thickness, fontType);
     }else
     {

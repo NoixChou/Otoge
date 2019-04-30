@@ -9,14 +9,14 @@
 #include "../../../Util/Calculate/Animation/Easing.hpp"
 #include "Setting/SettingScene.hpp"
 #include "../../../System/GlobalMethod.hpp"
+#include "../../../Util/Visual/Color.hpp"
 
 TitleScene::TitleScene() : Scene("TitleScene")
 {
     // メニュー開閉ボタン
     MenuOpener_ = std::make_shared<Button>("おなまえ", ScreenData(40.f, 40.f, 20.f, 20.f, true), DefaultScaler_);
     MenuOpener_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
-    MenuOpener_->baseColor = GetColor(179, 229, 252);
-    MenuOpener_->animationColor = GetColor(3, 169, 244);
+    MenuOpener_->baseColor = color_preset::BLUE;
     MenuOpener_->GetTextLabelInstance()->ChangeFontThickness(1);
     MenuOpener_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
     MenuOpener_->SetPriority(10.f);
@@ -32,8 +32,8 @@ TitleScene::TitleScene() : Scene("TitleScene")
 
     MenuPlay_ = std::make_shared<Button>("Play", ScreenData(0.f, 0.f, 100.f / 3.f, 100.f), MenuGroup_->GetDefaultScaler());
     MenuPlay_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
-    MenuPlay_->baseColor = GetColor(240, 98, 146);
-    MenuPlay_->animationColor = GetColor(233, 30, 99);
+    MenuPlay_->baseColor = color_preset::DEEP_ORANGE;
+    MenuPlay_->animationColor = color_preset::DEEP_ORANGE;
     MenuPlay_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
     MenuPlay_->GetTextLabelInstance()->ChangeFontThickness(9);
     MenuPlay_->SetTransparent(100.f);
@@ -41,19 +41,20 @@ TitleScene::TitleScene() : Scene("TitleScene")
 
     MenuOption_ = std::make_shared<Button>("Option", ScreenData(MenuPlay_->GetScreenWidth(), 0.f, 100.f / 3.f, 100.f), MenuGroup_->GetDefaultScaler());
     MenuOption_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
-    MenuOption_->baseColor = GetColor(120, 144, 156);
-    MenuOption_->animationColor = GetColor(38, 50, 56);
+    MenuOption_->baseColor = color_preset::BLUE_GREY;
+    MenuOption_->animationColor = color_preset::DARK_BLUE_GREY;
     MenuOption_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
-    MenuOption_->GetTextLabelInstance()->ChangeFontThickness(1);
+    MenuOption_->GetTextLabelInstance()->ChangeFontThickness(2);
     MenuOption_->SetTransparent(100.f);
     MenuGroup_->AddChildTask(std::static_pointer_cast<Task>(MenuOption_));
 
     MenuClose_ = std::make_shared<Button>("Exit", ScreenData(MenuPlay_->GetScreenWidth() + MenuOption_->GetScreenWidth(), 0.f, 100.f / 3.f, 100.f), MenuGroup_->GetDefaultScaler());
-    MenuClose_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
-    MenuClose_->baseColor = GetColor(117, 117, 117);
+    MenuClose_->baseColor = color_preset::DARK_GREY;
     MenuClose_->animationColor = GetColor(33, 33, 33);
+    MenuClose_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
+    MenuClose_->textColor = color_preset::GREY;
     MenuClose_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
-    MenuClose_->GetTextLabelInstance()->ChangeFontThickness(1);
+    MenuClose_->GetTextLabelInstance()->ChangeFontThickness(2);
     MenuClose_->SetTransparent(100.f);
     MenuGroup_->AddChildTask(std::static_pointer_cast<Task>(MenuClose_));
 

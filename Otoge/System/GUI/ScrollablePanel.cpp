@@ -2,12 +2,12 @@
 #include "../Input/MouseManager.hpp"
 #include "../../Util/Calculate/Animation/Easing.hpp"
 #include "../GlobalMethod.hpp"
+#include "../../Util/Visual/Color.hpp"
 
 ScrollablePanel::ScrollablePanel(const std::string& label, const ScreenData& layoutScreen, const ScreenData& panelScreen, std::shared_ptr<FlexibleScaler> parentScaler) : GUI(label + "<ScrollablePanel>", layoutScreen, parentScaler)
 {
     Label_ = label;
-    baseColor = GetColor(230, 230, 230);
-    animationColor = GetColor(180, 180, 180);
+    baseColor = color_preset::LIGHT_GREY;
 
     Panel_ = std::make_shared<Scene>(label + "<panel>", panelScreen, DefaultScaler_);
     AddChildTask(std::static_pointer_cast<Task>(Panel_));

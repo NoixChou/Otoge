@@ -3,13 +3,15 @@
 #include "../Task/TaskManager.hpp"
 #include "../Input/MouseManager.hpp"
 #include "../GlobalMethod.hpp"
+#include "../../Util/Visual/Color.hpp"
 
 Button::Button(const std::string& label, const ScreenData& layoutScreen, std::shared_ptr<FlexibleScaler> parentScaler) : GUI(label + "\"<Button>\"", layoutScreen, parentScaler)
 {
     Label_ = label;
-    textColor = GetColor(50, 50, 50);
-	baseColor = GetColor(240, 240, 240);
-	animationColor = GetColor(180,180,180);
+    textColor = color_preset::BLACK;
+	baseColor = color_preset::WHITE_GREY;
+	animationColor = color_preset::GREY;
+    mouseOverColor = color_preset::LIGHT_GREY;
 
     TextLabel_ = std::make_shared<Label>(Label_, ScreenData(0.f, 0.f, 100.f, 100.f), DefaultScaler_);
     TextLabel_->baseColor = textColor;
@@ -55,7 +57,7 @@ void Button::Draw()
     {
         //Logger_->Debug("btn Draw");
         SetDrawBlendMode(AlphaBlendMode_, 20);
-        DrawBox(0, 0, engine::CastToInt(GetRawScreenWidth()), engine::CastToInt(GetRawScreenHeight()), textColor, TRUE);
+        DrawBox(0, 0, engine::CastToInt(GetRawScreenWidth()), engine::CastToInt(GetRawScreenHeight()), mouseOverColor, TRUE);
     }
 }
 
@@ -99,5 +101,6 @@ void ButtonPushedAnimate::Draw()
 	l_Circle.width = Size_;
 	l_Circle.height = Size_;
     const auto l_Fixed = ParentScaler_->Calculate(l_Circle);
-	DrawCircle(engine::CastToInt(l_Fixed.posX), engine::CastToInt(l_Fixed.posY), engine::CastToInt(l_Fixed.width + l_Fixed.height / 2.0f), color, TRUE);
+    SetDrawBlendMode(DX_BLENDMODE_PMA_INVSRC, 255);
+    DrawCircle(engine::CastToInt(l_Fixed.posX), engine::CastToInt(l_Fixed.posY), engine::CastToInt(l_Fixed.width + l_Fixed.height / 2.0f), GetColor(255,255,255) , TRUE);
 }

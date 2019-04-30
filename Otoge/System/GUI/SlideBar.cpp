@@ -3,13 +3,14 @@
 #include "../Input/MouseManager.hpp"
 #include "../../Util/Calculate/Animation/Easing.hpp"
 #include "../GlobalMethod.hpp"
+#include "../../Util/Visual/Color.hpp"
 
 SlideBar::SlideBar(const std::string& label, const ScreenData& layoutScreen, std::shared_ptr<FlexibleScaler> parentScaler) : GUI(label + "\"<SlideBar>\"", layoutScreen, parentScaler)
 {
     Label_ = label;
-    barColor = GetColor(88, 88, 88);
-    baseColor = GetColor(230, 230, 230);
-    animationColor = GetColor(190, 190, 190);
+    barColor = color_preset::DARK_GREY;
+    baseColor = color_preset::LIGHT_GREY;
+    animationColor = color_preset::GREY;
 }
 
 SlideBar::~SlideBar()

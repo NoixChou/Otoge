@@ -2,10 +2,11 @@
 #include "../Config.h"
 #include "../../Util/Calculate/Screen/FontStringCalculator.hpp"
 #include "../GlobalMethod.hpp"
+#include "../../Util/Visual/Color.hpp"
 
 Label::Label(const std::string& label, const ScreenData& layoutScreen, std::shared_ptr<FlexibleScaler> parentScaler) : GUI(label + "\"<Label>\"", layoutScreen, parentScaler)
 {
-    baseColor = GetColor(127,127,127);
+    baseColor = color_preset::GREY;
     Label_ = label;
     textAlign = TextAlignment::left | TextAlignment::top;
 }

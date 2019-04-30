@@ -10,6 +10,7 @@
 #include "../../../../System/GUI/SlideBar.hpp"
 #include "../../../../System/GlobalMethod.hpp"
 #include "../../../../System/GUI/DropdownList.hpp"
+#include "../../../../Util/Visual/Color.hpp"
 
 SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
 {
@@ -17,14 +18,15 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
     TitleBar_->SetDrawFunction([&]
         {
             ScreenData l_FixedTitlebar = DefaultScaler_->Calculate(0.f, 0.f, 100.f, 100.f);
-            DrawBox(static_cast<int>(l_FixedTitlebar.posX), static_cast<int>(l_FixedTitlebar.posY), static_cast<int>(l_FixedTitlebar.width), static_cast<int>(l_FixedTitlebar.height), GetColor(255, 255, 255), TRUE);
+            DrawBox(static_cast<int>(l_FixedTitlebar.posX), static_cast<int>(l_FixedTitlebar.posY), static_cast<int>(l_FixedTitlebar.width), static_cast<int>(l_FixedTitlebar.height), color_preset::WHITE, TRUE);
         });
     TitleBar_->SetPriority(20.f);
     AddChildTask(std::static_pointer_cast<Task>(TitleBar_));
 
     CloseButton_ = std::make_shared<Button>("< Close", ScreenData(0.f, 0.f, 20.f, 100.f), TitleBar_->GetDefaultScaler());
-    CloseButton_->baseColor = GetColor(255, 255, 255);
-    CloseButton_->animationColor = GetColor(33, 33, 33);
+    CloseButton_->isDrawBase = false;
+    CloseButton_->baseColor = color_preset::WHITE;
+    CloseButton_->animationColor = color_preset::DARK_GREY;
     CloseButton_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
     CloseButton_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(2.f)));
     CloseButton_->GetTextLabelInstance()->ChangeFontThickness(1);
@@ -33,20 +35,14 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
 
     auto l_TitleLabel = std::make_shared<Label>("設定", ScreenData(0.0f, 0.0f, 100.f, CloseButton_->GetScreenHeight()), TitleBar_->GetDefaultScaler());
     l_TitleLabel->SetTextAlign(Label::TextAlignment::center | Label::TextAlignment::middle);
-    l_TitleLabel->baseColor = GetColor(117, 117, 117);
+    l_TitleLabel->baseColor = color_preset::BLACK;
     l_TitleLabel->AdjustmentFontSize_ = false;
     l_TitleLabel->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
     l_TitleLabel->ChangeFontThickness(1);
     TitleBar_->AddChildTask(std::static_pointer_cast<Task>(l_TitleLabel));
 
 
-    BodyPanel_ = std::make_shared<ScrollablePanel>("bodypanel", ScreenData(0.f, 5.f, 100.f, 95.f), ScreenData(0.f, 0.f, 100.f, 190.f), DefaultScaler_);
-    BodyPanel_->SetDrawFunction([&]
-        {
-            ScreenData l_FixedContentField = DefaultScaler_->Calculate(0.f, 0.f, 100.f, 100.f);
-            DrawBox(engine::CastToInt(l_FixedContentField.posX), engine::CastToInt(l_FixedContentField.posY),
-                    engine::CastToInt(l_FixedContentField.width), engine::CastToInt(l_FixedContentField.height), GetColor(240, 240, 240), TRUE);
-        });
+    BodyPanel_ = std::make_shared<ScrollablePanel>("bodypanel", ScreenData(3.f, 5.f, 94.f, 95.f), ScreenData(0.f, 0.f, 100.f, 190.f), DefaultScaler_);
     BodyPanel_->SetPriority(0.f);
     AddChildTask(std::static_pointer_cast<Task>(BodyPanel_));
 
@@ -68,14 +64,14 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
         BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(DisplaySectionLabel_));
 
         {
-            WindowSizeDescription_ = std::make_shared<Label>("ウィンドウサイズ/解像度:", ScreenData(0.f, DisplaySectionLabel_->GetScreenHeight(), 30.f, 1.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
-            WindowSizeDescription_->textAlign = Label::TextAlignment::left | Label::TextAlignment::middle;
-            WindowSizeDescription_->AdjustmentFontSize_ = false;
-            WindowSizeDescription_->ChangeFontSize(engine::CastToInt(WindowSizeDescription_->GetDefaultScaler()->CalculateWidth(8.f)));
-            WindowSizeDescription_->ChangeFontThickness(4);
+            WindowSizeDescription_ = std::make_shared<Label>("解像度:", ScreenData(0.f, DisplaySectionLabel_->GetScreenHeight(), 20.f, 1.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
+            WindowSizeDescription_->textAlign = Label::TextAlignment::left | Label::TextAlignment::bottom;
+            WindowSizeDescription_->AdjustmentFontSize_ = true;
+            //WindowSizeDescription_->ChangeFontSize(engine::CastToInt(WindowSizeDescription_->GetDefaultScaler()->CalculateHeight(60.f)));
+            WindowSizeDescription_->ChangeFontThickness(5);
             BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(WindowSizeDescription_));
 
-            WindowSizeList_ = std::make_shared<DropdownList>("WindowSizeList", ScreenData(WindowSizeDescription_->GetScreenWidth(), WindowSizeDescription_->GetPositionY(), 20.f, WindowSizeDescription_->GetScreenHeight()), AllowWindowSizes_.size(), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
+            WindowSizeList_ = std::make_shared<DropdownList>("WindowSizeList", ScreenData(WindowSizeDescription_->GetScreenWidth(), WindowSizeDescription_->GetPositionY(), 20.f, WindowSizeDescription_->GetScreenHeight() + 0.0f), AllowWindowSizes_.size(), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
             BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(WindowSizeList_));
 
             int l_ItemCount = 0;
@@ -171,5 +167,7 @@ void SettingScene::SceneUpdate(float deltaTime)
 
 void SettingScene::Draw()
 {
-
+    ScreenData l_FixedContentField = DefaultScaler_->Calculate(0.f, 0.f, 100.f, 100.f);
+    DrawBox(engine::CastToInt(l_FixedContentField.posX), engine::CastToInt(l_FixedContentField.posY),
+        engine::CastToInt(l_FixedContentField.width), engine::CastToInt(l_FixedContentField.height), BodyPanel_->baseColor, TRUE);
 }

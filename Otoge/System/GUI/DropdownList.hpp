@@ -25,6 +25,7 @@ private:
 public:
     unsigned animationColor;
     unsigned textColor;
+    unsigned listColor;
 
     DropdownList(const std::string& label, const ScreenData& layoutScreen, int maxItem, std::shared_ptr<FlexibleScaler> parentScaler = nullptr);
     ~DropdownList();
@@ -33,6 +34,10 @@ public:
     void Draw() override;
 
     void AddPanel();
+    void ResetAnimation();
+    void InvertOpening();
+    void OpenList();
+    void CloseList();
 
     void SetSelectedItemNum(int num);
     int GetSelectedItemNum() const;

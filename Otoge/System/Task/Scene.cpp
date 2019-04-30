@@ -5,6 +5,7 @@
 #include "../../Util/Calculate/Screen/FontStringCalculator.hpp"
 #include "TaskManager.hpp"
 #include "../GlobalMethod.hpp"
+#include "../../Util/Visual/Color.hpp"
 
 Scene::Scene(const std::string& sceneName, float sceneWidth, float sceneHeight, float sceneX, float sceneY, std::shared_ptr<FlexibleScaler> parentScaler, Task::TaskPointer parentTask) : Task(sceneName)
 {
@@ -125,7 +126,7 @@ void Scene::Update(float deltaTime)
         if (IsDrawFrame_ && IsOnMouse())
         {
             SetDrawBlendMode(AlphaBlendMode_, 127);
-            DrawFormatString(0, 0, GetColor(0, 0, 255), "+%.2f", DefaultScaler_->GetDiffX());
+            DrawFormatString(0, 0, color_preset::LIGHT_BLUE, "+%.2f", DefaultScaler_->GetDiffX());
             SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
         }
 
@@ -136,8 +137,8 @@ void Scene::Update(float deltaTime)
         // デバッグ用の枠を描画
         if (IsDrawFrame_)
         {
-            DrawBox(engine::CastToInt(Screen_.posX), engine::CastToInt(Screen_.posY), engine::CastToInt(Screen_.posX + Screen_.width), engine::CastToInt(Screen_.posY + Screen_.height), GetColor(255, 0, 0), FALSE);
-            DrawCircle(engine::CastToInt(DefaultScaler_->GetDiffX()), engine::CastToInt(DefaultScaler_->GetDiffY()), 3, GetColor(0, 255, 255));
+            DrawBox(engine::CastToInt(Screen_.posX), engine::CastToInt(Screen_.posY), engine::CastToInt(Screen_.posX + Screen_.width), engine::CastToInt(Screen_.posY + Screen_.height), color_preset::RED, FALSE);
+            DrawCircle(engine::CastToInt(DefaultScaler_->GetDiffX()), engine::CastToInt(DefaultScaler_->GetDiffY()), 3, color_preset::CYAN, TRUE);
         }
 
         // シーンバッファを描画(透明度も考慮)

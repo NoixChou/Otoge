@@ -1,5 +1,5 @@
 ﻿#include "TaskManager.hpp"
-
+#include "../../Util/Window/DxSettings.hpp"
 using namespace std;
 using namespace std::chrono;
 
@@ -99,6 +99,7 @@ void TaskManager::Tick(float tickSpeed = 1.0f)
 {   
     PrevClockCount_ = ClockCount_;
     ClockCount_ = high_resolution_clock::now();
+
     auto l_ProcessLoad = duration_cast<microseconds>(ClockCount_ - PrevClockCount_).count();
 
     const auto m_DeltaTime = l_ProcessLoad / 1000000.0f;
@@ -112,13 +113,22 @@ void TaskManager::Tick(float tickSpeed = 1.0f)
         fps_interval_count = 0.0f;
     }
 
-    ClearDrawScreen();
-    clsDx();
-    
-	UpdateTasks(Tasks_, TaskQueues_, tickSpeed, m_DeltaTime);
-	//Logger_->Info("Ticked");
-    //m_Task = std::vector< std::shared_ptr<Task> >::iterator();
-    ScreenFlip();
+    static float deltCount = 0.f;
+    deltCount += m_DeltaTime;
+
+    if (!DxSettings::doVSync || deltCount > (1.f / 60.f))
+    {
+        ClearDrawScreen();
+        clsDx();
+    }
+        UpdateTasks(Tasks_, TaskQueues_, tickSpeed, m_DeltaTime);
+
+    if (!DxSettings::doVSync || deltCount > (1.f / 60.f))
+    {
+        ScreenFlip();
+
+        deltCount = 0.f;
+    }
 }
 
 void TaskManager::UpdateTasks(std::vector<Task::TaskPointer>& tasks, std::vector<Task::TaskPointer>& queues, float tickSpeed, float deltaTime)

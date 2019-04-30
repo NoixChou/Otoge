@@ -10,8 +10,6 @@ private:
     std::shared_ptr<Scene> Panel_;
 
 public:
-    unsigned animationColor;
-
     ScrollablePanel(const std::string& label, const ScreenData& layoutScreen, const ScreenData& panelScreen, std::shared_ptr<FlexibleScaler> parentScaler = nullptr);
     ~ScrollablePanel();
 

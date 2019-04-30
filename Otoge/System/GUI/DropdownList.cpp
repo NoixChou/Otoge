@@ -3,21 +3,22 @@
 #include "../Input/MouseManager.hpp"
 #include "../../Util/Calculate/Animation/Easing.hpp"
 #include "../Task/TaskManager.hpp"
+#include "../../Util/Visual/Color.hpp"
 
 DropdownList::DropdownList(const std::string& label, const ScreenData& layoutScreen, int maxItem, std::shared_ptr<FlexibleScaler> parentScaler) : GUI(label, layoutScreen, parentScaler)
 {
     Label_ = label;
-    baseColor = GetColor(220, 220, 220);
-    animationColor = GetColor(127, 127, 127);
-    textColor = GetColor(50, 50, 50);
-
+    baseColor = color_preset::GREY;
+    animationColor = color_preset::DARK_GREY;
+    textColor = color_preset::BLACK;
+    listColor = color_preset::LIGHT_GREY;
 
     SelectedLabel_ = std::make_shared<Label>("", ScreenData(0.f, 0.f, 90.f, 100.f), DefaultScaler_);
     SelectedLabel_->baseColor = textColor;
     SelectedLabel_->AdjustmentFontSize_ = false;
     SelectedLabel_->ChangeFontSize(engine::CastToInt(SelectedLabel_->GetDefaultScaler()->CalculateHeight(70.f)));
-    SelectedLabel_->ChangeFontThickness(6);
-    SelectedLabel_->SetTextAlign(Label::TextAlignment::left | Label::TextAlignment::middle);
+    SelectedLabel_->ChangeFontThickness(8);
+    SelectedLabel_->SetTextAlign(Label::TextAlignment::left | Label::TextAlignment::bottom);
     AddChildTask(std::static_pointer_cast<Task>(SelectedLabel_));
 
     TriangleLabel_ = std::make_shared<Label>("▼", ScreenData(90.f, 0.f, 10.f, 100.f), DefaultScaler_);
@@ -31,7 +32,7 @@ DropdownList::DropdownList(const std::string& label, const ScreenData& layoutScr
     Panel_->SetDrawFunction([&]
         {
             auto fixed = Panel_->GetDefaultScaler()->Calculate(ScreenData(0.f, 0.f, 100.f, 100.f));
-            DrawBox(engine::CastToInt(fixed.posX), engine::CastToInt(fixed.posY), engine::CastToInt(fixed.posX + fixed.width), engine::CastToInt(fixed.posY + fixed.height), baseColor, TRUE);
+            DrawBox(engine::CastToInt(fixed.posX), engine::CastToInt(fixed.posY), engine::CastToInt(fixed.posX + fixed.width), engine::CastToInt(fixed.posY + fixed.height), listColor, TRUE);
         });
     Panel_->SetAlphaBlendMode(DX_BLENDMODE_ALPHA);
     Panel_->SetEnable(false);
@@ -66,20 +67,7 @@ void DropdownList::GUIUpdate(float deltaTime)
     {
         AddPanel();
 
-        timerCount = 0.f;
-        IsListOpening_ = true;
-        IsListOpened_ = !IsListOpened_;
-
-        if(IsListOpened_)
-        {
-            Panel_->SetVisible(true);
-            TriangleLabel_->SetLabel("▲");
-        }else
-        {
-            //Panel_->SetScreenHeight(ParentScaler_->CalculatePositionRateY(GetRawScreenHeight() / (ItemCount_)));
-            Panel_->SetEnable(false);
-            TriangleLabel_->SetLabel("▼");
-        }
+        InvertOpening();
     }
 
     if(IsListOpening_)
@@ -121,9 +109,7 @@ void DropdownList::GUIUpdate(float deltaTime)
         if(l_Item.lock()->IsClickedMouse())
         {
             SelectedItem_ = l_ItemCount;
-            timerCount = 0.f;
-            IsListOpening_ = true;
-            IsListOpened_ = false;
+            CloseList();
         }
 
         l_ItemCount++;
@@ -133,9 +119,7 @@ void DropdownList::GUIUpdate(float deltaTime)
     
     if(MouseManager::GetInstance()->IsDownButton(MOUSE_INPUT_LEFT) && (!Panel_->IsOnMouse() && !IsOnMouse()) && IsListOpened_)
     {
-        timerCount = 0.f;
-        IsListOpening_ = true;
-        IsListOpened_ = false;
+        CloseList();
     }
 
     Panel_->SetPositionY(engine::LimitRange(Panel_->GetScreenHeight(), GetPositionY() + GetScreenHeight(), GetPositionY()));
@@ -164,6 +148,38 @@ void DropdownList::AddPanel()
         }
         IsPanelAdded_ = true;
     }
+}
+
+void DropdownList::ResetAnimation()
+{
+    timerCount = 0.f;
+    IsListOpening_ = true;
+}
+
+void DropdownList::InvertOpening()
+{
+    if (IsListOpened_)
+        CloseList();
+    else
+        OpenList();
+}
+
+void DropdownList::OpenList()
+{
+    ResetAnimation();
+
+    IsListOpened_ = true;
+    Panel_->SetVisible(true);
+    TriangleLabel_->SetLabel("▲");
+}
+
+void DropdownList::CloseList()
+{
+    ResetAnimation();
+
+    IsListOpened_ = false;
+    Panel_->SetEnable(false);
+    TriangleLabel_->SetLabel("▼");
 }
 
 void DropdownList::SetSelectedItemNum(int num)
@@ -216,9 +232,9 @@ void DropdownList::AddItem(int num, const std::string& label)
     btn->isDrawBase = false;
     btn->textColor = textColor;
     btn->GetTextLabelInstance()->AdjustmentFontSize_ = false;
-    btn->GetTextLabelInstance()->ChangeFontSize(Panel_->GetDefaultScaler()->CalculateHeight(60.f));
+    btn->GetTextLabelInstance()->ChangeFontSize(engine::CastToInt(Panel_->GetDefaultScaler()->CalculateHeight(60.f)));
     btn->GetTextLabelInstance()->ChangeFontThickness(2);
-    btn->animationColor = GetColor(230, 230, 230);
+    btn->animationColor = color_preset::DARK_GREY;
     AddItem(num, btn);
 }
 

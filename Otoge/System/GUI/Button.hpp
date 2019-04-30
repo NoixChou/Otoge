@@ -13,6 +13,7 @@ public:
 
     unsigned textColor;
 	unsigned animationColor;
+    unsigned mouseOverColor;
 
     Button(const std::string& label, const ScreenData& layoutScreen, std::shared_ptr<FlexibleScaler> parentScaler = nullptr);
     ~Button();

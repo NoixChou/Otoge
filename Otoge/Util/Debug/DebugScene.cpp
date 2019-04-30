@@ -5,6 +5,7 @@
 #include "../../System/Input/KeyboardManager.hpp"
 #include "../../System/GUI/Button.hpp"
 #include "../../System/GlobalMethod.hpp"
+#include "../Visual/Color.hpp"
 
 DebugScene::DebugScene() : Scene("DebugScene")
 {
@@ -12,7 +13,7 @@ DebugScene::DebugScene() : Scene("DebugScene")
     DefaultScaler_->lockBottom = true;
 
     {
-        auto l_FpsPanel = std::make_shared<Scene>("FpsLabelPanel", ScreenData(1.f, 94.f, 7.f, 2.5f), DefaultScaler_);
+        auto l_FpsPanel = std::make_shared<Scene>("FpsLabelPanel", ScreenData(1.f, 94.f, 7.f, 2.8f), DefaultScaler_);
         l_FpsPanel->SetDrawFunction([&]
             {
                 ScreenData l_FpsScreen;
@@ -26,19 +27,19 @@ DebugScene::DebugScene() : Scene("DebugScene")
                     engine::CastToInt(l_FpsScreen.posY),
                     engine::CastToInt(l_FpsScreen.posX + l_FpsScreen.width),
                     engine::CastToInt(l_FpsScreen.posY + l_FpsScreen.height),
-                    GetColor(0, 180, 255), TRUE
+                    color_preset::LIGHT_BLUE, TRUE
                 );
             });
         AddChildTask(std::static_pointer_cast<Task>(l_FpsPanel));
 
         FpsLabel_ = std::make_shared<Label>("--", ScreenData(0.f, 0.f, 70.f, 100.f), l_FpsPanel->GetDefaultScaler());
-        FpsLabel_->baseColor = GetColor(180, 255, 180);
+        FpsLabel_->baseColor = color_preset::LEAF_GREEN;
         FpsLabel_->textAlign = Label::TextAlignment::middle | Label::TextAlignment::right;
         FpsLabel_->ChangeFontThickness(8);
         l_FpsPanel->AddChildTask(std::static_pointer_cast<Task>(FpsLabel_));
 
         FpsDescLabel_ = std::make_shared<Label>("fps", ScreenData(70.f, 0.f, 30.f, 100.f), l_FpsPanel->GetDefaultScaler());
-        FpsDescLabel_->baseColor = GetColor(180, 255, 180);
+        FpsDescLabel_->baseColor = color_preset::LEAF_GREEN;
         FpsDescLabel_->textAlign = Label::TextAlignment::bottom | Label::TextAlignment::center;
         FpsDescLabel_->ChangeFontThickness(2);
         FpsDescLabel_->AdjustmentFontSize_ = false;
@@ -47,7 +48,7 @@ DebugScene::DebugScene() : Scene("DebugScene")
     }
 
     {
-        auto l_DeltaTimePanel = std::make_shared<Scene>("DeltaTimeLabelPanel", ScreenData(1.f, 96.f, 7.f, 1.8f), DefaultScaler_);
+        auto l_DeltaTimePanel = std::make_shared<Scene>("DeltaTimeLabelPanel", ScreenData(1.f, 96.f, 7.f, 2.0f), DefaultScaler_);
         l_DeltaTimePanel->SetDrawFunction([&]
             {
                 ScreenData l_DeltaTimeScreen;
@@ -61,21 +62,21 @@ DebugScene::DebugScene() : Scene("DebugScene")
                     engine::CastToInt(l_DeltaTimeScreen.posY),
                     engine::CastToInt(l_DeltaTimeScreen.posX + l_DeltaTimeScreen.width),
                     engine::CastToInt(l_DeltaTimeScreen.posY + l_DeltaTimeScreen.height),
-                    GetColor(120, 220, 0), TRUE
+                    color_preset::AMBER_ORANGE, TRUE
                 );
             });
         AddChildTask(std::static_pointer_cast<Task>(l_DeltaTimePanel));
         
         DeltaTimeLabel_ = std::make_shared<Label>("--", ScreenData(0.f, 0.f, 70.f, 100.f), l_DeltaTimePanel->GetDefaultScaler());
-        DeltaTimeLabel_->baseColor = GetColor(255, 255, 180);
+        DeltaTimeLabel_->baseColor = color_preset::LEMON_YELLOW;
         DeltaTimeLabel_->textAlign = Label::TextAlignment::middle | Label::TextAlignment::right;
-        DeltaTimeLabel_->ChangeFontThickness(4);
+        DeltaTimeLabel_->ChangeFontThickness(6);
         l_DeltaTimePanel->AddChildTask(std::static_pointer_cast<Task>(DeltaTimeLabel_));
 
         DeltaTimeDescLabel_ = std::make_shared<Label>(" ms", ScreenData(70.f, 0.f, 30.f, 100.f), l_DeltaTimePanel->GetDefaultScaler());
-        DeltaTimeDescLabel_->baseColor = GetColor(255, 255, 180);
+        DeltaTimeDescLabel_->baseColor = color_preset::LEMON_YELLOW;
         DeltaTimeDescLabel_->textAlign = Label::TextAlignment::bottom | Label::TextAlignment::center;
-        DeltaTimeDescLabel_->ChangeFontThickness(4);
+        DeltaTimeDescLabel_->ChangeFontThickness(6);
         DeltaTimeDescLabel_->AdjustmentFontSize_ = false;
         DeltaTimeDescLabel_->ChangeFontSize(static_cast<int>(l_DeltaTimePanel->GetDefaultScaler()->CalculateHeight(80.f)));
         l_DeltaTimePanel->AddChildTask(std::static_pointer_cast<Task>(DeltaTimeDescLabel_));
