@@ -44,12 +44,14 @@ void PreInitialize()
     g_SystemSettings->Load(true);
     g_SystemSettings->SetDefault(game_config::SETTINGS_FULLSCREEN, false);
     g_SystemSettings->SetDefault(game_config::SETTINGS_VSYNC, false);
-    g_SystemSettings->SetDefault(game_config::SETTINGS_RES_WIDTH, 1024);
-    g_SystemSettings->SetDefault(game_config::SETTINGS_RES_HEIGHT, 720);
+    g_SystemSettings->SetDefault(game_config::SETTINGS_RES_WIDTH, 1920);
+    g_SystemSettings->SetDefault(game_config::SETTINGS_RES_HEIGHT,1080);
     g_SystemSettings->SetDefault(game_config::SETTINGS_AA_SAMPLE, 2);
     g_SystemSettings->SetDefault(game_config::SETTINGS_AA_QUALITY, 2);
 
-	g_SystemSettings->SetDefault<std::string>(game_config::SETTINGS_FONT_NAME, game_config::GAME_APP_DEFAULT_FONT);
+    g_SystemSettings->SetDefault<std::string>(game_config::SETTINGS_FONT_NAME, game_config::GAME_APP_DEFAULT_FONT);
+    g_SystemSettings->SetDefault<std::string>(game_config::SETTINGS_ALPHABET_FONT_NAME, game_config::GAME_APP_DEFAULT_FONT);
+    g_SystemSettings->SetDefault<std::string>(game_config::SETTINGS_NUMBER_FONT_NAME, game_config::GAME_APP_DEFAULT_FONT);
 	g_SystemSettings->SetDefault(game_config::SETTINGS_FONT_DRAWTYPE, DX_FONTTYPE_NORMAL);
 
     g_SystemSettings->SetDefault(game_config::SETTINGS_DEBUG_DRAW_SCENE_FRAME, false);
@@ -127,8 +129,8 @@ void Initialize()
                 static float currentSize = 0.f;
                 const float totalTime = 0.5f;
 
-                const float ReleasedSize = 1.7f;
-                const float HoldingSize = 1.0f;
+                const float ReleasedSize = 1.4f;
+                const float HoldingSize = 0.7f;
                 Easing::EaseFunction ease = Easing::OutExp;
 
                 if (MouseManager::GetInstance()->IsDownButton(MOUSE_INPUT_LEFT))

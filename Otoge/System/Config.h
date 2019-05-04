@@ -28,6 +28,8 @@ namespace game_config
     constexpr auto SETTINGS_AA_QUALITY = "system.graphic.antialiasing.quality";
 
     constexpr auto SETTINGS_FONT_NAME = "system.display.font.default";
+    constexpr auto SETTINGS_ALPHABET_FONT_NAME = "system.display.font.alphabet";
+    constexpr auto SETTINGS_NUMBER_FONT_NAME = "system.display.font.number";
     constexpr auto SETTINGS_FONT_DRAWTYPE = "system.display.font.draw_type";
 
     constexpr auto SETTINGS_DEBUG_DRAW_SCENE_FRAME = "system.debug.scene.draw_frame";

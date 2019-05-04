@@ -11,7 +11,7 @@ Button::Button(const std::string& label, const ScreenData& layoutScreen, std::sh
     textColor = color_preset::BLACK;
 	baseColor = color_preset::WHITE_GREY;
 	animationColor = color_preset::GREY;
-    mouseOverColor = color_preset::LIGHT_GREY;
+    //mouseOverColor = color_preset::LIGHT_GREY;
 
     TextLabel_ = std::make_shared<Label>(Label_, ScreenData(0.f, 0.f, 100.f, 100.f), DefaultScaler_);
     TextLabel_->baseColor = textColor;
@@ -57,7 +57,7 @@ void Button::Draw()
     {
         //Logger_->Debug("btn Draw");
         SetDrawBlendMode(AlphaBlendMode_, 20);
-        DrawBox(0, 0, engine::CastToInt(GetRawScreenWidth()), engine::CastToInt(GetRawScreenHeight()), mouseOverColor, TRUE);
+        DrawBox(0, 0, engine::CastToInt(GetRawScreenWidth()), engine::CastToInt(GetRawScreenHeight()), color_preset::BLACK, TRUE);
     }
 }
 

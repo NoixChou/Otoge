@@ -88,7 +88,6 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ProgramDataBaseFileName>$(SolutionDir)PDB\$(Configuration)\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
-      <DebugInformationFormat>None</DebugInformationFormat>
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);</PreprocessorDefinitions>
     </ClCompile>
@@ -112,7 +111,6 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ProgramDataBaseFileName>$(SolutionDir)PDB\$(Configuration)\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
-      <DebugInformationFormat>None</DebugInformationFormat>
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);</PreprocessorDefinitions>
     </ClCompile>
@@ -182,6 +180,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Game\Scenes\Title\Setting\SettingScene.cpp" />
+    <ClCompile Include="System\GUI\CheckBox.cpp" />
     <ClCompile Include="System\GUI\DropdownList.cpp" />
     <ClCompile Include="System\GUI\ScrollablePanel.cpp" />
     <ClCompile Include="System\GUI\SlideBar.cpp" />
@@ -216,6 +215,7 @@
   <ItemGroup>
     <ClInclude Include="Game\Scenes\Title\Setting\SettingScene.hpp" />
     <ClInclude Include="System\GlobalMethod.hpp" />
+    <ClInclude Include="System\GUI\CheckBox.hpp" />
     <ClInclude Include="System\GUI\DropdownList.hpp" />
     <ClInclude Include="System\GUI\ScrollablePanel.hpp" />
     <ClInclude Include="System\GUI\SlideBar.hpp" />
@@ -235,6 +235,7 @@
     <ClInclude Include="Util\Calculate\ScreenData.h" />
     <ClInclude Include="Util\Calculate\Screen\FontStringCalculator.hpp" />
     <ClInclude Include="Util\Calculate\Screen\FlexibleScaler.hpp" />
+    <ClInclude Include="Util\Encoding\CharacterType.hpp" />
     <ClInclude Include="Util\Encoding\EncodingConverter.h" />
     <ClInclude Include="Util\Setting\SettingManager.h" />
     <ClInclude Include="System\Config.h" />

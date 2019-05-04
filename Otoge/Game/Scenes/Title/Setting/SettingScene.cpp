@@ -11,6 +11,7 @@
 #include "../../../../System/GlobalMethod.hpp"
 #include "../../../../System/GUI/DropdownList.hpp"
 #include "../../../../Util/Visual/Color.hpp"
+#include "../../../../System/GUI/CheckBox.hpp"
 
 SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
 {
@@ -68,7 +69,7 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
             WindowSizeDescription_->textAlign = Label::TextAlignment::left | Label::TextAlignment::bottom;
             WindowSizeDescription_->AdjustmentFontSize_ = true;
             //WindowSizeDescription_->ChangeFontSize(engine::CastToInt(WindowSizeDescription_->GetDefaultScaler()->CalculateHeight(60.f)));
-            WindowSizeDescription_->ChangeFontThickness(5);
+            WindowSizeDescription_->ChangeFontThickness(2);
             BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(WindowSizeDescription_));
 
             WindowSizeList_ = std::make_shared<DropdownList>("WindowSizeList", ScreenData(WindowSizeDescription_->GetScreenWidth(), WindowSizeDescription_->GetPositionY(), 20.f, WindowSizeDescription_->GetScreenHeight() + 0.0f), AllowWindowSizes_.size(), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
@@ -82,6 +83,10 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
             }
         }
     }
+
+    auto testCheck = std::make_shared<CheckBox>("ABCD", ScreenData(0.f, 40.f, 20.f, 1.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
+    BodyPanel_->GetPanelInstance()->AddChildTask(testCheck);
+
     StopFade();
 }
 

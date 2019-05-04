@@ -20,6 +20,8 @@ protected:
 public:
     using DrawFunction = std::function<void()>;
 
+    bool isCallSceneDrawer = true;
+
     Scene(const std::string& sceneName, float sceneWidth = 100.f, float sceneHeight = 100.f, float sceneX = 0.f, float sceneY = 0.f, std::shared_ptr<FlexibleScaler> parentScaler = nullptr, Task::TaskPointer parentTask = nullptr);
     Scene(const std::string& sceneName, const ScreenData& screen, std::shared_ptr<FlexibleScaler> parentScaler = nullptr, Task::TaskPointer parentTask = nullptr);
     ~Scene();
@@ -46,6 +48,8 @@ public:
     bool IsFadingOut();
 
     void SetDrawFunction(DrawFunction func);
+    void ChangeDrawFunction(DrawFunction func);
+
     std::shared_ptr<FlexibleScaler> GetDefaultScaler() const;
     void SetScreen(ScreenData screen);
     void SetPositionX(float px);

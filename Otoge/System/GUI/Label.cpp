@@ -4,9 +4,9 @@
 #include "../GlobalMethod.hpp"
 #include "../../Util/Visual/Color.hpp"
 
-Label::Label(const std::string& label, const ScreenData& layoutScreen, std::shared_ptr<FlexibleScaler> parentScaler) : GUI(label + "\"<Label>\"", layoutScreen, parentScaler)
+Label::Label(const std::string& label, const ScreenData& layoutScreen, std::shared_ptr<FlexibleScaler> parentScaler) : GUI(label + "\"<Label>\"", layoutScreen, parentScaler, true)
 {
-    baseColor = color_preset::GREY;
+    baseColor = color_preset::BLACK;
     Label_ = label;
     textAlign = TextAlignment::left | TextAlignment::top;
 }

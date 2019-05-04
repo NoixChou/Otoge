@@ -109,7 +109,9 @@ void Scene::Update(float deltaTime)
         if (IsBufferUpdate_ || IsChangedSize_)
         {
             ClearDrawScreen();
-            Draw();
+
+            if(isCallSceneDrawer)
+                Draw();
 
             if(DrawerFunction_ != nullptr)
                 DrawerFunction_();
@@ -133,13 +135,6 @@ void Scene::Update(float deltaTime)
         // 元の描画設定に戻す
         SetDrawScreen(currentBuffer);
         SetDrawBlendMode(currentBlendMode, currentBlendParam);
-
-        // デバッグ用の枠を描画
-        if (IsDrawFrame_)
-        {
-            DrawBox(engine::CastToInt(Screen_.posX), engine::CastToInt(Screen_.posY), engine::CastToInt(Screen_.posX + Screen_.width), engine::CastToInt(Screen_.posY + Screen_.height), color_preset::RED, FALSE);
-            DrawCircle(engine::CastToInt(DefaultScaler_->GetDiffX()), engine::CastToInt(DefaultScaler_->GetDiffY()), 3, color_preset::CYAN, TRUE);
-        }
 
         // シーンバッファを描画(透明度も考慮)
         if (static_cast<int>(Transparency_) < 100)
@@ -172,6 +167,13 @@ void Scene::Update(float deltaTime)
 
         // 元の描画設定に戻す
         SetDrawBlendMode(currentBlendMode, currentBlendParam);
+
+        // デバッグ用の枠を描画
+        if (IsDrawFrame_)
+        {
+            DrawBox(engine::CastToInt(Screen_.posX), engine::CastToInt(Screen_.posY), engine::CastToInt(Screen_.posX + Screen_.width), engine::CastToInt(Screen_.posY + Screen_.height), color_preset::RED, FALSE);
+            DrawCircle(engine::CastToInt(DefaultScaler_->GetDiffX()), engine::CastToInt(DefaultScaler_->GetDiffY()), 3, color_preset::CYAN, TRUE);
+        }
     }
 }
 
@@ -302,6 +304,12 @@ bool Scene::IsFadingOut()
 void Scene::SetDrawFunction(DrawFunction func)
 {
     DrawerFunction_ = func;
+}
+
+void Scene::ChangeDrawFunction(DrawFunction func)
+{
+    SetDrawFunction(func);
+    isCallSceneDrawer = false;
 }
 
 std::shared_ptr<FlexibleScaler> Scene::GetDefaultScaler() const

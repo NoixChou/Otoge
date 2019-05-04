@@ -15,8 +15,8 @@ DropdownList::DropdownList(const std::string& label, const ScreenData& layoutScr
 
     SelectedLabel_ = std::make_shared<Label>("", ScreenData(0.f, 0.f, 90.f, 100.f), DefaultScaler_);
     SelectedLabel_->baseColor = textColor;
-    SelectedLabel_->AdjustmentFontSize_ = false;
-    SelectedLabel_->ChangeFontSize(engine::CastToInt(SelectedLabel_->GetDefaultScaler()->CalculateHeight(70.f)));
+    SelectedLabel_->AdjustmentFontSize_ = true;
+    //SelectedLabel_->ChangeFontSize(engine::CastToInt(SelectedLabel_->GetDefaultScaler()->CalculateHeight(70.f)));
     SelectedLabel_->ChangeFontThickness(8);
     SelectedLabel_->SetTextAlign(Label::TextAlignment::left | Label::TextAlignment::bottom);
     AddChildTask(std::static_pointer_cast<Task>(SelectedLabel_));
