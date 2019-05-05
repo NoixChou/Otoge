@@ -118,7 +118,6 @@ void Scene::Update(float deltaTime)
         }
 
         // 元の描画設定に戻す
-        //SetDrawScreen(currentBuffer);
         SetDrawBlendMode(currentBlendMode, currentBlendParam);
 
         // 子タスクの更新処理

@@ -12,6 +12,11 @@ struct ScreenData
         lockAspectRate = lock;
     }
 
+    operator std::string() const
+    {
+        return "<ScreenData> posX: " + std::to_string(posX) + ", posY: " + std::to_string(posY) + ", width: " + std::to_string(width) + ", height: " + std::to_string(height);
+    }
+
     float posX = 0.f;
     float posY = 0.f;
     float width = 0.f;

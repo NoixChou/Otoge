@@ -48,10 +48,12 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
     AddChildTask(std::static_pointer_cast<Task>(BodyPanel_));
 
     {
+        AllowWindowSizes_.push_back({ "16:9 WIDE", "", ""});
         AllowWindowSizes_.push_back({ "1920x1080", "1920", "1080" });
         AllowWindowSizes_.push_back({ "1600x1024", "1600", "1024" });
         AllowWindowSizes_.push_back({ "1440x900", "1440", "900" });
         AllowWindowSizes_.push_back({ "1280x720", "1280", "720" });
+        AllowWindowSizes_.push_back({ "4:3 STD", "", ""});
         AllowWindowSizes_.push_back({ "1280x1024", "1280", "1024" });
         AllowWindowSizes_.push_back({ "800x600", "800", "600" });
     }
@@ -76,16 +78,22 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
             BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(WindowSizeList_));
 
             int l_ItemCount = 0;
-            for(l_ItemCount = 0; l_ItemCount<AllowWindowSizes_.size(); l_ItemCount++)
+            for(l_ItemCount = 0; l_ItemCount < AllowWindowSizes_.size(); l_ItemCount++)
             {
                 std::string l_WindowSize = AllowWindowSizes_[l_ItemCount][0];
+                if(AllowWindowSizes_[l_ItemCount][1].empty())
+                {
+                    auto l_Item = DropdownList::SimpleItem(AllowWindowSizes_[l_ItemCount][0], true);
+                    WindowSizeList_->AddItem(l_ItemCount, l_Item);
+                    continue;
+                }
                 WindowSizeList_->AddItem(l_ItemCount, l_WindowSize);
             }
         }
     }
 
-    auto testCheck = std::make_shared<CheckBox>("ABCD", ScreenData(0.f, 40.f, 20.f, 1.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
-    BodyPanel_->GetPanelInstance()->AddChildTask(testCheck);
+    FullscreenCheck_ = std::make_shared<CheckBox>("フルスクリーン", ScreenData(WindowSizeList_->GetPositionX() + WindowSizeList_->GetScreenWidth() + 1.5f, WindowSizeDescription_->GetPositionY(), 25.f, 1.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
+    BodyPanel_->GetPanelInstance()->AddChildTask(FullscreenCheck_);
 
     StopFade();
 }
@@ -98,15 +106,31 @@ SettingScene::~SettingScene()
 void SettingScene::OnStartedFadeIn()
 {
     TaskManager::GetInstance()->SetModalTask(weak_from_this());
+
+    // 解像度
     auto l_CurrentSize = std::find_if(AllowWindowSizes_.begin(), AllowWindowSizes_.end(), [&](const std::vector<std::string> & lines)
     {
-        return lines.at(0) == SettingManager::GetGlobal()->Get<std::string>(game_config::SETTINGS_RES_WIDTH).get() + "x" + SettingManager::GetGlobal()->Get<std::string>(game_config::SETTINGS_RES_HEIGHT).get();
+        if (lines.at(1).empty() || lines.at(2).empty())
+        {
+            return false;
+        }
+        return (lines.at(1) == SettingManager::GetGlobal()->Get<std::string>(game_config::SETTINGS_RES_WIDTH).get()) && (lines.at(2) == SettingManager::GetGlobal()->Get<std::string>(game_config::SETTINGS_RES_HEIGHT).get());
     });
 
     if(l_CurrentSize != AllowWindowSizes_.end())
     {
-        WindowSizeList_->SetSelectedItemNum(engine::CastToInt(std::distance(AllowWindowSizes_.begin(), l_CurrentSize)) + 1);
+        WindowSizeList_->SetSelectedItemNum(engine::CastToInt(std::distance(AllowWindowSizes_.begin(), l_CurrentSize)));
     }
+
+    // フルスクリーン
+    auto l_IsFullscreen = SettingManager::GetGlobal()->Get<bool>(game_config::SETTINGS_FULLSCREEN);
+    if(l_IsFullscreen)
+        FullscreenCheck_->SetChecked(l_IsFullscreen.get());
+}
+
+void SettingScene::OnStartedFadeOut()
+{
+    SettingManager::GetGlobal()->Save();
 }
 
 void SettingScene::SceneFadeIn(float deltaTime)
@@ -144,29 +168,27 @@ void SettingScene::SceneUpdate(float deltaTime)
 {
     if(CloseButton_->IsClickedMouse() || (!IsOnMouse() && MouseManager::GetInstance()->IsDownButton(MOUSE_INPUT_LEFT) && IsEnable()))
     {
-        SettingManager::GetGlobal()->Save();
         StartFadeOut();
     }
 
-    if(WindowSizeList_->IsChangedSelect())
+    // 解像度
+    if(WindowSizeList_->IsChangedSelect() && IsEnable())
     {
-        int WindowWidth = stoi(AllowWindowSizes_[0][1]);
-        int WindowHeight = stoi(AllowWindowSizes_[0][2]);
+        int WindowWidth = 1;
+        int WindowHeight = 1;
 
-        auto l_CurrentSize = std::find_if(AllowWindowSizes_.begin(), AllowWindowSizes_.end(), [&](const std::vector<std::string> & lines)
-            {
-                return lines.at(0) == AllowWindowSizes_[WindowSizeList_->GetSelectedItemNum() - 1][0];
-            });
-
-        if (l_CurrentSize != AllowWindowSizes_.end())
-        {
-            int currentSizePos = engine::CastToInt(std::distance(AllowWindowSizes_.begin(), l_CurrentSize));
-            WindowWidth = stoi(AllowWindowSizes_[currentSizePos][1]);
-            WindowHeight = stoi(AllowWindowSizes_[currentSizePos][2]);
-        }
+        int currentSizePos = WindowSizeList_->GetSelectedItemNum();
+        WindowWidth = stoi(AllowWindowSizes_[currentSizePos][1]);
+        WindowHeight = stoi(AllowWindowSizes_[currentSizePos][2]);
 
         SettingManager::GetGlobal()->Set(game_config::SETTINGS_RES_WIDTH, WindowWidth);
         SettingManager::GetGlobal()->Set(game_config::SETTINGS_RES_HEIGHT, WindowHeight);
+    }
+    // フルスクリーン
+    if(FullscreenCheck_->IsChanged())
+    {
+        Logger_->Error("changed");
+        SettingManager::GetGlobal()->Set(game_config::SETTINGS_FULLSCREEN, FullscreenCheck_->IsChecked());
     }
 }
 

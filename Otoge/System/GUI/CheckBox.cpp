@@ -15,7 +15,8 @@ CheckBox::CheckBox(const std::string& label, const ScreenData& layoutScreen, std
     CheckButton_->animationColor = animationColor;
     CheckButton_->SetLabel("");
     CheckButton_->ChangeDrawFunction([=] {
-        auto fixed = CheckButton_->GetDefaultScaler()->Calculate(0.f, 0.f, 100.f, 100.f);
+        auto l_SizeSubVal = 15.f;
+        auto fixed = CheckButton_->GetDefaultScaler()->Calculate(0.f + l_SizeSubVal, 0.f + l_SizeSubVal, 100.f - (l_SizeSubVal), 100.f - (l_SizeSubVal));
         float round = CheckButton_->GetDefaultScaler()->CalculateHeight(30.f);
         float thick = CheckButton_->GetDefaultScaler()->CalculateHeight(8.f);
         thick /= 2.f;
@@ -27,10 +28,10 @@ CheckBox::CheckBox(const std::string& label, const ScreenData& layoutScreen, std
     });
     AddChildTask(std::static_pointer_cast<Task>(CheckButton_));
 
-    TextLabel_ = std::make_shared<Label>(label, ScreenData(CheckButton_->GetScreenWidth(), 15.f, 100.f - CheckButton_->GetScreenWidth(), 70.f), DefaultScaler_);
+    TextLabel_ = std::make_shared<Label>(label, ScreenData(CheckButton_->GetScreenWidth(), 2.f, 100.f - CheckButton_->GetScreenWidth(), 96.f), DefaultScaler_);
     TextLabel_->baseColor = textColor;
     TextLabel_->AdjustmentFontSize_ = true;
-    TextLabel_->ChangeFontThickness(8);
+    TextLabel_->ChangeFontThickness(6);
     TextLabel_->SetTextAlign(Label::TextAlignment::center | Label::TextAlignment::middle);
     AddChildTask(std::static_pointer_cast<Task>(TextLabel_));
 }
@@ -41,6 +42,8 @@ CheckBox::~CheckBox()
 
 void CheckBox::GUIUpdate(float deltaTime)
 {
+    IsOldChecked_ = IsChecked_;
+
     if(CheckButton_->IsClickedMouse() || TextLabel_->IsClickedMouse())
     {
         IsChecked_ = !IsChecked_;
@@ -68,6 +71,11 @@ void CheckBox::SetChecked(bool check)
 bool CheckBox::IsChecked()
 {
     return IsChecked_;
+}
+
+bool CheckBox::IsChanged()
+{
+    return IsOldChecked_ != IsChecked_ && IsEnable();
 }
 
 std::shared_ptr<Label> CheckBox::GetTextLabelInstance()

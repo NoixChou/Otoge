@@ -138,9 +138,9 @@ void Initialize()
                 if (MouseManager::GetInstance()->IsReleaseButton(MOUSE_INPUT_LEFT))
                     currentSize = cursorDrawer->GetDefaultScaler()->CalculateHeight(HoldingSize), cursorDrawer->timerCount = 0.f;
                 if (MouseManager::GetInstance()->IsHoldButton(MOUSE_INPUT_LEFT))
-                    cursorSize = ease(cursorDrawer->timerCount, totalTime, cursorDrawer->GetDefaultScaler()->CalculateHeight(HoldingSize), currentSize);
+                    cursorSize = engine::CastToFloat(ease(cursorDrawer->timerCount, totalTime, cursorDrawer->GetDefaultScaler()->CalculateHeight(HoldingSize), currentSize));
                 else
-                    cursorSize = Easing::OutExp(cursorDrawer->timerCount, totalTime, cursorDrawer->GetDefaultScaler()->CalculateHeight(ReleasedSize), currentSize);
+                    cursorSize = engine::CastToFloat(Easing::OutExp(cursorDrawer->timerCount, totalTime, cursorDrawer->GetDefaultScaler()->CalculateHeight(ReleasedSize), currentSize));
 
                 if(cursorDrawer->timerCount > totalTime)
                 {

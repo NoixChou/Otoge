@@ -5,6 +5,7 @@
 #include "../../../../System/GUI/ScrollablePanel.hpp"
 #include "../../../../System/GUI/SlideBar.hpp"
 #include "../../../../System/GUI/DropdownList.hpp"
+#include "../../../../System/GUI/CheckBox.hpp"
 
 class SettingScene :
     public Scene
@@ -18,6 +19,12 @@ private:
     std::shared_ptr<Label> DisplaySectionLabel_;
     std::shared_ptr<Label> WindowSizeDescription_;
     std::shared_ptr<DropdownList> WindowSizeList_;
+    std::shared_ptr<CheckBox> FullscreenCheck_;
+    std::shared_ptr<CheckBox> VSyncCheck_;
+
+    std::shared_ptr<Label> InterfaceSectionLabel_;
+    std::shared_ptr<DropdownList> JapaneseFontList_;
+    std::shared_ptr<DropdownList> AlphabetFontList_;
 
     std::vector<std::vector<std::string>> AllowWindowSizes_;
 
@@ -26,6 +33,7 @@ public:
     ~SettingScene();
 
     void OnStartedFadeIn() override;
+    void OnStartedFadeOut() override;
     void SceneFadeIn(float deltaTime) override;
     void SceneFadeOut(float deltaTime) override;
 

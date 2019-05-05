@@ -81,7 +81,7 @@ bool Task::IsEnable() const
 
     if (!l_ModalTask.expired())
     {
-        return IsOnModal();
+        return IsOnModal() && IsRawEnable();
     }
     return IsRawEnable();
 }
@@ -90,7 +90,7 @@ bool Task::IsRawEnable() const
 {
     if (!parentTask.expired())
     {
-        if (!parentTask.lock()->IsEnable()) return false;
+        return parentTask.lock()->IsEnable() && IsEnable_;
     }
 
     return IsEnable_;

@@ -4,6 +4,8 @@
 #include "../Input/MouseManager.hpp"
 #include "../../Util/Calculate/Screen/FontStringCalculator.hpp"
 #include "../../Util/Visual/Color.hpp"
+#include "TaskManager.hpp"
+#include "../../Util/Window/DxSettings.hpp"
 int DrawableTask::TemporaryDrawBuffer_ = -1;
 int DrawableTask::BufferWidth_ = -1;
 int DrawableTask::BufferHeight_ = -1;
@@ -15,9 +17,9 @@ DrawableTask::DrawableTask(const std::string& sceneName, float x, float y, float
 	if(TemporaryDrawBuffer_ == -1)
 	{
 		if(BufferWidth_ == -1)
-			BufferWidth_ = SettingManager::GetGlobal()->Get<int>(game_config::SETTINGS_RES_WIDTH).get();
+			BufferWidth_ = DxSettings::windowWidth;
 		if(BufferHeight_ == -1)
-			BufferHeight_ = SettingManager::GetGlobal()->Get<int>(game_config::SETTINGS_RES_HEIGHT).get();
+			BufferHeight_ = DxSettings::windowWidth;
 
 		IsDrawPoint_ = SettingManager::GetGlobal()->Get<bool>(game_config::SETTINGS_DEBUG_DRAW_DTASK_POINT).get();
 		SettingManager::GetGlobal()->SetDefault<float>("system.debug.drawable.drawPointSize", DrawPointSize_);
@@ -54,12 +56,15 @@ void DrawableTask::Update(float deltaTime)
 		int currentBuffer = GetDrawScreen();
 		int currentBlendMode = DX_BLENDMODE_NOBLEND, currentBlendParam = 255;
 		GetDrawBlendMode(&currentBlendMode, &currentBlendParam);
-		SetDrawScreen(TemporaryDrawBuffer_);
+		
+	    SetDrawScreen(TemporaryDrawBuffer_);
+        SetDrawBlendMode(currentBlendMode, currentBlendParam);
 		ClearDrawScreen();
+
 		/* 描画始め */
 
 		Draw();
-		ChildUpdate(deltaTime);
+        TaskManager::UpdateTasks(children, childrenQueues, TickSpeed_, deltaTime);
 
 		// デバッグ
 		if (IsDrawPoint_)

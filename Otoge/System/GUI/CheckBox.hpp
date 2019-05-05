@@ -9,6 +9,7 @@ private:
     std::shared_ptr<Button> CheckButton_;
     std::shared_ptr<Label> TextLabel_;
 
+    bool IsOldChecked_ = false; 
     bool IsChecked_ = false;
 
 public:
@@ -24,6 +25,7 @@ public:
 
     void SetChecked(bool check);
     bool IsChecked();
+    bool IsChanged();
 
     std::shared_ptr<Label> GetTextLabelInstance();
 };
