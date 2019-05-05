@@ -66,6 +66,10 @@ void GUI::SceneUpdate(float deltaTime)
     IsChangedLabel_ = false;
 }
 
+void GUI::OnReCalculateScreen()
+{
+}
+
 void GUI::SetLabel(const std::string& label)
 {
     IsChangedLabel_ = Label_ != label;

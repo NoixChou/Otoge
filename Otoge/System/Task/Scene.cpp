@@ -67,8 +67,13 @@ void Scene::Update(float deltaTime)
     // スケーラサイズに変更があるか
     if (CurrentParentWidth_ != ParentScaler_->GetScreenWidth()) IsChangedSize_ = true;
     if (CurrentParentHeight_ != ParentScaler_->GetScreenHeight()) IsChangedSize_ = true;
+    if (CurrentWidth_ != DefaultScaler_->GetScreenWidth()) IsChangedSize_ = true;
+    if (CurrentHeight_ != DefaultScaler_->GetScreenHeight()) IsChangedSize_ = true;
+
     CurrentParentWidth_ = ParentScaler_->GetScreenWidth();
     CurrentParentHeight_ = ParentScaler_->GetScreenHeight();
+    CurrentWidth_ = DefaultScaler_->GetScreenWidth();
+    CurrentHeight_ = DefaultScaler_->GetScreenHeight();
 
     PrevScreen_ = Screen_;
 
@@ -210,6 +215,8 @@ void Scene::ReCalculateScreen()
 		RefreshDrawBuffer();
 
     RefreshChildren();
+
+    OnReCalculateScreen();
 }
 
 bool Scene::RefreshScaler()
@@ -261,6 +268,11 @@ void Scene::RefreshChildren()
             l_ChildScene->ReCalculateScreen();
         }
     }
+}
+
+bool Scene::IsChangedScaler()
+{
+    return false;
 }
 
 void Scene::StartFadeIn()

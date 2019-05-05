@@ -10,6 +10,7 @@ protected:
     bool IsFadingIn_ = false;
     bool IsFadingOut_ = false;
 
+    float CurrentWidth_ = 0.f, CurrentHeight_ = 0.f;
     float CurrentParentWidth_ = 0.f, CurrentParentHeight_ = 0.f;
     std::shared_ptr<FlexibleScaler> ParentScaler_ = nullptr;
     std::shared_ptr<FlexibleScaler> DefaultScaler_ = nullptr;
@@ -31,6 +32,9 @@ public:
     bool RefreshScaler();
     bool RefreshDrawBuffer();
     void RefreshChildren();
+    bool IsChangedScaler();
+
+    virtual void OnReCalculateScreen() {}
 
     virtual void OnStartedFadeIn() {}
     virtual void OnStoppedFadeIn() {}

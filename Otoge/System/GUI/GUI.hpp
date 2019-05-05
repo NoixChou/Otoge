@@ -25,6 +25,7 @@ public:
     void SceneUpdate(float deltaTime) override;
     virtual void GUIUpdate(float deltaTime) = 0;
     virtual void Draw() = 0;
+    void OnReCalculateScreen() override;
 
     void SetLabel(const std::string& label);
     std::string GetLabel();

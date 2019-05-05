@@ -3,7 +3,9 @@
 #include "../../../System/Config.h"
 #include "../../../System/GlobalMethod.hpp"
 #include "../../Window/DxSettings.hpp"
+
 std::shared_ptr<FlexibleScaler> FlexibleScaler::GlobalInstance_ = nullptr;
+std::vector<FlexibleScaler*> FlexibleScaler::Scalers_;
 
 FlexibleScaler::FlexibleScaler(float screenWidth, float screenHeight, float scale)
 {
@@ -12,14 +14,38 @@ FlexibleScaler::FlexibleScaler(float screenWidth, float screenHeight, float scal
     ScreenWidth_ = screenWidth;
     ScreenHeight_ = screenHeight;
     Scale_ = scale;
+
+    Scalers_.push_back(this);
 }
 
 FlexibleScaler::~FlexibleScaler()
 {
+    auto result = std::find(Scalers_.begin(), Scalers_.end(), this);
+    if(result == Scalers_.end())
+    {
+        Logger::LowLevelLog("Broken scaler list!!!", "CRITICAL");
+    }else
+    {
+        Scalers_.erase(result);
+    }
+}
+
+void FlexibleScaler::ApplyWindowSizeChanges()
+{
+    GlobalInstance_->SetScreenWidth(DxSettings::windowWidth);
+    GlobalInstance_->SetScreenHeight(DxSettings::windowHeight);
+    Logger::LowLevelLog("Scalers Count: " + std::to_string(Scalers_.size()), "Flex Scaler");
+    for(auto s : Scalers_)
+    {
+        Logger::LowLevelLog("Reset " + std::to_string(s->GetScreenWidth()), "Flex       Scaler");
+        s->SetScreenWidth(s->CalculateWidth(GlobalInstance_->CalculatePositionRateX(s->GetScreenWidth())));
+        s->SetScreenHeight(s->CalculateHeight(GlobalInstance_->CalculatePositionRateY(s->GetScreenHeight())));
+    }
 }
 
 std::shared_ptr<FlexibleScaler> FlexibleScaler::GetWindowBasedInstance()
 {
+    Logger::LowLevelLog("WindowBased!", "INFO FlexScaler");
     return GlobalInstance_;
 }
 

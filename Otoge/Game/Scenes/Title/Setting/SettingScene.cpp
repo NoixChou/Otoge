@@ -12,6 +12,7 @@
 #include "../../../../System/GUI/DropdownList.hpp"
 #include "../../../../Util/Visual/Color.hpp"
 #include "../../../../System/GUI/CheckBox.hpp"
+#include "../../../../Util/Window/DxSettings.hpp"
 
 SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
 {
@@ -81,13 +82,15 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
             for(l_ItemCount = 0; l_ItemCount < AllowWindowSizes_.size(); l_ItemCount++)
             {
                 std::string l_WindowSize = AllowWindowSizes_[l_ItemCount][0];
+                std::string l_WindowWidth = AllowWindowSizes_[l_ItemCount][1];
+                std::string l_WindowHeight = AllowWindowSizes_[l_ItemCount][2];
                 if(AllowWindowSizes_[l_ItemCount][1].empty())
                 {
                     auto l_Item = DropdownList::SimpleItem(AllowWindowSizes_[l_ItemCount][0], true);
                     WindowSizeList_->AddItem(l_ItemCount, l_Item);
                     continue;
                 }
-                WindowSizeList_->AddItem(l_ItemCount, l_WindowSize);
+                WindowSizeList_->AddItem(l_ItemCount, l_WindowSize, std::vector<std::string>{l_WindowWidth, l_WindowHeight});
             }
         }
     }
@@ -183,12 +186,19 @@ void SettingScene::SceneUpdate(float deltaTime)
 
         SettingManager::GetGlobal()->Set(game_config::SETTINGS_RES_WIDTH, WindowWidth);
         SettingManager::GetGlobal()->Set(game_config::SETTINGS_RES_HEIGHT, WindowHeight);
+        DxSettings::windowWidth = WindowWidth;
+        DxSettings::windowHeight = WindowHeight;
+        SetGraphMode(WindowWidth, WindowHeight, 32);
+        FlexibleScaler::ApplyWindowSizeChanges();
+        ReCalculateScreen();
     }
     // フルスクリーン
     if(FullscreenCheck_->IsChanged())
     {
         Logger_->Error("changed");
         SettingManager::GetGlobal()->Set(game_config::SETTINGS_FULLSCREEN, FullscreenCheck_->IsChecked());
+        DxSettings::isFullScreen = FullscreenCheck_->IsChecked();
+        ChangeWindowMode(!DxSettings::isFullScreen);
     }
 }
 
