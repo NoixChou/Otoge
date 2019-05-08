@@ -1,5 +1,4 @@
 ﻿#include "SettingManager.h"
-#include "../Encoding/EncodingConverter.h"
 using namespace std;
 
 SettingManager *SettingManager::GlobalSettings_ = nullptr;
@@ -33,9 +32,8 @@ bool SettingManager::Load(const std::string &fileName, bool autoCreate)
         if(autoCreate)
         {
             Logger_->Warn("ファイルが見つからないので作成します...");
-            std::wofstream f(fileName);
-            f.imbue(std::locale(std::locale(), new std::codecvt_utf8<wchar_t>));
-            f.write(encoding::ConvertUtf8ToUtf16("{}").c_str(), 2);
+            std::ofstream f(fileName);
+            f.write("{}", 2);
             f.close();
 
             if (Load(fileName, false))

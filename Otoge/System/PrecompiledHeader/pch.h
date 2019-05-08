@@ -3,6 +3,7 @@
 // コンパイラ設定
 #pragma execution_character_set("utf-8")
 #define _CRT_SECURE_NO_WARNINGS
+#define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
 
 // Windows api
 #include <Windows.h>
@@ -45,6 +46,7 @@
 #include <thread>
 #include <numeric>
 #include <string>
+#include <optional>
 #include <locale>
 #include <codecvt>
 

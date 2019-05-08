@@ -15,7 +15,7 @@ namespace game_config
     constexpr auto GAME_SCREEN_WIDTH = 1024;
     constexpr auto GAME_SCREEN_HEIGHT = 720;
 
-    constexpr auto GAME_APP_DEFAULT_FONT = "ＭＳ　ゴシック"; // デフォルトのフォント
+    constexpr auto GAME_APP_DEFAULT_FONT = "MS Gothic"; // デフォルトのフォント
 
     // 設定ファイル
     constexpr auto SETTINGS_PATH = "system.";

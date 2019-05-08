@@ -9,7 +9,7 @@
 #include "../../../../Util/Calculate/Animation/Easing.hpp"
 #include "../../../../System/GUI/SlideBar.hpp"
 #include "../../../../System/GlobalMethod.hpp"
-#include "../../../../System/GUI/DropdownList.hpp"
+#include "../../../../System/GUI/DropdownList.cpp"
 #include "../../../../Util/Visual/Color.hpp"
 #include "../../../../System/GUI/CheckBox.hpp"
 #include "../../../../Util/Window/DxSettings.hpp"
@@ -48,16 +48,16 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
     BodyPanel_->SetPriority(0.f);
     AddChildTask(std::static_pointer_cast<Task>(BodyPanel_));
 
-    {
-        AllowWindowSizes_.push_back({ "16:9 WIDE", "", ""});
-        AllowWindowSizes_.push_back({ "1920x1080", "1920", "1080" });
-        AllowWindowSizes_.push_back({ "1600x1024", "1600", "1024" });
-        AllowWindowSizes_.push_back({ "1440x900", "1440", "900" });
-        AllowWindowSizes_.push_back({ "1280x720", "1280", "720" });
-        AllowWindowSizes_.push_back({ "4:3 STD", "", ""});
-        AllowWindowSizes_.push_back({ "1280x1024", "1280", "1024" });
-        AllowWindowSizes_.push_back({ "800x600", "800", "600" });
-    }
+	{
+		AllowWindowSizes_.push_back(std::make_pair("16:9 WIDE", std::make_pair(0, 0)));
+		AllowWindowSizes_.push_back(std::make_pair("1920x1080", std::make_pair(1920, 1080)));
+		AllowWindowSizes_.push_back(std::make_pair("1600x1024", std::make_pair(1600, 1024)));
+		AllowWindowSizes_.push_back(std::make_pair("1440x900", std::make_pair(1440, 900)));
+		AllowWindowSizes_.push_back(std::make_pair("1280x720", std::make_pair(1280, 720)));
+		AllowWindowSizes_.push_back(std::make_pair("4:3 STD", std::make_pair(0, 0)));
+		AllowWindowSizes_.push_back(std::make_pair("1280x1024", std::make_pair(1280, 1024)));
+		AllowWindowSizes_.push_back(std::make_pair("800x600", std::make_pair(800, 600)));
+	}
 
     {
         DisplaySectionLabel_ = std::make_shared<Label>("ディスプレイ", ScreenData(0.f, 0.f, 100.f, 2.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
@@ -75,22 +75,19 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
             WindowSizeDescription_->ChangeFontThickness(2);
             BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(WindowSizeDescription_));
 
-            WindowSizeList_ = std::make_shared<DropdownList>("WindowSizeList", ScreenData(WindowSizeDescription_->GetScreenWidth(), WindowSizeDescription_->GetPositionY(), 20.f, WindowSizeDescription_->GetScreenHeight() + 0.0f), AllowWindowSizes_.size(), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
+            WindowSizeList_ = std::make_shared<DropdownList<std::pair<int, int>>>("WindowSizeList", ScreenData(WindowSizeDescription_->GetScreenWidth(), WindowSizeDescription_->GetPositionY(), 20.f, WindowSizeDescription_->GetScreenHeight() + 0.0f), AllowWindowSizes_.size(), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
             BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(WindowSizeList_));
 
             int l_ItemCount = 0;
             for(l_ItemCount = 0; l_ItemCount < AllowWindowSizes_.size(); l_ItemCount++)
             {
-                std::string l_WindowSize = AllowWindowSizes_[l_ItemCount][0];
-                std::string l_WindowWidth = AllowWindowSizes_[l_ItemCount][1];
-                std::string l_WindowHeight = AllowWindowSizes_[l_ItemCount][2];
-                if(AllowWindowSizes_[l_ItemCount][1].empty())
+                std::string l_WindowSize = AllowWindowSizes_[l_ItemCount].first;
+                if(AllowWindowSizes_[l_ItemCount].second.first == 0)
                 {
-                    auto l_Item = DropdownList::SimpleItem(AllowWindowSizes_[l_ItemCount][0], true);
-                    WindowSizeList_->AddItem(l_ItemCount, l_Item);
+                    WindowSizeList_->AddSeparator(l_ItemCount, l_WindowSize);
                     continue;
                 }
-                WindowSizeList_->AddItem(l_ItemCount, l_WindowSize, std::vector<std::string>{l_WindowWidth, l_WindowHeight});
+                WindowSizeList_->AddSimpleItem(l_ItemCount, l_WindowSize, AllowWindowSizes_[l_ItemCount].second);
             }
         }
     }
@@ -111,13 +108,13 @@ void SettingScene::OnStartedFadeIn()
     TaskManager::GetInstance()->SetModalTask(weak_from_this());
 
     // 解像度
-    auto l_CurrentSize = std::find_if(AllowWindowSizes_.begin(), AllowWindowSizes_.end(), [&](const std::vector<std::string> & lines)
+    auto l_CurrentSize = std::find_if(AllowWindowSizes_.begin(), AllowWindowSizes_.end(), [&](const std::pair<std::string, std::pair<int, int>>& lines)
     {
-        if (lines.at(1).empty() || lines.at(2).empty())
+        if (lines.second.first == 0 || lines.second.second == 0)
         {
             return false;
         }
-        return (lines.at(1) == SettingManager::GetGlobal()->Get<std::string>(game_config::SETTINGS_RES_WIDTH).get()) && (lines.at(2) == SettingManager::GetGlobal()->Get<std::string>(game_config::SETTINGS_RES_HEIGHT).get());
+        return (lines.second.first == SettingManager::GetGlobal()->Get<int>(game_config::SETTINGS_RES_WIDTH).get()) && (lines.second.second == SettingManager::GetGlobal()->Get<int>(game_config::SETTINGS_RES_HEIGHT).get());
     });
 
     if(l_CurrentSize != AllowWindowSizes_.end())
@@ -177,12 +174,12 @@ void SettingScene::SceneUpdate(float deltaTime)
     // 解像度
     if(WindowSizeList_->IsChangedSelect() && IsEnable())
     {
-        int WindowWidth = 1;
-        int WindowHeight = 1;
+		int WindowWidth = SettingManager::GetGlobal()->Get<int>(game_config::SETTINGS_RES_WIDTH).get();
+        int WindowHeight = SettingManager::GetGlobal()->Get<int>(game_config::SETTINGS_RES_HEIGHT).get();
 
-        int currentSizePos = WindowSizeList_->GetSelectedItemNum();
-        WindowWidth = stoi(AllowWindowSizes_[currentSizePos][1]);
-        WindowHeight = stoi(AllowWindowSizes_[currentSizePos][2]);
+        std::optional<std::pair<int, int>> ItemValue = WindowSizeList_->GetSelectedItemValue();
+		if (!ItemValue.has_value()) return;
+		std::tie(WindowWidth, WindowHeight) = ItemValue.value();
 
         SettingManager::GetGlobal()->Set(game_config::SETTINGS_RES_WIDTH, WindowWidth);
         SettingManager::GetGlobal()->Set(game_config::SETTINGS_RES_HEIGHT, WindowHeight);
