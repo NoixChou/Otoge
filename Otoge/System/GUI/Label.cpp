@@ -39,7 +39,7 @@ void Label::GUIUpdate(float deltaTime)
 
 void Label::Draw()
 {
-    DrawStringToHandle(static_cast<int>(TextX_), static_cast<int>(TextY_), Label_.c_str(), baseColor, FontHandle_);
+    DrawStringFToHandle(TextX_, TextY_, Label_.c_str(), baseColor, FontHandle_);
 }
 
 void Label::SetTextAlign(TextAlignment align)

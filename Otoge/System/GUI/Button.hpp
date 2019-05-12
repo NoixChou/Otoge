@@ -37,4 +37,6 @@ public:
 
 	void PreUpdate(float deltaTime) override;
 	void Draw() override;
+
+    void SizeAnimationProcess(float deltaTime);
 };

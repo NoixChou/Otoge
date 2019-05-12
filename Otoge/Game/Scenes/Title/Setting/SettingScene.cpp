@@ -16,16 +16,17 @@
 
 SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
 {
-    TitleBar_ = std::make_shared<Scene>("titlebar", ScreenData(0.f, 0.f, 100.f, 5.f), DefaultScaler_);
-    TitleBar_->SetDrawFunction([&]
+    auto l_TitleBar = std::make_shared<Scene>("titlebar", ScreenData(0.f, 0.f, 100.f, 5.f), DefaultScaler_);
+    TitleBar_ = l_TitleBar;
+    TitleBar_.lock()->SetDrawFunction([&]
         {
             ScreenData l_FixedTitlebar = DefaultScaler_->Calculate(0.f, 0.f, 100.f, 100.f);
             DrawBox(static_cast<int>(l_FixedTitlebar.posX), static_cast<int>(l_FixedTitlebar.posY), static_cast<int>(l_FixedTitlebar.width), static_cast<int>(l_FixedTitlebar.height), color_preset::WHITE, TRUE);
         });
-    TitleBar_->SetPriority(20.f);
-    AddChildTask(std::static_pointer_cast<Task>(TitleBar_));
+    TitleBar_.lock()->SetPriority(20.f);
+    AddChildTask(std::static_pointer_cast<Task>(TitleBar_.lock()));
 
-    CloseButton_ = std::make_shared<Button>("< Close", ScreenData(0.f, 0.f, 20.f, 100.f), TitleBar_->GetDefaultScaler());
+    CloseButton_ = std::make_shared<Button>("< Close", ScreenData(0.f, 0.f, 20.f, 100.f), TitleBar_.lock()->GetDefaultScaler());
     CloseButton_->isDrawBase = false;
     CloseButton_->baseColor = color_preset::WHITE;
     CloseButton_->animationColor = color_preset::DARK_GREY;
@@ -33,15 +34,15 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
     CloseButton_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(2.f)));
     CloseButton_->GetTextLabelInstance()->ChangeFontThickness(1);
     CloseButton_->SetPriority(5.f);
-    TitleBar_->AddChildTask(std::static_pointer_cast<Task>(CloseButton_));
+    TitleBar_.lock()->AddChildTask(std::static_pointer_cast<Task>(CloseButton_));
 
-    auto l_TitleLabel = std::make_shared<Label>("設定", ScreenData(0.0f, 0.0f, 100.f, CloseButton_->GetScreenHeight()), TitleBar_->GetDefaultScaler());
+    auto l_TitleLabel = std::make_shared<Label>("設定", ScreenData(0.0f, 0.0f, 100.f, CloseButton_->GetScreenHeight()), TitleBar_.lock()->GetDefaultScaler());
     l_TitleLabel->SetTextAlign(Label::TextAlignment::center | Label::TextAlignment::middle);
     l_TitleLabel->baseColor = color_preset::BLACK;
     l_TitleLabel->AdjustmentFontSize_ = false;
     l_TitleLabel->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
     l_TitleLabel->ChangeFontThickness(1);
-    TitleBar_->AddChildTask(std::static_pointer_cast<Task>(l_TitleLabel));
+    TitleBar_.lock()->AddChildTask(std::static_pointer_cast<Task>(l_TitleLabel));
 
 
     BodyPanel_ = std::make_shared<ScrollablePanel>("bodypanel", ScreenData(3.f, 5.f, 94.f, 95.f), ScreenData(0.f, 0.f, 100.f, 190.f), DefaultScaler_);
@@ -97,6 +98,9 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
 
     FullscreenCheck_ = std::make_shared<CheckBox>("フルスクリーン", ScreenData(WindowSizeList_->GetPositionX() + WindowSizeList_->GetScreenWidth() + 1.5f, WindowSizeDescription_->GetPositionY(), 25.f, 1.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
     BodyPanel_->GetPanelInstance()->AddChildTask(FullscreenCheck_);
+
+    VSyncCheck_ = std::make_shared<CheckBox>("垂直同期", ScreenData(WindowSizeList_->GetPositionX(), WindowSizeDescription_->GetPositionY() + WindowSizeDescription_->GetScreenHeight() + 1.5f, 20.f, 1.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
+    BodyPanel_->GetPanelInstance()->AddChildTask(VSyncCheck_);
 
     StopFade();
 }
@@ -172,6 +176,11 @@ void SettingScene::SceneUpdate(float deltaTime)
     if(CloseButton_->IsClickedMouse() || (!IsOnMouse() && MouseManager::GetInstance()->IsDownButton(MOUSE_INPUT_LEFT) && IsEnable()))
     {
         StartFadeOut();
+    }
+
+    if(KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_LCONTROL) && KeyboardManager::GetInstance()->IsDownKey(KEY_INPUT_O))
+    {
+        StartFadeIn();
     }
 
     // 解像度

@@ -12,6 +12,7 @@
 #include "System/Task/CursorDrawer.hpp"
 #include "Util/Calculate/Animation/Easing.hpp"
 #include "Util/Visual/Color.hpp"
+#include "Util/Encoding/EncodingConverter.h"
 using namespace std;
 
 // 前方宣言
@@ -72,6 +73,7 @@ void PreInitialize()
     DxSettings::useOriginalCursor = g_SystemSettings->Get<bool>(game_config::SETTINGS_MOUSE_USEORIGINAL).get();
 
     ChangeWindowMode(!DxSettings::isFullScreen); // ウィンドウモード/フルスクリーン
+
     SetUseCharCodeFormat(DX_CHARCODEFORMAT_UTF8); // 文字コード
     SetMainWindowText((static_cast<std::string>(game_config::GAME_APP_NAME) + " v" + static_cast<std::string>(game_config::GAME_APP_VER)).c_str()); // ウィンドウのタイトル
     SetAlwaysRunFlag(TRUE); // 常に処理
@@ -82,6 +84,8 @@ void PreInitialize()
     SetFullSceneAntiAliasingMode(DxSettings::antialiasingSample, DxSettings::antialiasingQuality);
 
 	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
+
+    SetUseDirect3DVersion(DX_DIRECT3D_9EX);
 }
 
 // 初期化
@@ -93,15 +97,15 @@ void Initialize()
     {
         // DXライブラリ 初期化失敗
         g_Logger->Critical("DXライブラリ初期化 失敗");
-        MessageBox(nullptr, "DXライブラリの初期化に失敗しました。", "error", MB_OK | MB_ICONERROR);
+        MessageBox(nullptr, encoding::ConvertUtf8ToSJIS("DXライブラリの初期化に失敗しました。").c_str(), "error", MB_OK | MB_ICONERROR);
         exit(-1);
     }
     g_Logger->Info("DXライブラリ初期化 成功");
 
     // 3D設定
+    SetDrawScreen(DX_SCREEN_BACK);
     SetUseZBuffer3D(TRUE);
     SetWriteZBuffer3D(TRUE);
-    SetDrawScreen(DX_SCREEN_BACK);
 
     SetDrawMode(DX_DRAWMODE_BILINEAR);
     SetMouseDispFlag(TRUE); // マウスカーソルの表示
@@ -160,8 +164,8 @@ void Loop()
 {
     while(ProcessMessage() != -1 && !TaskManager::GetInstance()->IsGameExit())
     {
-		if(KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_A))
-	        TaskManager::GetInstance()->Tick(0.5f);
+		if(KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_TAB))
+	        TaskManager::GetInstance()->Tick(0.1f);
 		else
 			TaskManager::GetInstance()->Tick(1.0f);
     }

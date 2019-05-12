@@ -3,6 +3,7 @@
 #include "../../Util/Setting/SettingManager.h"
 #include "../Config.h"
 #include "../../Util/Window/DxSettings.hpp"
+#include "../Task/TaskManager.hpp"
 std::shared_ptr<MouseManager> MouseManager::Instance_ = nullptr;
 
 MouseManager::MouseManager() : Task("MouseManager")
@@ -81,9 +82,59 @@ bool MouseManager::IsVisibleCursor() const
     return GetMouseDispFlag();
 }
 
+void MouseManager::UpdateMousePosition()
+{
+    SetMousePoint(MousePosX_, MousePosY_);
+}
+
+void MouseManager::SetMouseX(int x)
+{
+    MousePosX_ = x;
+    UpdateMousePosition();
+}
+
+void MouseManager::SetMouseY(int y)
+{
+    MousePosY_ = y;
+    UpdateMousePosition();
+}
+
+void MouseManager::SetMouseX(float x)
+{
+    SetMouseX(engine::CastToInt(x));
+}
+
+void MouseManager::SetMouseY(float y)
+{
+    SetMouseY(engine::CastToInt(y));
+}
+
 bool MouseManager::IsMovedMouse()
 {
+    auto currentTask = TaskManager::GetInstance()->GetCurrentProcessTask();
+    if ((*currentTask) != nullptr && !(*currentTask)->IsEnable())
+        return false;
     return (PrevMousePosX_ != MousePosX_) || (PrevMousePosY_ != MousePosY_);
+}
+
+int MouseManager::GetMouseXVel()
+{
+    return MousePosX_ - PrevMousePosX_;
+}
+
+int MouseManager::GetMouseYVel()
+{
+    return MousePosY_ - PrevMousePosY_;
+}
+
+float MouseManager::GetMouseXVelf()
+{
+    return engine::CastToFloat(GetMouseXVel());
+}
+
+float MouseManager::GetMouseYVelf()
+{
+    return engine::CastToFloat(GetMouseYVel());
 }
 
 int MouseManager::GetMouseX()

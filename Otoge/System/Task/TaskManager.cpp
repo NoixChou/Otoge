@@ -4,6 +4,7 @@ using namespace std;
 using namespace std::chrono;
 
 std::shared_ptr<TaskManager> TaskManager::Instance_ = nullptr;
+std::vector< Task::TaskPointer >::iterator TaskManager::ProcessingTask_;
 
 TaskManager::TaskManager()
 {
@@ -68,6 +69,11 @@ void TaskManager::UnsetModalTask()
     auto l_lockedModalTask = ModalTask_.lock();
     l_lockedModalTask->SetEnable(l_lockedModalTask->GetOldEnables());
     ModalTask_.reset();
+}
+
+std::vector<Task::TaskPointer>::iterator TaskManager::GetCurrentProcessTask()
+{
+    return ProcessingTask_;
 }
 
 int TaskManager::GetTaskCount()
@@ -142,6 +148,7 @@ void TaskManager::UpdateTasks(std::vector<Task::TaskPointer>& tasks, std::vector
 
 	for (l_Task; l_Task != tasks.end(); ++l_Task)
 	{
+        ProcessingTask_ = l_Task;
         const auto l_BeginTime = high_resolution_clock::now();
 
 		// タイマー更新

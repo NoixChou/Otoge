@@ -48,11 +48,13 @@ void Button::Draw()
     if(isDrawBase)
         DrawBox(0, 0, engine::CastToInt(GetRawScreenWidth()), engine::CastToInt(GetRawScreenHeight()), baseColor, TRUE);
 
+    /*
     if (IsHoldMouse() && timerCount > 0.3f)
     {
         SetDrawBlendMode(AlphaBlendMode_, 127);
         DrawBox(0, 0, engine::CastToInt(GetRawScreenWidth()), engine::CastToInt(GetRawScreenHeight()), animationColor, TRUE);
     }
+    */
     if (IsOnMouse())
     {
         //Logger_->Debug("btn Draw");
@@ -89,8 +91,28 @@ ButtonPushedAnimate::~ButtonPushedAnimate()
 
 void ButtonPushedAnimate::PreUpdate(float deltaTime)
 {
-	Size_ += Size_ * 10.f * deltaTime;
-	SetTransparent(GetTransparent() - (100.f * deltaTime));
+    if (!parentTask.expired())
+    {
+        auto parentScene = std::dynamic_pointer_cast<Scene>(parentTask.lock());
+        if(parentScene)
+        {
+            if(parentScene->IsHoldMouse())
+            {
+                Lifespan_ = 0.5f;
+                if (Size_ < parentScene->GetRawScreenWidth() || Size_ < parentScene->GetRawScreenHeight())
+                {
+                    SizeAnimationProcess(deltaTime);
+                }
+                else
+                {
+                    return;
+                }
+            }
+        }
+    }
+
+    SizeAnimationProcess(deltaTime);
+    SetTransparent(GetTransparent() - (100.f * deltaTime));
 }
 
 void ButtonPushedAnimate::Draw()
@@ -103,4 +125,9 @@ void ButtonPushedAnimate::Draw()
     const auto l_Fixed = ParentScaler_->Calculate(l_Circle);
     SetDrawBlendMode(DX_BLENDMODE_PMA_INVSRC, 255);
     DrawCircle(engine::CastToInt(l_Fixed.posX), engine::CastToInt(l_Fixed.posY), engine::CastToInt(l_Fixed.width + l_Fixed.height / 2.0f), GetColor(255,255,255) , TRUE);
+}
+
+void ButtonPushedAnimate::SizeAnimationProcess(float deltaTime)
+{
+    Size_ += Size_ * 10.f * deltaTime;
 }

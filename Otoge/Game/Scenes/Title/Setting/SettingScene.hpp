@@ -11,7 +11,7 @@ class SettingScene :
     public Scene
 {
 private:
-    std::shared_ptr<Scene> TitleBar_;
+    std::weak_ptr<Scene> TitleBar_;
 	std::shared_ptr<Button> CloseButton_;
 
     std::shared_ptr<ScrollablePanel> BodyPanel_;

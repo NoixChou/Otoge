@@ -10,66 +10,77 @@
 #include "Setting/SettingScene.hpp"
 #include "../../../System/GlobalMethod.hpp"
 #include "../../../Util/Visual/Color.hpp"
+#include "../Play/Game3DTest.hpp"
+
+std::weak_ptr<Scene> TitleScene::SettingScene_;
 
 TitleScene::TitleScene() : Scene("TitleScene")
 {
     // メニュー開閉ボタン
-    MenuOpener_ = std::make_shared<Button>("おなまえ", ScreenData(40.f, 40.f, 20.f, 20.f, true), DefaultScaler_);
-    MenuOpener_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
-    MenuOpener_->baseColor = color_preset::BLUE;
-    MenuOpener_->GetTextLabelInstance()->ChangeFontThickness(1);
-    MenuOpener_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
-    MenuOpener_->SetPriority(10.f);
-    AddChildTask(std::static_pointer_cast<Task>(MenuOpener_));
+    auto l_MenuOpener = std::make_shared<Button>("おなまえ", ScreenData(40.f, 40.f, 20.f, 20.f, true), DefaultScaler_);
+    MenuOpener_ = l_MenuOpener;
+    MenuOpener_.lock()->GetTextLabelInstance()->AdjustmentFontSize_ = false;
+    MenuOpener_.lock()->baseColor = color_preset::BLUE;
+    MenuOpener_.lock()->GetTextLabelInstance()->ChangeFontThickness(1);
+    MenuOpener_.lock()->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
+    MenuOpener_.lock()->SetPriority(10.f);
+    AddChildTask(std::static_pointer_cast<Task>(MenuOpener_.lock()));
 
     //メニュー項目ボタン
     auto l_GroupScreen = ScreenData(20.f, 43.f, 60.f, 14.f);
-    MenuGroup_ = std::make_shared<Scene>("MenuGroup", l_GroupScreen, DefaultScaler_);
-    MenuGroup_->SetTransparent(0.f);
-    MenuGroup_->SetPriority(0.f);
-    AddChildTask(std::static_pointer_cast<Task>(MenuGroup_));
-    MenuGroup_->SetEnable(false);
+    auto l_MenuGroup = std::make_shared<Scene>("MenuGroup", l_GroupScreen, DefaultScaler_);
+    MenuGroup_ = l_MenuGroup;
+    MenuGroup_.lock()->SetTransparent(0.f);
+    MenuGroup_.lock()->SetPriority(0.f);
+    AddChildTask(std::static_pointer_cast<Task>(MenuGroup_.lock()));
+    MenuGroup_.lock()->SetEnable(false);
 
-    MenuPlay_ = std::make_shared<Button>("Play", ScreenData(0.f, 0.f, 100.f / 3.f, 100.f), MenuGroup_->GetDefaultScaler());
-    MenuPlay_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
-    MenuPlay_->baseColor = color_preset::DEEP_ORANGE;
-    MenuPlay_->animationColor = color_preset::DEEP_ORANGE;
-    MenuPlay_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
-    MenuPlay_->GetTextLabelInstance()->ChangeFontThickness(9);
-    MenuPlay_->SetTransparent(100.f);
-    MenuGroup_->AddChildTask(std::static_pointer_cast<Task>(MenuPlay_));
+    auto l_MenuPlay = std::make_shared<Button>("Play", ScreenData(0.f, 0.f, 100.f / 3.f, 100.f), MenuGroup_.lock()->GetDefaultScaler());
+    MenuPlay_ = l_MenuPlay;
+    MenuPlay_.lock()->GetTextLabelInstance()->AdjustmentFontSize_ = false;
+    MenuPlay_.lock()->baseColor = color_preset::DEEP_ORANGE;
+    MenuPlay_.lock()->animationColor = color_preset::DEEP_ORANGE;
+    MenuPlay_.lock()->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
+    MenuPlay_.lock()->GetTextLabelInstance()->ChangeFontThickness(9);
+    MenuPlay_.lock()->SetTransparent(100.f);
+    MenuGroup_.lock()->AddChildTask(std::static_pointer_cast<Task>(MenuPlay_.lock()));
 
-    MenuOption_ = std::make_shared<Button>("Option", ScreenData(MenuPlay_->GetScreenWidth(), 0.f, 100.f / 3.f, 100.f), MenuGroup_->GetDefaultScaler());
-    MenuOption_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
-    MenuOption_->baseColor = color_preset::BLUE_GREY;
-    MenuOption_->animationColor = color_preset::DARK_BLUE_GREY;
-    MenuOption_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
-    MenuOption_->GetTextLabelInstance()->ChangeFontThickness(2);
-    MenuOption_->SetTransparent(100.f);
-    MenuGroup_->AddChildTask(std::static_pointer_cast<Task>(MenuOption_));
+    auto l_MenuOption = std::make_shared<Button>("Option", ScreenData(MenuPlay_.lock()->GetScreenWidth(), 0.f, 100.f / 3.f, 100.f), MenuGroup_.lock()->GetDefaultScaler());
+    MenuOption_ = l_MenuOption;
+    MenuOption_.lock()->GetTextLabelInstance()->AdjustmentFontSize_ = false;
+    MenuOption_.lock()->baseColor = color_preset::BLUE_GREY;
+    MenuOption_.lock()->animationColor = color_preset::DARK_BLUE_GREY;
+    MenuOption_.lock()->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
+    MenuOption_.lock()->GetTextLabelInstance()->ChangeFontThickness(2);
+    MenuOption_.lock()->SetTransparent(100.f);
+    MenuGroup_.lock()->AddChildTask(std::static_pointer_cast<Task>(MenuOption_.lock()));
 
-    MenuClose_ = std::make_shared<Button>("Exit", ScreenData(MenuPlay_->GetScreenWidth() + MenuOption_->GetScreenWidth(), 0.f, 100.f / 3.f, 100.f), MenuGroup_->GetDefaultScaler());
-    MenuClose_->baseColor = color_preset::DARK_GREY;
-    MenuClose_->animationColor = GetColor(33, 33, 33);
-    MenuClose_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
-    MenuClose_->textColor = color_preset::GREY;
-    MenuClose_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
-    MenuClose_->GetTextLabelInstance()->ChangeFontThickness(2);
-    MenuClose_->SetTransparent(100.f);
-    MenuGroup_->AddChildTask(std::static_pointer_cast<Task>(MenuClose_));
+    auto l_MenuClose = std::make_shared<Button>("Exit", ScreenData(MenuPlay_.lock()->GetScreenWidth() + MenuOption_.lock()->GetScreenWidth(), 0.f, 100.f / 3.f, 100.f), MenuGroup_.lock()->GetDefaultScaler());
+    MenuClose_ = l_MenuClose;
+    MenuClose_.lock()->baseColor = color_preset::DARK_GREY;
+    MenuClose_.lock()->animationColor = GetColor(33, 33, 33);
+    MenuClose_.lock()->GetTextLabelInstance()->AdjustmentFontSize_ = false;
+    MenuClose_.lock()->textColor = color_preset::GREY;
+    MenuClose_.lock()->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
+    MenuClose_.lock()->GetTextLabelInstance()->ChangeFontThickness(2);
+    MenuClose_.lock()->SetTransparent(100.f);
+    MenuGroup_.lock()->AddChildTask(std::static_pointer_cast<Task>(MenuClose_.lock()));
 
-    SettingScene_ = std::make_shared<SettingScene>();
-    SettingScene_->SetPositionX(-SettingScene_->GetScreenWidth());
-    SettingScene_->SetPriority(10.f);
-    SettingScene_->SetEnable(false);
-    TaskManager::GetInstance()->AddTask(SettingScene_);
-
-    StartFadeIn();
+    if (SettingScene_.expired())
+    {
+        auto l_SettingScene = std::make_shared<SettingScene>();
+        SettingScene_ = l_SettingScene;
+        SettingScene_.lock()->SetPositionX(-SettingScene_.lock()->GetScreenWidth());
+        SettingScene_.lock()->SetPriority(10.f);
+        SettingScene_.lock()->SetEnable(false);
+        TaskManager::GetInstance()->AddTask(SettingScene_.lock());
+    }
 }
 
 
 TitleScene::~TitleScene()
 {
+    
 }
 
 void TitleScene::SceneFadeIn(float deltaTime)
@@ -93,7 +104,7 @@ void TitleScene::SceneUpdate(float deltaTime)
 	static bool isOpened = false;
 	static bool isMoving = false;
 
-    if(MenuOpener_->IsClickedMouse())
+    if(MenuOpener_.lock()->IsClickedMouse())
     {
         timerCount = 0.0f;
 		isOpened = !isOpened;
@@ -102,60 +113,65 @@ void TitleScene::SceneUpdate(float deltaTime)
     
     if(isMoving)
     {
-        if (MenuPlay_->GetRawPositionX() + MenuGroup_->GetRawPositionX() < MenuOpener_->GetRawPositionX())
-            MenuPlay_->SetTransparent(0.f);
+        if (MenuPlay_.lock()->GetRawPositionX() + MenuGroup_.lock()->GetRawPositionX() < MenuOpener_.lock()->GetRawPositionX())
+            MenuPlay_.lock()->SetTransparent(0.f);
         else
-            MenuPlay_->SetTransparent(100.f);
+            MenuPlay_.lock()->SetTransparent(100.f);
 
-        if (MenuOption_->GetRawPositionX() + MenuGroup_->GetRawPositionX() < MenuOpener_->GetRawPositionX())
-            MenuOption_->SetTransparent(0.f);
+        if (MenuOption_.lock()->GetRawPositionX() + MenuGroup_.lock()->GetRawPositionX() < MenuOpener_.lock()->GetRawPositionX())
+            MenuOption_.lock()->SetTransparent(0.f);
         else
-            MenuOption_->SetTransparent(100.f);
+            MenuOption_.lock()->SetTransparent(100.f);
 
-        if (MenuClose_->GetRawPositionX() + MenuGroup_->GetRawPositionX() < MenuOpener_->GetRawPositionX())
-            MenuClose_->SetTransparent(0.f);
+        if (MenuClose_.lock()->GetRawPositionX() + MenuGroup_.lock()->GetRawPositionX() < MenuOpener_.lock()->GetRawPositionX())
+            MenuClose_.lock()->SetTransparent(0.f);
         else
-            MenuClose_->SetTransparent(100.f);
+            MenuClose_.lock()->SetTransparent(100.f);
 
         float totalTime = 0.5f;
         Easing::EaseFunction ease = Easing::OutQuint;
 
         if(isOpened)
         {
-            MenuOpener_->SetPositionX(engine::CastToFloat(ease(timerCount, totalTime, 20.f, 40.f)));
-            MenuGroup_->SetPositionX(engine::CastToFloat(ease(timerCount, totalTime, 40.f, 20.f)));
-            MenuGroup_->SetTransparent(engine::CastToFloat(ease(timerCount, totalTime, 99.f, 0.f)));
+            MenuOpener_.lock()->SetPositionX(engine::CastToFloat(ease(timerCount, totalTime, 20.f, 40.f)));
+            MenuGroup_.lock()->SetPositionX(engine::CastToFloat(ease(timerCount, totalTime, 40.f, 20.f)));
+            MenuGroup_.lock()->SetTransparent(engine::CastToFloat(ease(timerCount, totalTime, 99.f, 0.f)));
         }else
         {
-            MenuOpener_->SetPositionX(engine::CastToFloat(ease(timerCount, totalTime, 40.f, 20.f)));
-            MenuGroup_->SetPositionX(engine::CastToFloat(ease(timerCount, totalTime, 20.f, 40.f)));
-            MenuGroup_->SetTransparent(engine::CastToFloat(ease(timerCount, totalTime, 0.f, 99.f)));
+            MenuOpener_.lock()->SetPositionX(engine::CastToFloat(ease(timerCount, totalTime, 40.f, 20.f)));
+            MenuGroup_.lock()->SetPositionX(engine::CastToFloat(ease(timerCount, totalTime, 20.f, 40.f)));
+            MenuGroup_.lock()->SetTransparent(engine::CastToFloat(ease(timerCount, totalTime, 0.f, 99.f)));
 
         }
 
         if(timerCount > totalTime)
         {
             isMoving = false;
-            MenuGroup_->SetEnable(isOpened);
+            MenuGroup_.lock()->SetEnable(isOpened);
         }
     }
 
-    if(MenuClose_->IsClickedMouse())
+    if(MenuPlay_.lock()->IsClickedMouse())
+    {
+        TaskManager::GetInstance()->AddTask(std::make_shared<Game3DTest>());
+        Terminate();
+    }
+    if(MenuClose_.lock()->IsClickedMouse())
     {
         TaskManager::GetInstance()->GameExit();
     }
-    if(MenuOption_->IsClickedMouse())
+    if(MenuOption_.lock()->IsClickedMouse())
     {
-        SettingScene_->StartFadeIn();
+        SettingScene_.lock()->StartFadeIn();
     }
 
-    if (SettingScene_->IsFadingIn())
+    if (SettingScene_.lock()->IsFadingIn())
     {
-        SetTransparent(100.f - (SettingScene_->GetTransparent() / 2.f));
+        SetTransparent(100.f - (SettingScene_.lock()->GetTransparent() / 2.f));
     }
-    else if (SettingScene_->IsFadingOut())
+    else if (SettingScene_.lock()->IsFadingOut())
     {
-        SetTransparent(100.f - (SettingScene_->GetTransparent() / 2.f));
+        SetTransparent(100.f - (SettingScene_.lock()->GetTransparent() / 2.f));
     }
 }
 
@@ -167,8 +183,10 @@ void TitleScene::Draw()
     d.width = 100.f;
     d.height = 100.f;
     ScreenData fixed = DefaultScaler_->Calculate(d);
+    /*
     DrawBox(engine::CastToInt(fixed.posX),
             engine::CastToInt(fixed.posY),
             engine::CastToInt(fixed.width),
             engine::CastToInt(fixed.height), GetColor(117, 117, 117), TRUE);
+    */
 }

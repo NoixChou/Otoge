@@ -89,13 +89,16 @@ void GUI::AdjustFont()
     {
 
         ChangeFontSize(engine::CastToInt(GetRawScreenHeight()));
-
-        while (FontStringCalculator::GetStringWidth(FontHandle_, Label_) > GetRawScreenWidth())
+        if(FontStringCalculator::GetStringWidth(FontHandle_, Label_) > GetRawScreenWidth())
+        {
+            ChangeFontSize(engine::CastToInt(GetRawScreenWidth()) / static_cast<int>(Label_.length()));
+        }
+        /*while (FontStringCalculator::GetStringWidth(FontHandle_, Label_) > GetRawScreenWidth())
         {
             if (GetFontSize() <= 1) break;
             ChangeFontSize(GetFontSize() - 1);
             //ChangeFontSize(engine::CastToInt(GetRawScreenWidth()) / static_cast<int>(Label_.length()));
-        }
+        }*/
     }
 }
 

@@ -37,7 +37,18 @@ public:
     void HideCursor();
     bool IsVisibleCursor() const;
 
+    void UpdateMousePosition();
+    void SetMouseX(int x);
+    void SetMouseY(int y);
+    void SetMouseX(float x);
+    void SetMouseY(float y);
+
     bool IsMovedMouse();
+    int GetMouseXVel();
+    int GetMouseYVel();
+    float GetMouseXVelf();
+    float GetMouseYVelf();
+
     int GetMouseX();
     int GetMouseY();
     float GetMouseXf();

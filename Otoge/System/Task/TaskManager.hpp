@@ -10,7 +10,7 @@ private:
 
     std::vector< Task::TaskPointer > Tasks_;
     std::vector< Task::TaskPointer > TaskQueues_;
-    std::vector< Task::TaskPointer >::iterator ProcessingTask_;
+    static std::vector< Task::TaskPointer >::iterator ProcessingTask_;
     Task::WeakTaskPointer ModalTask_;
 
     std::chrono::high_resolution_clock::time_point ClockCount_ = std::chrono::high_resolution_clock::now();
@@ -42,6 +42,8 @@ public:
     void SetModalTask();
     void SetModalTask(Task::WeakTaskPointer task);
     void UnsetModalTask();
+
+    std::vector< Task::TaskPointer >::iterator GetCurrentProcessTask();
 
     int GetTaskCount();
     bool AddTask(const Task::TaskPointer& task);

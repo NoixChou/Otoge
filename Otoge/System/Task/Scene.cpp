@@ -323,6 +323,11 @@ void Scene::ChangeDrawFunction(DrawFunction func)
     isCallSceneDrawer = false;
 }
 
+int Scene::GetDrawBuffer()
+{
+    return SceneBuffer_;
+}
+
 std::shared_ptr<FlexibleScaler> Scene::GetDefaultScaler() const
 {
     return DefaultScaler_;

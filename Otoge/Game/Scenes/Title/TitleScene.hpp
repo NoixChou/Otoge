@@ -7,13 +7,13 @@ class TitleScene :
     public Scene
 {
 private:
-	std::shared_ptr<Button> MenuOpener_;
-    std::shared_ptr<Scene> MenuGroup_;
-    std::shared_ptr<Button> MenuPlay_;
-    std::shared_ptr<Button> MenuOption_;
-    std::shared_ptr<Button> MenuClose_;
+	std::weak_ptr<Button> MenuOpener_;
+    std::weak_ptr<Scene> MenuGroup_;
+    std::weak_ptr<Button> MenuPlay_;
+    std::weak_ptr<Button> MenuOption_;
+    std::weak_ptr<Button> MenuClose_;
 
-    std::shared_ptr<Scene> SettingScene_;
+    static std::weak_ptr<Scene> SettingScene_;
 
 public:
     TitleScene();

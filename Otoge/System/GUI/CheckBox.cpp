@@ -31,7 +31,7 @@ CheckBox::CheckBox(const std::string& label, const ScreenData& layoutScreen, std
     TextLabel_ = std::make_shared<Label>(label, ScreenData(CheckButton_->GetScreenWidth(), 2.f, 100.f - CheckButton_->GetScreenWidth(), 96.f), DefaultScaler_);
     TextLabel_->baseColor = textColor;
     TextLabel_->AdjustmentFontSize_ = true;
-    TextLabel_->ChangeFontThickness(6);
+    TextLabel_->ChangeFontThickness(1);
     TextLabel_->SetTextAlign(Label::TextAlignment::center | Label::TextAlignment::middle);
     AddChildTask(std::static_pointer_cast<Task>(TextLabel_));
 }

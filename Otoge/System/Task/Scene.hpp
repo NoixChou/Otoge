@@ -54,6 +54,8 @@ public:
     void SetDrawFunction(DrawFunction func);
     void ChangeDrawFunction(DrawFunction func);
 
+    int GetDrawBuffer();
+
     std::shared_ptr<FlexibleScaler> GetDefaultScaler() const;
     void SetScreen(ScreenData screen);
     void SetPositionX(float px);
