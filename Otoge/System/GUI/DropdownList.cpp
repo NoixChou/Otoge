@@ -8,22 +8,22 @@
 
 template<typename V>
 DropdownList<V>::BaseItem::BaseItem(std::string text, float textSize, float thickness) :
-	text(std::move(text)),
-	textSize(textSize),
-	textThickness(thickness)
+    text(std::move(text)),
+    textSize(textSize),
+    textThickness(thickness)
 {
 }
 
 template<typename V>
 DropdownList<V>::Separator::Separator(std::string text, float textSize, float thickness) :
-	BaseItem(text, textSize, thickness)
+    BaseItem(text, textSize, thickness)
 {
 }
 
 template<typename V>
 DropdownList<V>::SimpleItem::SimpleItem(std::string text, V value, float textSize, float thickness) :
-	BaseItem(text, textSize, thickness),
-	value(value)
+    BaseItem(text, textSize, thickness),
+    value(value)
 {
 }
 
@@ -143,7 +143,7 @@ void DropdownList<V>::GUIUpdate(float deltaTime)
 
         l_ItemCount++;
     }
-	
+    
     if (IsChangedSelect())
     {
         UpdateSelected();
@@ -247,18 +247,18 @@ std::shared_ptr<typename DropdownList<V>::BaseItem> DropdownList<V>::GetSelected
 template <class V>
 std::optional<V> DropdownList<V>::GetSelectedItemValue() const
 {
-	int index;
-	if (SelectedItem_ > Items_.size())
-	{
-		index = Items_.size() - 1;
-	}
-	else
-	{
-		index = SelectedItem_;
-	}
+    int index;
+    if (SelectedItem_ > Items_.size())
+    {
+        index = Items_.size() - 1;
+    }
+    else
+    {
+        index = SelectedItem_;
+    }
 
-	auto item = std::static_pointer_cast<SimpleItem>(ItemData_[index]);
-	return item->value;
+    auto item = std::static_pointer_cast<SimpleItem>(ItemData_[index]);
+    return item->value;
 }
 
 template <class V>
@@ -334,19 +334,19 @@ void DropdownList<V>::AddBaseItem(int num, std::shared_ptr<BaseItem> item)
 template <class V>
 void DropdownList<V>::AddSeparator(int num, const std::string& label)
 {
-	AddPanel();
-	auto l_Item = std::make_shared<Separator>(label);
-	Logger_->Info("Separator");
-	AddBaseItem(num, l_Item);
+    AddPanel();
+    auto l_Item = std::make_shared<Separator>(label);
+    Logger_->Info("Separator");
+    AddBaseItem(num, l_Item);
 }
 
 template <class V>
 void DropdownList<V>::AddSimpleItem(int num, const std::string& label, V value)
 {
-	AddPanel();
-	auto l_Item = std::make_shared<SimpleItem>(label, value);
-	Logger_->Info("SimpleItem");
-	AddBaseItem(num, l_Item);
+    AddPanel();
+    auto l_Item = std::make_shared<SimpleItem>(label, value);
+    Logger_->Info("SimpleItem");
+    AddBaseItem(num, l_Item);
 }
 
 template <class V>

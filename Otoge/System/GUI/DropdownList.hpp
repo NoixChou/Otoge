@@ -13,28 +13,28 @@ public:
         std::string text = "";
         float textSize;
         float textThickness;
-		virtual Label::TextAlignment align() { return Label::TextAlignment::center | Label::TextAlignment::middle; }
+        virtual Label::TextAlignment align() { return Label::TextAlignment::center | Label::TextAlignment::middle; }
         unsigned textColor = color_preset::BLACK;
         unsigned backColor = color_preset::WHITE;
         bool doDrawBack = false;
-		virtual bool isEnabledOnInit() { return true; }
+        virtual bool isEnabledOnInit() { return true; }
         BaseItem(std::string text, float textSize, float thickness);
     };
-	struct Separator :
-		public BaseItem
-	{
-		Label::TextAlignment align() { return Label::TextAlignment::left | Label::TextAlignment::middle; }
+    struct Separator :
+        public BaseItem
+    {
+        Label::TextAlignment align() { return Label::TextAlignment::left | Label::TextAlignment::middle; }
 
-		bool isEnabledOnInit() { return false; }
-		Separator(std::string text, float textSize = 65.f, float thickness = 3.f);
-	};
-	struct SimpleItem :
-		public BaseItem
-	{
-		std::optional<V> value;
+        bool isEnabledOnInit() { return false; }
+        Separator(std::string text, float textSize = 65.f, float thickness = 3.f);
+    };
+    struct SimpleItem :
+        public BaseItem
+    {
+        std::optional<V> value;
 
-		SimpleItem(std::string text, V value, float textSize = 60.f, float thickness = 1.f);
-	};
+        SimpleItem(std::string text, V value, float textSize = 60.f, float thickness = 1.f);
+    };
 
 private:
     int ItemCount_ = 0;
@@ -76,14 +76,14 @@ public:
 
     void SetSelectedItemNum(int num);
     int GetSelectedItemNum() const;
-	std::shared_ptr<BaseItem> GetSelectedItem() const;
-	std::optional<V> GetSelectedItemValue() const;
+    std::shared_ptr<BaseItem> GetSelectedItem() const;
+    std::optional<V> GetSelectedItemValue() const;
     bool IsChangedSelect() const;
     void UpdateSelected();
 
     void SetMaxItem(int num);
     void AddBaseItem(int num, std::shared_ptr<BaseItem> item);
-	void AddSeparator(int num, const std::string& label);
+    void AddSeparator(int num, const std::string& label);
     void AddSimpleItem(int num, const std::string& label, V value);
 
     std::shared_ptr<Scene> GetPanelInstance();
