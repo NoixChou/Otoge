@@ -187,21 +187,18 @@ double Easing::OutBounce(double t, double totaltime, double max, double min)
     max -= min;
     t /= totaltime;
     if(t < 1 / 2.75) return max * (7.5625 * t * t) + min;
-    else if(t < 2 / 2.75)
+    if(t < 2 / 2.75)
     {
         t -= 1.5 / 2.75;
         return max * (7.5625 * t * t + 0.75) + min;
     }
-    else if(t < 2.5 / 2.75)
+    if(t < 2.5 / 2.75)
     {
         t -= 2.25 / 2.75;
         return max * (7.5625 * t * t + 0.9375) + min;
     }
-    else
-    {
-        t -= 2.625 / 2.75;
-        return max * (7.5625 * t * t + 0.984375) + min;
-    }
+    t -= 2.625 / 2.75;
+    return max * (7.5625 * t * t + 0.984375) + min;
 }
 
 double Easing::InBounce(double t, double totaltime, double max, double min)
@@ -212,7 +209,7 @@ double Easing::InBounce(double t, double totaltime, double max, double min)
 double Easing::InOutBounce(double t, double totaltime, double max, double min)
 {
     if(t < totaltime / 2) return InBounce(t * 2, totaltime, max - min, max) * 0.5 + min;
-    else return OutBounce(t * 2 - totaltime, totaltime, max - min, 0) * 0.5 + min + (max - min) * 0.5;
+    return OutBounce(t * 2 - totaltime, totaltime, max - min, 0) * 0.5 + min + (max - min) * 0.5;
 }
 
 double Easing::Linear(double t, double totaltime, double max, double min)

@@ -1,5 +1,4 @@
 ﻿//#include "Config.h"
-
 /*
 // 設定ファイル
 namespace settings

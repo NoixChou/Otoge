@@ -29,11 +29,8 @@ Game3DTest::Game3DTest(): Scene("Game3DTest", 100.f, 100.f)
     BackButton_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(2.f)));
     BackButton_->GetTextLabelInstance()->ChangeFontThickness(1);
     AddChildTask(std::static_pointer_cast<Task>(BackButton_));
-
-
     DebugLabel_ = std::make_shared<Label>("DebugLabel", ScreenData(0.f, 0.f, 10.f, 2.0f), DefaultScaler_);
     DebugLabel_->baseColor = color_preset::WHITE;
-
     StartFadeIn();
 }
 
@@ -54,23 +51,19 @@ Game3DTest::~Game3DTest()
 
 void Game3DTest::OnStartedFadeIn()
 {
-    
 }
 
 void Game3DTest::OnStartedFadeOut()
 {
-    
 }
 
 void Game3DTest::SceneFadeIn(float deltaTime)
 {
-    float totalTime = 1.0f;
+    const float totalTime = 1.0f;
     Easing::EaseFunction ease = Easing::OutExp;
-
     SetTransparent(engine::CastToFloat(ease(timerCount, totalTime, 100.f, 0.f)));
     SetPositionX(engine::CastToFloat(ease(timerCount, totalTime, 0.f, -GetScreenWidth())));
-
-    if (timerCount > totalTime)
+    if(timerCount > totalTime)
     {
         IsFadingIn_ = false;
     }
@@ -78,13 +71,11 @@ void Game3DTest::SceneFadeIn(float deltaTime)
 
 void Game3DTest::SceneFadeOut(float deltaTime)
 {
-    float totalTime = 1.0f;
+    const float totalTime = 1.0f;
     Easing::EaseFunction ease = Easing::OutExp;
-
     SetTransparent(engine::CastToFloat(ease(timerCount, totalTime, 0.f, 100.f)));
     SetPositionX(engine::CastToFloat(ease(timerCount, totalTime, -GetScreenWidth(), 0.f)));
-
-    if (timerCount > totalTime)
+    if(timerCount > totalTime)
     {
         IsFadingOut_ = false;
         TaskManager::GetInstance()->AddTask(std::static_pointer_cast<Task>(std::make_shared<TitleScene>()));
@@ -98,8 +89,7 @@ void Game3DTest::SceneUpdate(float deltaTime)
     FixedCharaMoveSpeed_ = CHARA_MOVE_SPEED * deltaTime;
     FixedCharaAnimSpeed_ = CHARA_PLAY_ANIM_SPEED * deltaTime;
     FixedCameraRotSpeed_ = CAMERA_ANGLE_SPEED * deltaTime;
-
-    if (BackButton_->IsClickedMouse())
+    if(BackButton_->IsClickedMouse())
     {
         StartFadeOut();
     }
@@ -184,7 +174,6 @@ void Game3DTest::Chara_Terminate(CHARA* ch)
 void Game3DTest::Chara_Process(CHARA* ch, VECTOR MoveVec, int JumpFlag)
 {
     int MoveFlag;			// 移動したかどうかのフラグ( 1:移動した  0:移動していない )
-
     // ルートフレームのＺ軸方向の移動パラメータを無効にする
     {
         MATRIX LocalMatrix;
@@ -204,15 +193,14 @@ void Game3DTest::Chara_Process(CHARA* ch, VECTOR MoveVec, int JumpFlag)
 
     // 移動したかどうかのフラグをセット、少しでも移動していたら「移動している」を表す１にする
     MoveFlag = 0;
-    if (MoveVec.x < -0.001f || MoveVec.x > 0.001f ||
-        MoveVec.y < -0.001f || MoveVec.y > 0.001f ||
-        MoveVec.z < -0.001f || MoveVec.z > 0.001f)
+    if(MoveVec.x < -0.001f || MoveVec.x > 0.001f || MoveVec.y < -0.001f || MoveVec.y > 0.001f || MoveVec.z < -0.001f ||
+        MoveVec.z > 0.001f)
     {
         MoveFlag = 1;
     }
 
     // キャラクターの状態が「ジャンプ」ではなく、且つジャンプフラグが立っていたらジャンプする
-    if (ch->State != 2 && JumpFlag == 1)
+    if(ch->State != 2 && JumpFlag == 1)
     {
         // 状態を「ジャンプ」にする
         ch->State = 2;
@@ -225,13 +213,13 @@ void Game3DTest::Chara_Process(CHARA* ch, VECTOR MoveVec, int JumpFlag)
     }
 
     // 移動ボタンが押されたかどうかで処理を分岐
-    if (MoveFlag)
+    if(MoveFlag)
     {
         // 移動ベクトルを正規化したものをキャラクターが向くべき方向として保存
         ch->TargetMoveDirection = VNorm(MoveVec);
 
         // もし今まで「立ち止まり」状態だったら
-        if (ch->State == 0)
+        if(ch->State == 0)
         {
             // 走りアニメーションを再生する
             Chara_PlayAnim(ch, 1);
@@ -243,7 +231,7 @@ void Game3DTest::Chara_Process(CHARA* ch, VECTOR MoveVec, int JumpFlag)
     else
     {
         // このフレームで移動していなくて、且つ状態が「走り」だったら
-        if (ch->State == 1)
+        if(ch->State == 1)
         {
             // 立ち止りアニメーションを再生する
             Chara_PlayAnim(ch, 4);
@@ -254,13 +242,13 @@ void Game3DTest::Chara_Process(CHARA* ch, VECTOR MoveVec, int JumpFlag)
     }
 
     // 状態が「ジャンプ」の場合は
-    if (ch->State == 2)
+    if(ch->State == 2)
     {
         // Ｙ軸方向の速度を重力分減算する
         ch->JumpPower -= CHARA_GRAVITY * DeltaTime_;
 
         // もし落下していて且つ再生されているアニメーションが上昇中用のものだった場合は
-        if (ch->JumpPower < 0.0f && MV1GetAttachAnim(ch->ModelHandle, ch->PlayAnim1) == 2)
+        if(ch->JumpPower < 0.0f && MV1GetAttachAnim(ch->ModelHandle, ch->PlayAnim1) == 2)
         {
             // 落下中ようのアニメーションを再生する
             Chara_PlayAnim(ch, 3);
@@ -295,7 +283,6 @@ void Game3DTest::Chara_Move(CHARA* ch, VECTOR MoveVector)
     HITRESULT_LINE LineRes;				// 線分とポリゴンとの当たり判定の結果を代入する構造体
     VECTOR OldPos;						// 移動前の座標	
     VECTOR NowPos;						// 移動後の座標
-
     // 移動前の座標を保存
     OldPos = ch->Position;
 
@@ -307,7 +294,7 @@ void Game3DTest::Chara_Move(CHARA* ch, VECTOR MoveVector)
     HitDim = MV1CollCheck_Sphere(stg.ModelHandle, -1, ch->Position, CHARA_ENUM_DEFAULT_SIZE + VSize(MoveVector));
 
     // x軸かy軸方向に 0.01f 以上移動した場合は「移動した」フラグを１にする
-    if (fabs(MoveVector.x) > 0.01f || fabs(MoveVector.z) > 0.01f)
+    if(fabs(MoveVector.x) > 0.01f || fabs(MoveVector.z) > 0.01f)
     {
         MoveFlag = 1;
     }
@@ -323,18 +310,17 @@ void Game3DTest::Chara_Move(CHARA* ch, VECTOR MoveVector)
         YukaNum = 0;
 
         // 検出されたポリゴンの数だけ繰り返し
-        for (i = 0; i < HitDim.HitNum; i++)
+        for(i = 0; i < HitDim.HitNum; i++)
         {
             // ＸＺ平面に垂直かどうかはポリゴンの法線のＹ成分が０に限りなく近いかどうかで判断する
-            if (HitDim.Dim[i].Normal.y < 0.000001f && HitDim.Dim[i].Normal.y > -0.000001f)
+            if(HitDim.Dim[i].Normal.y < 0.000001f && HitDim.Dim[i].Normal.y > -0.000001f)
             {
                 // 壁ポリゴンと判断された場合でも、キャラクターのＹ座標＋１．０ｆより高いポリゴンのみ当たり判定を行う
-                if (HitDim.Dim[i].Position[0].y > ch->Position.y + 1.0f ||
-                    HitDim.Dim[i].Position[1].y > ch->Position.y + 1.0f ||
-                    HitDim.Dim[i].Position[2].y > ch->Position.y + 1.0f)
+                if(HitDim.Dim[i].Position[0].y > ch->Position.y + 1.0f || HitDim.Dim[i].Position[1].y > ch->Position.y +
+                    1.0f || HitDim.Dim[i].Position[2].y > ch->Position.y + 1.0f)
                 {
                     // ポリゴンの数が列挙できる限界数に達していなかったらポリゴンを配列に追加
-                    if (KabeNum < CHARA_MAX_HITCOLL)
+                    if(KabeNum < CHARA_MAX_HITCOLL)
                     {
                         // ポリゴンの構造体のアドレスを壁ポリゴンポインタ配列に保存する
                         Kabe[KabeNum] = &HitDim.Dim[i];
@@ -347,7 +333,7 @@ void Game3DTest::Chara_Move(CHARA* ch, VECTOR MoveVector)
             else
             {
                 // ポリゴンの数が列挙できる限界数に達していなかったらポリゴンを配列に追加
-                if (YukaNum < CHARA_MAX_HITCOLL)
+                if(YukaNum < CHARA_MAX_HITCOLL)
                 {
                     // ポリゴンの構造体のアドレスを床ポリゴンポインタ配列に保存する
                     Yuka[YukaNum] = &HitDim.Dim[i];
@@ -360,22 +346,24 @@ void Game3DTest::Chara_Move(CHARA* ch, VECTOR MoveVector)
     }
 
     // 壁ポリゴンとの当たり判定処理
-    if (KabeNum != 0)
+    if(KabeNum != 0)
     {
         // 壁に当たったかどうかのフラグは初期状態では「当たっていない」にしておく
         HitFlag = 0;
 
         // 移動したかどうかで処理を分岐
-        if (MoveFlag == 1)
+        if(MoveFlag == 1)
         {
             // 壁ポリゴンの数だけ繰り返し
-            for (i = 0; i < KabeNum; i++)
+            for(i = 0; i < KabeNum; i++)
             {
                 // i番目の壁ポリゴンのアドレスを壁ポリゴンポインタ配列から取得
                 Poly = Kabe[i];
 
                 // ポリゴンとキャラクターが当たっていなかったら次のカウントへ
-                if (HitCheck_Capsule_Triangle(NowPos, VAdd(NowPos, VGet(0.0f, CHARA_HIT_HEIGHT, 0.0f)), CHARA_HIT_WIDTH, Poly->Position[0], Poly->Position[1], Poly->Position[2]) == FALSE) continue;
+                if(HitCheck_Capsule_Triangle(NowPos, VAdd(NowPos, VGet(0.0f, CHARA_HIT_HEIGHT, 0.0f)), CHARA_HIT_WIDTH,
+                                             Poly->Position[0], Poly->Position[1], Poly->Position[2]) == FALSE) continue
+                    ;
 
                 // ここにきたらポリゴンとキャラクターが当たっているということなので、ポリゴンに当たったフラグを立てる
                 HitFlag = 1;
@@ -383,7 +371,6 @@ void Game3DTest::Chara_Move(CHARA* ch, VECTOR MoveVector)
                 // 壁に当たったら壁に遮られない移動成分分だけ移動する
                 {
                     VECTOR SlideVec;	// キャラクターをスライドさせるベクトル
-
                     // 進行方向ベクトルと壁ポリゴンの法線ベクトルに垂直なベクトルを算出
                     SlideVec = VCross(MoveVector, Poly->Normal);
 
@@ -396,18 +383,20 @@ void Game3DTest::Chara_Move(CHARA* ch, VECTOR MoveVector)
                 }
 
                 // 新たな移動座標で壁ポリゴンと当たっていないかどうかを判定する
-                for (j = 0; j < KabeNum; j++)
+                for(j = 0; j < KabeNum; j++)
                 {
                     // j番目の壁ポリゴンのアドレスを壁ポリゴンポインタ配列から取得
                     Poly = Kabe[j];
 
                     // 当たっていたらループから抜ける
-                    if (HitCheck_Capsule_Triangle(NowPos, VAdd(NowPos, VGet(0.0f, CHARA_HIT_HEIGHT, 0.0f)), CHARA_HIT_WIDTH, Poly->Position[0], Poly->Position[1], Poly->Position[2]) == TRUE) break;
+                    if(HitCheck_Capsule_Triangle(NowPos, VAdd(NowPos, VGet(0.0f, CHARA_HIT_HEIGHT, 0.0f)),
+                                                 CHARA_HIT_WIDTH, Poly->Position[0], Poly->Position[1],
+                                                 Poly->Position[2]) == TRUE) break;
                 }
 
                 // j が KabeNum だった場合はどのポリゴンとも当たらなかったということなので
                 // 壁に当たったフラグを倒した上でループから抜ける
-                if (j == KabeNum)
+                if(j == KabeNum)
                 {
                     HitFlag = 0;
                     break;
@@ -417,15 +406,15 @@ void Game3DTest::Chara_Move(CHARA* ch, VECTOR MoveVector)
         else
         {
             // 移動していない場合の処理
-
             // 壁ポリゴンの数だけ繰り返し
-            for (i = 0; i < KabeNum; i++)
+            for(i = 0; i < KabeNum; i++)
             {
                 // i番目の壁ポリゴンのアドレスを壁ポリゴンポインタ配列から取得
                 Poly = Kabe[i];
 
                 // ポリゴンに当たっていたら当たったフラグを立てた上でループから抜ける
-                if (HitCheck_Capsule_Triangle(NowPos, VAdd(NowPos, VGet(0.0f, CHARA_HIT_HEIGHT, 0.0f)), CHARA_HIT_WIDTH, Poly->Position[0], Poly->Position[1], Poly->Position[2]) == TRUE)
+                if(HitCheck_Capsule_Triangle(NowPos, VAdd(NowPos, VGet(0.0f, CHARA_HIT_HEIGHT, 0.0f)), CHARA_HIT_WIDTH,
+                                             Poly->Position[0], Poly->Position[1], Poly->Position[2]) == TRUE)
                 {
                     HitFlag = 1;
                     break;
@@ -434,51 +423,67 @@ void Game3DTest::Chara_Move(CHARA* ch, VECTOR MoveVector)
         }
 
         // 壁に当たっていたら壁から押し出す処理を行う
-        if (HitFlag == 1)
+        if(HitFlag == 1)
         {
             // 壁からの押し出し処理を試みる最大数だけ繰り返し
-            for (k = 0; k < CHARA_HIT_TRYNUM; k++)
+            for(k = 0; k < CHARA_HIT_TRYNUM; k++)
             {
                 // 壁ポリゴンの数だけ繰り返し
-                for (i = 0; i < KabeNum; i++)
+                for(i = 0; i < KabeNum; i++)
                 {
                     // i番目の壁ポリゴンのアドレスを壁ポリゴンポインタ配列から取得
                     Poly = Kabe[i];
 
                     // キャラクターと当たっているかを判定
-                    if (HitCheck_Capsule_Triangle(NowPos, VAdd(NowPos, VGet(0.0f, CHARA_HIT_HEIGHT, 0.0f)), CHARA_HIT_WIDTH, Poly->Position[0], Poly->Position[1], Poly->Position[2]) == FALSE) continue;
+                    if(HitCheck_Capsule_Triangle(NowPos, VAdd(NowPos, VGet(0.0f, CHARA_HIT_HEIGHT, 0.0f)),
+                                                 CHARA_HIT_WIDTH, Poly->Position[0], Poly->Position[1],
+                                                 Poly->Position[2]) == FALSE) continue;
 
                     // 当たっていたら規定距離分キャラクターを壁の法線方向に移動させる
                     NowPos = VAdd(NowPos, VScale(Poly->Normal, CHARA_HIT_SLIDE_LENGTH));
 
+                    // キャラクターの状態が「ジャンプ」ではなく、且つジャンプフラグが立っていたらジャンプする
+                    if (ch->State != 2)
+                    {
+                        // 状態を「ジャンプ」にする
+                        ch->State = 2;
+
+                        // Ｙ軸方向の速度をセット
+                        ch->JumpPower = CHARA_JUMP_POWER;
+
+                        // ジャンプアニメーションの再生
+                        Chara_PlayAnim(ch, 2);
+                    }
+
                     // 移動した上で壁ポリゴンと接触しているかどうかを判定
-                    for (j = 0; j < KabeNum; j++)
+                    for(j = 0; j < KabeNum; j++)
                     {
                         // 当たっていたらループを抜ける
                         Poly = Kabe[j];
-                        if (HitCheck_Capsule_Triangle(NowPos, VAdd(NowPos, VGet(0.0f, CHARA_HIT_HEIGHT, 0.0f)), CHARA_HIT_WIDTH, Poly->Position[0], Poly->Position[1], Poly->Position[2]) == TRUE) break;
+                        if(HitCheck_Capsule_Triangle(NowPos, VAdd(NowPos, VGet(0.0f, CHARA_HIT_HEIGHT, 0.0f)),
+                                                     CHARA_HIT_WIDTH, Poly->Position[0], Poly->Position[1],
+                                                     Poly->Position[2]) == TRUE) break;
                     }
 
                     // 全てのポリゴンと当たっていなかったらここでループ終了
-                    if (j == KabeNum) break;
+                    if(j == KabeNum) break;
                 }
 
                 // i が KabeNum ではない場合は全部のポリゴンで押し出しを試みる前に全ての壁ポリゴンと接触しなくなったということなのでループから抜ける
-                if (i != KabeNum) break;
+                if(i != KabeNum) break;
             }
         }
     }
 
     // 床ポリゴンとの当たり判定
-    if (YukaNum != 0)
+    if(YukaNum != 0)
     {
         // ジャンプ中且つ上昇中の場合は処理を分岐
-        if (ch->State == 2 && ch->JumpPower > 0.0f)
+        if(ch->State == 2 && ch->JumpPower > 0.0f)
         {
             float MinY;
 
             // 天井に頭をぶつける処理を行う
-
             // 一番低い天井にぶつける為の判定用変数を初期化
             MinY = 0.0f;
 
@@ -486,19 +491,20 @@ void Game3DTest::Chara_Move(CHARA* ch, VECTOR MoveVector)
             HitFlag = 0;
 
             // 床ポリゴンの数だけ繰り返し
-            for (i = 0; i < YukaNum; i++)
+            for(i = 0; i < YukaNum; i++)
             {
                 // i番目の床ポリゴンのアドレスを床ポリゴンポインタ配列から取得
                 Poly = Yuka[i];
 
                 // 足先から頭の高さまでの間でポリゴンと接触しているかどうかを判定
-                LineRes = HitCheck_Line_Triangle(NowPos, VAdd(NowPos, VGet(0.0f, CHARA_HIT_HEIGHT, 0.0f)), Poly->Position[0], Poly->Position[1], Poly->Position[2]);
+                LineRes = HitCheck_Line_Triangle(NowPos, VAdd(NowPos, VGet(0.0f, CHARA_HIT_HEIGHT, 0.0f)),
+                                                 Poly->Position[0], Poly->Position[1], Poly->Position[2]);
 
                 // 接触していなかったら何もしない
-                if (LineRes.HitFlag == FALSE) continue;
+                if(LineRes.HitFlag == FALSE) continue;
 
                 // 既にポリゴンに当たっていて、且つ今まで検出した天井ポリゴンより高い場合は何もしない
-                if (HitFlag == 1 && MinY < LineRes.Position.y) continue;
+                if(HitFlag == 1 && MinY < LineRes.Position.y) continue;
 
                 // ポリゴンに当たったフラグを立てる
                 HitFlag = 1;
@@ -508,7 +514,7 @@ void Game3DTest::Chara_Move(CHARA* ch, VECTOR MoveVector)
             }
 
             // 接触したポリゴンがあったかどうかで処理を分岐
-            if (HitFlag == 1)
+            if(HitFlag == 1)
             {
                 // 接触した場合はキャラクターのＹ座標を接触座標を元に更新
                 NowPos.y = MinY - CHARA_HIT_HEIGHT;
@@ -522,7 +528,6 @@ void Game3DTest::Chara_Move(CHARA* ch, VECTOR MoveVector)
             float MaxY;
 
             // 下降中かジャンプ中ではない場合の処理
-
             // 床ポリゴンに当たったかどうかのフラグを倒しておく
             HitFlag = 0;
 
@@ -530,28 +535,32 @@ void Game3DTest::Chara_Move(CHARA* ch, VECTOR MoveVector)
             MaxY = 0.0f;
 
             // 床ポリゴンの数だけ繰り返し
-            for (i = 0; i < YukaNum; i++)
+            for(i = 0; i < YukaNum; i++)
             {
                 // i番目の床ポリゴンのアドレスを床ポリゴンポインタ配列から取得
                 Poly = Yuka[i];
 
                 // ジャンプ中かどうかで処理を分岐
-                if (ch->State == 2)
+                if(ch->State == 2)
                 {
                     // ジャンプ中の場合は頭の先から足先より少し低い位置の間で当たっているかを判定
-                    LineRes = HitCheck_Line_Triangle(VAdd(NowPos, VGet(0.0f, CHARA_HIT_HEIGHT, 0.0f)), VAdd(NowPos, VGet(0.0f, -1.0f, 0.0f)), Poly->Position[0], Poly->Position[1], Poly->Position[2]);
+                    LineRes = HitCheck_Line_Triangle(VAdd(NowPos, VGet(0.0f, CHARA_HIT_HEIGHT, 0.0f)),
+                                                     VAdd(NowPos, VGet(0.0f, -1.0f, 0.0f)), Poly->Position[0],
+                                                     Poly->Position[1], Poly->Position[2]);
                 }
                 else
                 {
                     // 走っている場合は頭の先からそこそこ低い位置の間で当たっているかを判定( 傾斜で落下状態に移行してしまわない為 )
-                    LineRes = HitCheck_Line_Triangle(VAdd(NowPos, VGet(0.0f, CHARA_HIT_HEIGHT, 0.0f)), VAdd(NowPos, VGet(0.0f, -40.0f, 0.0f)), Poly->Position[0], Poly->Position[1], Poly->Position[2]);
+                    LineRes = HitCheck_Line_Triangle(VAdd(NowPos, VGet(0.0f, CHARA_HIT_HEIGHT, 0.0f)),
+                                                     VAdd(NowPos, VGet(0.0f, -40.0f, 0.0f)), Poly->Position[0],
+                                                     Poly->Position[1], Poly->Position[2]);
                 }
 
                 // 当たっていなかったら何もしない
-                if (LineRes.HitFlag == FALSE) continue;
+                if(LineRes.HitFlag == FALSE) continue;
 
                 // 既に当たったポリゴンがあり、且つ今まで検出した床ポリゴンより低い場合は何もしない
-                if (HitFlag == 1 && MaxY > LineRes.Position.y) continue;
+                if(HitFlag == 1 && MaxY > LineRes.Position.y) continue;
 
                 // ポリゴンに当たったフラグを立てる
                 HitFlag = 1;
@@ -561,10 +570,9 @@ void Game3DTest::Chara_Move(CHARA* ch, VECTOR MoveVector)
             }
 
             // 床ポリゴンに当たったかどうかで処理を分岐
-            if (HitFlag == 1)
+            if(HitFlag == 1)
             {
                 // 当たった場合
-
                 // 接触したポリゴンで一番高いＹ座標をキャラクターのＹ座標にする
                 NowPos.y = MaxY;
 
@@ -572,10 +580,10 @@ void Game3DTest::Chara_Move(CHARA* ch, VECTOR MoveVector)
                 ch->JumpPower = 0.0f;
 
                 // もしジャンプ中だった場合は着地状態にする
-                if (ch->State == 2)
+                if(ch->State == 2)
                 {
                     // 移動していたかどうかで着地後の状態と再生するアニメーションを分岐する
-                    if (MoveFlag)
+                    if(MoveFlag)
                     {
                         // 移動している場合は走り状態に
                         Chara_PlayAnim(ch, 1);
@@ -595,7 +603,7 @@ void Game3DTest::Chara_Move(CHARA* ch, VECTOR MoveVector)
             else
             {
                 // 床コリジョンに当たっていなくて且つジャンプ状態ではなかった場合は
-                if (ch->State != 2)
+                if(ch->State != 2)
                 {
                     // ジャンプ中にする
                     ch->State = 2;
@@ -621,7 +629,7 @@ void Game3DTest::Chara_Move(CHARA* ch, VECTOR MoveVector)
 }
 
 // キャラクターに当たっていたら押し出す処理を行う( chk_ch に ch が当たっていたら ch が離れる )
-void Game3DTest::Chara_Collision(CHARA * ch, VECTOR * ch_MoveVec, CHARA * chk_ch)
+void Game3DTest::Chara_Collision(CHARA* ch, VECTOR* ch_MoveVec, CHARA* chk_ch)
 {
     VECTOR ChkChToChVec;
     VECTOR PushVec;
@@ -632,12 +640,11 @@ void Game3DTest::Chara_Collision(CHARA * ch, VECTOR * ch_MoveVec, CHARA * chk_ch
     ChPosition = VAdd(ch->Position, *ch_MoveVec);
 
     // 当たっていなかったら何もしない
-    if (HitCheck_Capsule_Capsule(
-        ChPosition, VAdd(ChPosition, VGet(0.0f, CHARA_HIT_HEIGHT, 0.0f)), CHARA_HIT_WIDTH,
-        chk_ch->Position, VAdd(chk_ch->Position, VGet(0.0f, CHARA_HIT_HEIGHT, 0.0f)), CHARA_HIT_WIDTH) == TRUE)
+    if(HitCheck_Capsule_Capsule(ChPosition, VAdd(ChPosition, VGet(0.0f, CHARA_HIT_HEIGHT, 0.0f)), CHARA_HIT_WIDTH,
+                                chk_ch->Position, VAdd(chk_ch->Position, VGet(0.0f, CHARA_HIT_HEIGHT, 0.0f)),
+                                CHARA_HIT_WIDTH) == TRUE)
     {
         // 当たっていたら ch が chk から離れる処理をする
-
         // chk_ch から ch へのベクトルを算出
         ChkChToChVec = VSub(ChPosition, chk_ch->Position);
 
@@ -651,10 +658,9 @@ void Game3DTest::Chara_Collision(CHARA * ch, VECTOR * ch_MoveVec, CHARA * chk_ch
         PushVec = VScale(ChkChToChVec, 1.0f / Length);
 
         // 押し出す距離を算出、もし二人の距離から二人の大きさを引いた値に押し出し力を足して離れてしまう場合は、ぴったりくっつく距離に移動する
-        if (Length - CHARA_HIT_WIDTH * 2.0f + CHARA_HIT_PUSH_POWER > 0.0f)
+        if(Length - CHARA_HIT_WIDTH * 2.0f + CHARA_HIT_PUSH_POWER > 0.0f)
         {
             float TempY;
-
             TempY = ChPosition.y;
             ChPosition = VAdd(chk_ch->Position, VScale(PushVec, CHARA_HIT_WIDTH * 2.0f));
 
@@ -673,11 +679,10 @@ void Game3DTest::Chara_Collision(CHARA * ch, VECTOR * ch_MoveVec, CHARA * chk_ch
 }
 
 // キャラクターの向きを変える処理
-void Game3DTest::Chara_AngleProcess(CHARA * ch)
+void Game3DTest::Chara_AngleProcess(CHARA* ch)
 {
     float TargetAngle;			// 目標角度
     float SaAngle;				// 目標角度と現在の角度との差
-
     // 目標の方向ベクトルから角度値を算出する
     TargetAngle = atan2(ch->TargetMoveDirection.x, ch->TargetMoveDirection.z);
 
@@ -688,23 +693,22 @@ void Game3DTest::Chara_AngleProcess(CHARA * ch)
 
         // ある方向からある方向の差が１８０度以上になることは無いので
         // 差の値が１８０度以上になっていたら修正する
-        if (SaAngle < -DX_PI_F)
+        if(SaAngle < -DX_PI_F)
         {
             SaAngle += DX_TWO_PI_F;
         }
-        else
-            if (SaAngle > DX_PI_F)
-            {
-                SaAngle -= DX_TWO_PI_F;
-            }
+        else if(SaAngle > DX_PI_F)
+        {
+            SaAngle -= DX_TWO_PI_F;
+        }
     }
 
     // 角度の差が０に近づける
-    if (SaAngle > 0.0f)
+    if(SaAngle > 0.0f)
     {
         // 差がプラスの場合は引く
         SaAngle -= CHARA_ANGLE_SPEED * DeltaTime_;
-        if (SaAngle < 0.0f)
+        if(SaAngle < 0.0f)
         {
             SaAngle = 0.0f;
         }
@@ -713,7 +717,7 @@ void Game3DTest::Chara_AngleProcess(CHARA * ch)
     {
         // 差がマイナスの場合は足す
         SaAngle += CHARA_ANGLE_SPEED * DeltaTime_;
-        if (SaAngle > 0.0f)
+        if(SaAngle > 0.0f)
         {
             SaAngle = 0.0f;
         }
@@ -725,10 +729,10 @@ void Game3DTest::Chara_AngleProcess(CHARA * ch)
 }
 
 // キャラクターに新たなアニメーションを再生する
-void Game3DTest::Chara_PlayAnim(CHARA * ch, int PlayAnim)
+void Game3DTest::Chara_PlayAnim(CHARA* ch, int PlayAnim)
 {
     // 再生中のモーション２が有効だったらデタッチする
-    if (ch->PlayAnim2 != -1)
+    if(ch->PlayAnim2 != -1)
     {
         MV1DetachAnim(ch->ModelHandle, ch->PlayAnim2);
         ch->PlayAnim2 = -1;
@@ -747,22 +751,21 @@ void Game3DTest::Chara_PlayAnim(CHARA * ch, int PlayAnim)
 }
 
 // キャラクターのアニメーション処理
-void Game3DTest::Chara_AnimProcess(CHARA * ch)
+void Game3DTest::Chara_AnimProcess(CHARA* ch)
 {
     float AnimTotalTime;		// 再生しているアニメーションの総時間
-
     // ブレンド率が１以下の場合は１に近づける
-    if (ch->AnimBlendRate < 1.0f)
+    if(ch->AnimBlendRate < 1.0f)
     {
         ch->AnimBlendRate += CHARA_ANIM_BLEND_SPEED * DeltaTime_;
-        if (ch->AnimBlendRate > 1.0f)
+        if(ch->AnimBlendRate > 1.0f)
         {
             ch->AnimBlendRate = 1.0f;
         }
     }
 
     // 再生しているアニメーション１の処理
-    if (ch->PlayAnim1 != -1)
+    if(ch->PlayAnim1 != -1)
     {
         // アニメーションの総時間を取得
         AnimTotalTime = MV1GetAttachAnimTotalTime(ch->ModelHandle, ch->PlayAnim1);
@@ -771,7 +774,7 @@ void Game3DTest::Chara_AnimProcess(CHARA * ch)
         ch->AnimPlayCount1 += FixedCharaAnimSpeed_;
 
         // 再生時間が総時間に到達していたら再生時間をループさせる
-        if (ch->AnimPlayCount1 >= AnimTotalTime)
+        if(ch->AnimPlayCount1 >= AnimTotalTime)
         {
             ch->AnimPlayCount1 = fmod(ch->AnimPlayCount1, AnimTotalTime);
         }
@@ -784,7 +787,7 @@ void Game3DTest::Chara_AnimProcess(CHARA * ch)
     }
 
     // 再生しているアニメーション２の処理
-    if (ch->PlayAnim2 != -1)
+    if(ch->PlayAnim2 != -1)
     {
         // アニメーションの総時間を取得
         AnimTotalTime = MV1GetAttachAnimTotalTime(ch->ModelHandle, ch->PlayAnim2);
@@ -793,7 +796,7 @@ void Game3DTest::Chara_AnimProcess(CHARA * ch)
         ch->AnimPlayCount2 += FixedCharaAnimSpeed_;
 
         // 再生時間が総時間に到達していたら再生時間をループさせる
-        if (ch->AnimPlayCount2 > AnimTotalTime)
+        if(ch->AnimPlayCount2 > AnimTotalTime)
         {
             ch->AnimPlayCount2 = fmod(ch->AnimPlayCount2, AnimTotalTime);
         }
@@ -851,35 +854,35 @@ void Game3DTest::Player_Process(void)
     JumpFlag = 0;
 
     // 方向ボタン「←」が入力されたらカメラの見ている方向から見て左方向に移動する
-    if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_A))
+    if(KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_A))
     {
         // 移動ベクトルに「←」が入力された時の移動ベクトルを加算する
         MoveVec = VAdd(MoveVec, LeftMoveVec);
     }
     else
         // 方向ボタン「→」が入力されたらカメラの見ている方向から見て右方向に移動する
-        if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_D))
+        if(KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_D))
         {
             // 移動ベクトルに「←」が入力された時の移動ベクトルを反転したものを加算する
             MoveVec = VAdd(MoveVec, VScale(LeftMoveVec, -1.0f));
         }
 
     // 方向ボタン「↑」が入力されたらカメラの見ている方向に移動する
-    if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_W))
+    if(KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_W))
     {
         // 移動ベクトルに「↑」が入力された時の移動ベクトルを加算する
         MoveVec = VAdd(MoveVec, UpMoveVec);
     }
     else
         // 方向ボタン「↓」が入力されたらカメラの方向に移動する
-        if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_S))
+        if(KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_S))
         {
             // 移動ベクトルに「↑」が入力された時の移動ベクトルを反転したものを加算する
             MoveVec = VAdd(MoveVec, VScale(UpMoveVec, -1.0f));
         }
 
     // ボタン１が押されていたらジャンプフラグを立てる
-    if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_SPACE))
+    if(KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_SPACE))
     {
         JumpFlag = 1;
     }
@@ -888,7 +891,7 @@ void Game3DTest::Player_Process(void)
     MoveVec = VScale(MoveVec, FixedCharaMoveSpeed_);
 
     // プレイヤーキャラ以外との当たり判定を行う
-    for (i = 0; i < NOTPLAYER_NUM; i++)
+    for(i = 0; i < NOTPLAYER_NUM; i++)
     {
         Chara_Collision(&pl.CharaInfo, &MoveVec, &npl[i].CharaInfo);
     }
@@ -901,15 +904,11 @@ void Game3DTest::Player_Process(void)
 void Game3DTest::NotPlayer_Initialize(void)
 {
     int i;
-    static VECTOR FirstPosition[NOTPLAYER_NUM] =
-    {
-        { -3000.0f, 0.0f, 2300.0f },
-        { -2500.0f, 7300.0f, -2500.0f },
-        { -2600.0f, 0.0f, -3100.0f },
-        {  2800.0f, 0.0f, 200.0f },
+    static VECTOR FirstPosition[NOTPLAYER_NUM] = {
+        { -3000.0f, 0.0f, 2300.0f }, { -2500.0f, 7300.0f, -2500.0f }, { -2600.0f, 0.0f, -3100.0f },
+        { 2800.0f, 0.0f, 200.0f },
     };
-
-    for (i = 0; i < NOTPLAYER_NUM; i++)
+    for(i = 0; i < NOTPLAYER_NUM; i++)
     {
         // キャラクター情報を初期化
         Chara_Initialize(&npl[i].CharaInfo, FirstPosition[i]);
@@ -928,7 +927,7 @@ void Game3DTest::NotPlayer_Terminate(void)
     int i;
 
     // キャラクタの数だけ繰り返し
-    for (i = 0; i < NOTPLAYER_NUM; i++)
+    for(i = 0; i < NOTPLAYER_NUM; i++)
     {
         // キャラクター情報の後始末
         Chara_Terminate(&npl[i].CharaInfo);
@@ -944,14 +943,14 @@ void Game3DTest::NotPlayer_Process(void)
     int JumpFlag;
 
     // キャラクタの数だけ繰り返し
-    for (i = 0; i < NOTPLAYER_NUM; i++)
+    for(i = 0; i < NOTPLAYER_NUM; i++)
     {
         // ジャンプフラグを倒しておく
         JumpFlag = 0;
 
         // 一定時間が経過したら移動する方向を変更する
         npl[i].MoveTime++;
-        if (npl[i].MoveTime >= NOTPLAYER_MOVETIME)
+        if(npl[i].MoveTime >= NOTPLAYER_MOVETIME)
         {
             npl[i].MoveTime = 0;
 
@@ -959,7 +958,7 @@ void Game3DTest::NotPlayer_Process(void)
             npl[i].MoveAngle = GetRand(1000) * DX_PI_F * 2.0f / 1000.0f;
 
             // 一定確率でジャンプする
-            if (GetRand(1000) < NOTPLAYER_JUMPRATIO)
+            if(GetRand(1000) < NOTPLAYER_JUMPRATIO)
             {
                 JumpFlag = 1;
             }
@@ -974,11 +973,10 @@ void Game3DTest::NotPlayer_Process(void)
         Chara_Collision(&npl[i].CharaInfo, &MoveVec, &pl.CharaInfo);
 
         // 自分以外のプレイヤーキャラとの当たり判定を行う
-        for (j = 0; j < NOTPLAYER_NUM; j++)
+        for(j = 0; j < NOTPLAYER_NUM; j++)
         {
             // 自分との当たり判定はしない
-            if (i == j) continue;
-
+            if(i == j) continue;
             Chara_Collision(&npl[i].CharaInfo, &MoveVec, &npl[j].CharaInfo);
         }
 
@@ -1009,9 +1007,10 @@ void Game3DTest::Stage_Initialize(void)
     SetDrawValidFloatTypeGraphCreateFlag(FALSE);
     SetCreateDrawValidGraphChannelNum(4);
     SetCreateGraphColorBitDepth(32);
-
-    BloomBufferGraphHandle = MakeScreen(engine::CastToInt(GetRawScreenWidth()), engine::CastToInt(GetRawScreenHeight()), TRUE);
-    ScaleDownGraphHandle = MakeScreen(engine::CastToInt(GetRawScreenWidth()) / 8, engine::CastToInt(GetRawScreenHeight()) / 8, TRUE);
+    BloomBufferGraphHandle = MakeScreen(engine::CastToInt(GetRawScreenWidth()), engine::CastToInt(GetRawScreenHeight()),
+                                        TRUE);
+    ScaleDownGraphHandle = MakeScreen(engine::CastToInt(GetRawScreenWidth()) / 8,
+                                      engine::CastToInt(GetRawScreenHeight()) / 8, TRUE);
 
     // 深度記録画像描画用の頂点シェーダーを読み込む
     Skin4_DepthShadow_Step1_VertexShader = LoadVertexShader("SkinMesh4_DepthShadow_Step1VS.vso");
@@ -1048,9 +1047,9 @@ void Game3DTest::Camera_Initialize(void)
 // カメラの処理
 void Game3DTest::Camera_Process(void)
 {
-    if (!KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_LALT))
+    if(!KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_LALT))
     {
-        if (MouseManager::GetInstance()->IsMovedMouse())
+        if(MouseManager::GetInstance()->IsMovedMouse())
         {
             cam.AngleH += MouseManager::GetInstance()->GetMouseXVelf() / 500.f;
             cam.AngleV -= MouseManager::GetInstance()->GetMouseYVelf() / 500.f;
@@ -1059,22 +1058,19 @@ void Game3DTest::Camera_Process(void)
         }
     }
     //cam.AngleH -= FixedCameraRotSpeed_;
-    
     // －１８０度以下になったら角度値が大きくなりすぎないように３６０度を足す
-    if (cam.AngleH < -DX_PI_F)
+    if(cam.AngleH < -DX_PI_F)
     {
         cam.AngleH += DX_TWO_PI_F;
     }
     //cam.AngleH += FixedCameraRotSpeed_;
-
     // １８０度以上になったら角度値が大きくなりすぎないように３６０度を引く
-    if (cam.AngleH > DX_PI_F)
+    if(cam.AngleH > DX_PI_F)
     {
         cam.AngleH -= DX_TWO_PI_F;
     }
 
     //cam.AngleV -= FixedCameraRotSpeed_;
-
     cam.AngleV = engine::LimitRange(cam.AngleV, -DX_PI_F / 2.0f + 0.1f, DX_PI_F / 2.0f - 0.1f);
 
     // カメラの注視点はプレイヤー座標から規定値分高い座標
@@ -1106,7 +1102,7 @@ void Game3DTest::Camera_Process(void)
         HRes = MV1CollCheck_Capsule(stg.ModelHandle, -1, cam.Target, cam.Eye, CAMERA_COLLISION_SIZE);
         HitNum = HRes.HitNum;
         MV1CollResultPolyDimTerminate(HRes);
-        if (HitNum != 0)
+        if(HitNum != 0)
         {
             float NotHitLength;
             float HitLength;
@@ -1114,7 +1110,6 @@ void Game3DTest::Camera_Process(void)
             VECTOR TestPosition;
 
             // あったら無い位置までプレイヤーに近づく
-
             // ポリゴンに当たらない距離をセット
             NotHitLength = 0.0f;
 
@@ -1132,7 +1127,7 @@ void Game3DTest::Camera_Process(void)
                 HRes = MV1CollCheck_Capsule(stg.ModelHandle, -1, cam.Target, TestPosition, CAMERA_COLLISION_SIZE);
                 HitNum = HRes.HitNum;
                 MV1CollResultPolyDimTerminate(HRes);
-                if (HitNum != 0)
+                if(HitNum != 0)
                 {
                     // 当たったら当たる距離を TestLength に変更する
                     HitLength = TestLength;
@@ -1144,7 +1139,7 @@ void Game3DTest::Camera_Process(void)
                 }
 
                 // HitLength と NoHitLength が十分に近づいていなかったらループ
-            } while (HitLength - NotHitLength > 0.1f);
+            } while(HitLength - NotHitLength > 0.1f);
 
             // カメラの座標をセット
             cam.Eye = TestPosition;
@@ -1160,11 +1155,9 @@ void Game3DTest::SetupDepthImage(void)
     VECTOR LightDirection;
     VECTOR LightPosition;
     VECTOR LightTarget;
-
     static auto LightAddVec = VGet(0.f, 0.f, 0.f);
 
     //LightAddVec = VAdd(LightAddVec, VGet(50.f * DeltaTime_, 0.f, 0.f));
-
     // 描画先を影用深度記録画像にする
     SetDrawScreen(DepthBufferGraphHandle);
     // 影用深度記録画像を真っ白にクリア
@@ -1177,10 +1170,8 @@ void Game3DTest::SetupDepthImage(void)
 
     // 描画する奥行き範囲をセット
     SetCameraNearFar(10.0f, 13050.0f);
-
     DebugLabel_->SetLabel("LightVec: " + std::to_string(LightAddVec.x));
     //SetLightDirection(LightAddVec);
-
     // カメラの向きはライトの向き
     LightDirection = GetLightDirection();
 
@@ -1218,12 +1209,12 @@ void Game3DTest::SetupDepthImage(void)
     MV1DrawModel(pl.CharaInfo.ModelHandle);
 
     // プレイヤー以外キャラモデルの描画
-    for (i = 0; i < NOTPLAYER_NUM; i++)
+    for(i = 0; i < NOTPLAYER_NUM; i++)
     {
         MV1DrawModel(npl[i].CharaInfo.ModelHandle);
     }
-
-    DrawBillboard3D(VAdd(pl.CharaInfo.Position, VGet(0.f, 1000.f, 0.f)), 0.5f, 0.5f, 500.f, 0.f, DebugLabel_->GetDrawBuffer(), TRUE);
+    DrawBillboard3D(VAdd(pl.CharaInfo.Position, VGet(0.f, 1000.f, 0.f)), 0.5f, 0.5f, 500.f, 0.f,
+                    DebugLabel_->GetDrawBuffer(), TRUE);
     DrawBillboard3D(VAdd(pl.CharaInfo.Position, VGet(0.f, 1000.f, 0.f)), 0.5f, 0.5f, 500.f, 0.f, GetDrawBuffer(), TRUE);
 
 
@@ -1232,7 +1223,6 @@ void Game3DTest::SetupDepthImage(void)
 
     // 描画先を裏画面に戻す
     SetDrawScreen(GetDrawBuffer());
-
     ClearDrawScreen();
 }
 
@@ -1276,7 +1266,7 @@ void Game3DTest::DrawModelWithDepthShadow(void)
     MV1DrawModel(pl.CharaInfo.ModelHandle);
 
     // プレイヤー以外キャラモデルの描画
-    for (i = 0; i < NOTPLAYER_NUM; i++)
+    for(i = 0; i < NOTPLAYER_NUM; i++)
     {
         MV1DrawModel(npl[i].CharaInfo.ModelHandle);
     }
@@ -1292,7 +1282,8 @@ void Game3DTest::DrawModelWithDepthShadow(void)
 
     //DrawSphere3D(VAdd(pl.CharaInfo.Position, VGet(0.f, 1000.f, 0.f)), 500.f, 40, GetColor(255, 255, 255), GetColor(255, 255, 255), TRUE);
     //DrawBillboard3D(VAdd(pl.CharaInfo.Position, VGet(0.f, 1000.f, 0.f)), 0.5f, 0.5f, 500.f, 0.f, GetDrawBuffer(), TRUE);
-    DrawBillboard3D(VAdd(pl.CharaInfo.Position, VGet(0.f, 1000.f, 0.f)), 0.5f, 0.5f, 500.f, 0.f, DebugLabel_->GetDrawBuffer(), TRUE);
+    DrawBillboard3D(VAdd(pl.CharaInfo.Position, VGet(0.f, 1000.f, 0.f)), 0.5f, 0.5f, 500.f, 0.f,
+                    DebugLabel_->GetDrawBuffer(), TRUE);
     // ステージモデルの描画
     MV1DrawModel(stg.ModelHandle);
 
@@ -1304,13 +1295,14 @@ void Game3DTest::DrawModelWithDepthShadow(void)
     MV1DrawModel(pl.CharaInfo.ModelHandle);
 
     // プレイヤー以外キャラモデルの描画
-    for (i = 0; i < NOTPLAYER_NUM; i++)
+    for(i = 0; i < NOTPLAYER_NUM; i++)
     {
         MV1DrawModel(npl[i].CharaInfo.ModelHandle);
     }
 
     // 描画結果から高輝度部分のみを抜き出した画像を得る
-    GraphFilterBlt(GetDrawBuffer(), BloomBufferGraphHandle, DX_GRAPH_FILTER_BRIGHT_CLIP, DX_CMP_LESS, 150, TRUE, GetColor(0, 0, 0), 255);
+    GraphFilterBlt(GetDrawBuffer(), BloomBufferGraphHandle, DX_GRAPH_FILTER_BRIGHT_CLIP, DX_CMP_LESS, 150, TRUE,
+                   GetColor(0, 0, 0), 255);
 
     // 高輝度部分を８分の１に縮小した画像を得る
     GraphFilterBlt(BloomBufferGraphHandle, ScaleDownGraphHandle, DX_GRAPH_FILTER_DOWN_SCALE, 8);
@@ -1321,8 +1313,10 @@ void Game3DTest::DrawModelWithDepthShadow(void)
     // 描画ブレンドモードを加算にする
     SetDrawBlendMode(DX_BLENDMODE_PMA_ADD, 255);
     // 高輝度部分を縮小してぼかした画像を画面いっぱいに２回描画する( ２回描画するのはより明るくみえるようにするため )
-    DrawExtendGraph(0, 0, engine::CastToInt(GetRawScreenWidth()), engine::CastToInt(GetRawScreenHeight()), ScaleDownGraphHandle, TRUE);
-    DrawExtendGraph(0, 0, engine::CastToInt(GetRawScreenWidth()), engine::CastToInt(GetRawScreenHeight()), ScaleDownGraphHandle, TRUE);
+    DrawExtendGraph(0, 0, engine::CastToInt(GetRawScreenWidth()), engine::CastToInt(GetRawScreenHeight()),
+                    ScaleDownGraphHandle, TRUE);
+    DrawExtendGraph(0, 0, engine::CastToInt(GetRawScreenWidth()), engine::CastToInt(GetRawScreenHeight()),
+                    ScaleDownGraphHandle, TRUE);
 }
 
 // 描画処理

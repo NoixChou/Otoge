@@ -27,22 +27,16 @@ void FontStringCalculator::DestroyInstance()
     Instance_.reset();
 }
 */
-
 float FontStringCalculator::GetStringWidth(int fontHandle, const std::string& string)
 {
     const int l_Length = static_cast<int>(string.length());
-
-    if (fontHandle != -1)
-        return engine::CastToFloat(GetDrawStringWidthToHandle(string.c_str(), l_Length, fontHandle));
-
+    if(fontHandle != -1) return engine::CastToFloat(GetDrawStringWidthToHandle(string.c_str(), l_Length, fontHandle));
     return engine::CastToFloat(GetDrawStringWidth(string.c_str(), l_Length));
 }
 
 float FontStringCalculator::GetStringHeight(int fontHandle)
 {
-    if (fontHandle != -1)
-        return engine::CastToFloat(GetFontLineSpaceToHandle(fontHandle));
-
+    if(fontHandle != -1) return engine::CastToFloat(GetFontLineSpaceToHandle(fontHandle));
     return engine::CastToFloat(GetFontLineSpace());
 }
 
@@ -56,7 +50,8 @@ float FontStringCalculator::GetStringCenterVertical(int fontHandle)
     return GetStringHeight(fontHandle) / 2.0f;
 }
 
-VECTOR FontStringCalculator::GetStringCenterInBox(int fontHandle, const std::string& string, const ScreenData& screenBox)
+VECTOR FontStringCalculator::GetStringCenterInBox(int fontHandle, const std::string& string,
+                                                  const ScreenData& screenBox)
 {
     VECTOR result;
     result.x = (screenBox.width / 2) - GetStringCenterHorizontal(fontHandle, string);

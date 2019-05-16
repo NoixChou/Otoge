@@ -9,9 +9,7 @@ std::shared_ptr<MouseManager> MouseManager::Instance_ = nullptr;
 MouseManager::MouseManager() : Task("MouseManager")
 {
     MouseAreaLimit_ = SettingManager::GetGlobal()->Get<bool>(game_config::SETTINGS_MOUSE_AREA_LIMIT).get();
-    if(DxSettings::useOriginalCursor)
-        HideCursor();
-
+    if(DxSettings::useOriginalCursor) HideCursor();
     Logger_->Info("マウス入力管理 初期化完了");
 }
 
@@ -28,7 +26,7 @@ std::shared_ptr<MouseManager> MouseManager::GetInstance()
 
 void MouseManager::CreateInstance()
 {
-    if (!Instance_)
+    if(!Instance_)
     {
         Instance_.reset(new MouseManager);
     }
@@ -39,28 +37,25 @@ void MouseManager::DestroyInstance()
     Instance_.reset();
 }
 
-
 void MouseManager::Update(float deltaTime)
 {
     PrevMousePosX_ = MousePosX_;
     PrevMousePosY_ = MousePosY_;
     PrevMouseInput_ = MouseInput_;
-
     GetMousePoint(&MousePosX_, &MousePosY_);
     MouseWheelSpeed_ = GetMouseWheelRotVolF();
     MouseInput_ = GetMouseInput();
-
-    if (MouseAreaLimit_)
+    if(MouseAreaLimit_)
     {
         MousePosX_ = engine::LimitRange(MousePosX_, 0, DxSettings::windowWidth);
         MousePosY_ = engine::LimitRange(MousePosY_, 0, DxSettings::windowHeight);
     }
-    
-    if (MouseInput_ != 0 && PrevMouseInput_ == 0)
+    if(MouseInput_ != 0 && PrevMouseInput_ == 0)
     {
         MouseDownPosX_ = MousePosX_;
         MouseDownPosY_ = MousePosY_;
-    }else if(MouseInput_ == 0 && PrevMouseInput_ != 0)
+    }
+    else if(MouseInput_ == 0 && PrevMouseInput_ != 0)
     {
         MouseReleasePosX_ = MousePosX_;
         MouseReleasePosY_ = MousePosY_;
@@ -112,8 +107,7 @@ void MouseManager::SetMouseY(float y)
 bool MouseManager::IsMovedMouse()
 {
     auto currentTask = TaskManager::GetInstance()->GetCurrentProcessTask();
-    if ((*currentTask) != nullptr && !(*currentTask)->IsEnable())
-        return false;
+    if((*currentTask) != nullptr && !(*currentTask)->IsEnable()) return false;
     return (PrevMousePosX_ != MousePosX_) || (PrevMousePosY_ != MousePosY_);
 }
 
@@ -157,7 +151,6 @@ float MouseManager::GetMouseYf()
     return engine::CastToFloat(MousePosY_);
 }
 
-
 int MouseManager::GetDownPosX()
 {
     return MouseDownPosX_;
@@ -177,7 +170,6 @@ float MouseManager::GetDownPosYf()
 {
     return engine::CastToFloat(MouseDownPosY_);
 }
-
 
 int MouseManager::GetReleasePosX()
 {
@@ -201,12 +193,12 @@ float MouseManager::GetReleasePosYf()
 
 float MouseManager::GetMouseRateX(std::shared_ptr<FlexibleScaler> scaler)
 {
-	return scaler->CalculatePositionRateX(engine::CastToFloat(MousePosX_));
+    return scaler->CalculatePositionRateX(engine::CastToFloat(MousePosX_));
 }
 
 float MouseManager::GetMouseRateY(std::shared_ptr<FlexibleScaler> scaler)
 {
-	return scaler->CalculatePositionRateY(engine::CastToFloat(MousePosY_));
+    return scaler->CalculatePositionRateY(engine::CastToFloat(MousePosY_));
 }
 
 float MouseManager::GetMouseWheelAccel()

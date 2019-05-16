@@ -183,6 +183,7 @@
     <ClCompile Include="Game\Scenes\Title\Setting\SettingScene.cpp" />
     <ClCompile Include="System\GUI\CheckBox.cpp" />
     <ClCompile Include="System\GUI\DropdownList.cpp" />
+    <ClCompile Include="System\GUI\RoundedButton.cpp" />
     <ClCompile Include="System\GUI\ScrollablePanel.cpp" />
     <ClCompile Include="System\GUI\SlideBar.cpp" />
     <ClCompile Include="System\Task\CursorDrawer.cpp" />
@@ -219,6 +220,7 @@
     <ClInclude Include="System\GlobalMethod.hpp" />
     <ClInclude Include="System\GUI\CheckBox.hpp" />
     <ClInclude Include="System\GUI\DropdownList.hpp" />
+    <ClInclude Include="System\GUI\RoundedButton.hpp" />
     <ClInclude Include="System\GUI\ScrollablePanel.hpp" />
     <ClInclude Include="System\GUI\SlideBar.hpp" />
     <ClInclude Include="System\Task\CursorDrawer.hpp" />

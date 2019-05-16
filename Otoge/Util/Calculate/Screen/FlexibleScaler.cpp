@@ -3,18 +3,16 @@
 #include "../../../System/Config.h"
 #include "../../../System/GlobalMethod.hpp"
 #include "../../Window/DxSettings.hpp"
-
 std::shared_ptr<FlexibleScaler> FlexibleScaler::GlobalInstance_ = nullptr;
 std::vector<FlexibleScaler*> FlexibleScaler::Scalers_;
 
 FlexibleScaler::FlexibleScaler(float screenWidth, float screenHeight, float scale)
 {
-    Logger::LowLevelLog("Scaler created, w: " + std::to_string(screenWidth) + ", h:" + std::to_string(screenHeight), "DEBUG");
-
+    Logger::LowLevelLog("Scaler created, w: " + std::to_string(screenWidth) + ", h:" + std::to_string(screenHeight),
+                        "DEBUG");
     ScreenWidth_ = screenWidth;
     ScreenHeight_ = screenHeight;
     Scale_ = scale;
-
     Scalers_.push_back(this);
 }
 
@@ -24,7 +22,8 @@ FlexibleScaler::~FlexibleScaler()
     if(result == Scalers_.end())
     {
         Logger::LowLevelLog("Broken scaler list!!!", "CRITICAL");
-    }else
+    }
+    else
     {
         Scalers_.erase(result);
     }
@@ -51,9 +50,10 @@ std::shared_ptr<FlexibleScaler> FlexibleScaler::GetWindowBasedInstance()
 
 void FlexibleScaler::CreateWindowBasedInstance()
 {
-    if (!GlobalInstance_)
+    if(!GlobalInstance_)
     {
-        GlobalInstance_.reset(new FlexibleScaler(engine::CastToFloat(DxSettings::windowWidth), engine::CastToFloat(DxSettings::windowHeight), 1.f));
+        GlobalInstance_.reset(new FlexibleScaler(engine::CastToFloat(DxSettings::windowWidth),
+                                                 engine::CastToFloat(DxSettings::windowHeight), 1.f));
     }
 }
 
@@ -124,12 +124,12 @@ void FlexibleScaler::SetScale(float scale)
 
 float FlexibleScaler::CalculatePositionRateX(float rawX) const
 {
-	return rawX / (ScreenWidth_) * 100.f * Scale_;
+    return rawX / (ScreenWidth_) * 100.f * Scale_;
 }
 
 float FlexibleScaler::CalculatePositionRateY(float rawY) const
 {
-	return rawY / (ScreenHeight_) * 100.f * Scale_;
+    return rawY / (ScreenHeight_) * 100.f * Scale_;
 }
 
 float FlexibleScaler::CalculatePositionX(float px) const
@@ -155,12 +155,9 @@ float FlexibleScaler::CalculateHeight(float height) const
 ScreenData FlexibleScaler::Calculate(const ScreenData& dataOfPercent) const
 {
     ScreenData result;
-
     result.lockAspectRate = dataOfPercent.lockAspectRate;
-
     result.posX = CalculatePositionX(dataOfPercent.posX);
     result.posY = CalculatePositionY(dataOfPercent.posY);
-
     if(lockTop && !lockBottom)
     {
         result.height = CalculateHeight(dataOfPercent.height);
@@ -170,7 +167,6 @@ ScreenData FlexibleScaler::Calculate(const ScreenData& dataOfPercent) const
         result.height = CalculateHeight(dataOfPercent.height);
         result.posY -= result.height;
     }
-
     if(lockLeft && !lockRight)
     {
         result.width = CalculateWidth(dataOfPercent.width);
@@ -180,7 +176,6 @@ ScreenData FlexibleScaler::Calculate(const ScreenData& dataOfPercent) const
         result.width = CalculateWidth(dataOfPercent.width);
         result.posX -= result.width;
     }
-
     return result;
 }
 

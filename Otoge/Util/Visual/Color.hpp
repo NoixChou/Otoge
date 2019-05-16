@@ -16,7 +16,6 @@ namespace color_preset
     const unsigned WHITE_GREEN = GetColor(129, 199, 132);
     const unsigned LIGHT_GREEN = GetColor(139, 195, 74);
     const unsigned LEAF_GREEN = GetColor(165, 214, 167);
-
     const unsigned TEAL = GetColor(0, 150, 136);
 
     /* ê¬ån */
@@ -29,7 +28,6 @@ namespace color_preset
     const unsigned INDIGO = GetColor(63, 81, 181);
     const unsigned WHITE_INDIGO = GetColor(92, 107, 192);
     const unsigned CYAN = GetColor(0, 188, 212);
-
     const unsigned PURPLE = GetColor(156, 39, 176);
 
     /* ê‘ån */

@@ -1,8 +1,8 @@
 ﻿#pragma once
-
 struct ScreenData
 {
     ScreenData() = default;
+
     ScreenData(float px, float py, float w, float h, bool lock = false)
     {
         posX = px;
@@ -14,7 +14,8 @@ struct ScreenData
 
     operator std::string() const
     {
-        return "<ScreenData> posX: " + std::to_string(posX) + ", posY: " + std::to_string(posY) + ", width: " + std::to_string(width) + ", height: " + std::to_string(height);
+        return "<ScreenData> posX: " + std::to_string(posX) + ", posY: " + std::to_string(posY) + ", width: " + std::
+            to_string(width) + ", height: " + std::to_string(height);
     }
 
     float posX = 0.f;
