@@ -4,22 +4,36 @@
 #include "../../Util/Visual/Color.hpp"
 #include "../GlobalMethod.hpp"
 
+template<typename V>
 class DropdownList : public GUI
 {
 public:
-    struct SimpleItem
+    struct BaseItem
     {
         std::string text = "";
-        float textSize = 60.f;
-        float textThickness = 1.f;
-        Label::TextAlignment align = Label::TextAlignment::center | Label::TextAlignment::middle;
+        float textSize;
+        float textThickness;
+        virtual Label::TextAlignment align() { return Label::TextAlignment::center | Label::TextAlignment::middle; }
         unsigned textColor = color_preset::BLACK;
-        unsigned backColor = color_preset::WHITE;
+        unsigned backColor;
         bool doDrawBack = false;
-        bool isSection = false;
-        boost::any value;
-        SimpleItem() = default;
-        SimpleItem(std::string text, bool isSection = false, float textSize = 60.f, float thickness = 1.f);
+        virtual bool isEnabledOnInit() { return true; }
+        BaseItem(std::string text, float textSize, float thickness);
+    };
+    struct Separator :
+        public BaseItem
+    {
+        Label::TextAlignment align() { return Label::TextAlignment::left | Label::TextAlignment::middle; }
+
+        bool isEnabledOnInit() { return false; }
+        Separator(std::string text, float textSize = 65.f, float thickness = 3.f);
+    };
+    struct SimpleItem :
+        public BaseItem
+    {
+        std::optional<V> value;
+
+        SimpleItem(std::string text, V value, float textSize = 60.f, float thickness = 1.f);
     };
 
 private:
@@ -33,30 +47,39 @@ private:
     std::shared_ptr<Scene> Panel_;
     std::shared_ptr<Label> SelectedLabel_;
     std::shared_ptr<Label> TriangleLabel_;
-    std::vector<SimpleItem> ItemData_;
-    std::vector<std::weak_ptr<Button> > Items_;
+
+    std::vector<std::shared_ptr<BaseItem>> ItemData_;
+    std::vector<std::weak_ptr<Button>> Items_;
+
     void AddItem(int num, const std::shared_ptr<Button>& item);
 public:
     unsigned animationColor;
     unsigned textColor;
     unsigned listColor;
-    DropdownList(const std::string& label, const ScreenData& layoutScreen, int maxItem,
-                 std::shared_ptr<FlexibleScaler> parentScaler = nullptr);
+
+    DropdownList(const std::string& label, const ScreenData& layoutScreen, int maxItem, std::shared_ptr<FlexibleScaler> parentScaler = nullptr);
     ~DropdownList();
+
     void GUIUpdate(float deltaTime) override;
     void Draw() override;
+
     void AddPanel();
     void ResetAnimation();
     void InvertOpening();
     void OpenList();
     void CloseList();
+
     void SetSelectedItemNum(int num);
     int GetSelectedItemNum() const;
-    SimpleItem GetSelectedItem() const;
+    std::shared_ptr<BaseItem> GetSelectedItem() const;
+    std::optional<V> GetSelectedItemValue() const;
     bool IsChangedSelect() const;
     void UpdateSelected();
+
     void SetMaxItem(int num);
-    void AddItem(int num, const SimpleItem& item);
-    void AddItem(int num, const std::string& label, boost::any value = 0, bool isSection = false);
+    void AddBaseItem(int num, std::shared_ptr<BaseItem> item);
+    void AddSeparator(int num, const std::string& label);
+    void AddSimpleItem(int num, const std::string& label, V value);
+
     std::shared_ptr<Scene> GetPanelInstance();
 };
