@@ -18,15 +18,15 @@ private:
 
     std::shared_ptr<Label> DisplaySectionLabel_;
     std::shared_ptr<Label> WindowSizeDescription_;
-    std::shared_ptr<DropdownList> WindowSizeList_;
+    std::shared_ptr<DropdownList<std::pair<int, int>>> WindowSizeList_;
     std::shared_ptr<CheckBox> FullscreenCheck_;
     std::shared_ptr<CheckBox> VSyncCheck_;
 
     std::shared_ptr<Label> InterfaceSectionLabel_;
-    std::shared_ptr<DropdownList> JapaneseFontList_;
-    std::shared_ptr<DropdownList> AlphabetFontList_;
+    //std::shared_ptr<DropdownList> JapaneseFontList_;
+    //std::shared_ptr<DropdownList> AlphabetFontList_;
 
-    std::vector<std::vector<std::string>> AllowWindowSizes_;
+    std::vector<std::pair<std::string, std::pair<int, int>>> AllowWindowSizes_;
 
 public:
     SettingScene();

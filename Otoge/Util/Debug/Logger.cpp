@@ -11,6 +11,7 @@ Logger::Logger(const string &moduleName)
     {
         AllocConsole();
 
+        SetConsoleOutputCP(CP_UTF8);
         auto l_ConOutResult = freopen("CONOUT$", "w", stdout);
         auto l_ConInResult = freopen("CONIN$", "r", stdin);
         if(l_ConOutResult == nullptr || l_ConInResult == nullptr)
@@ -39,16 +40,15 @@ Logger::~Logger()
 #endif
 }
 
-void Logger::Log(const string& message, const string &tag)
+void Logger::Log(std::string const& message, std::string const& tag)
 {
 #ifdef _DEBUG
-    printf("[%s]", encoding::ConvertUtf8ToSJIS(tag).c_str());
+    printf("[%s]", (tag).c_str());
     OutputDebugString(("[" + tag + "] ").c_str());
 
     if (ModuleName_ != "")
-        printf("<%s> ", encoding::ConvertUtf8ToSJIS(ModuleName_).c_str()), OutputDebugString(encoding::ConvertUtf8ToSJIS("<" + ModuleName_ + "> ").c_str());
-    printf(encoding::ConvertUtf8ToSJIS(message).c_str());
-    printf("\n");
+        printf("<%s> ", (ModuleName_).c_str()), OutputDebugString(encoding::ConvertUtf8ToSJIS("<" + ModuleName_ + "> ").c_str());
+    printf("%s\n", message.c_str());
     OutputDebugString(encoding::ConvertUtf8ToSJIS(message).c_str());
     OutputDebugString("\n");
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
@@ -58,11 +58,10 @@ void Logger::Log(const string& message, const string &tag)
 void Logger::LowLevelLog(const std::string& message, const std::string& tag)
 {
 #ifdef _DEBUG
-    printf("[%s] ", encoding::ConvertUtf8ToSJIS(tag).c_str());
-    OutputDebugString(encoding::ConvertUtf8ToSJIS("[" + tag + "] ").c_str());
+    printf("[%s]", (tag).c_str());
+    OutputDebugString(("[" + tag + "] ").c_str());
 
-    printf("%s", encoding::ConvertUtf8ToSJIS(message).c_str());
-    printf("\n");
+    printf("%s\n", message.c_str());
     OutputDebugString(encoding::ConvertUtf8ToSJIS(message).c_str());
     OutputDebugString("\n");
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);

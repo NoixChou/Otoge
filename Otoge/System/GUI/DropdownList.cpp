@@ -6,23 +6,33 @@
 #include "../../Util/Visual/Color.hpp"
 #include "../../Util/Calculate/Screen/FontStringCalculator.hpp"
 
-DropdownList::SimpleItem::SimpleItem(std::string text, bool isSection, float textSize, float thickness):
+template<typename V>
+DropdownList<V>::BaseItem::BaseItem(std::string text, float textSize, float thickness) :
     text(std::move(text)),
     textSize(textSize),
-    textThickness(thickness),
-    isSection(isSection)
+    textThickness(thickness)
 {
-    if(isSection)
-    {
-        this->textSize += 5.f;
-        this->textThickness += 2.f;
-        this->align = Label::TextAlignment::left | Label::TextAlignment::middle;
-        this->doDrawBack = true;
-        this->backColor = color_preset::WHITE_GREY;
-    }
 }
 
-DropdownList::DropdownList(const std::string& label, const ScreenData& layoutScreen, int maxItem, std::shared_ptr<FlexibleScaler> parentScaler) : GUI(label, layoutScreen, parentScaler)
+template<typename V>
+DropdownList<V>::Separator::Separator(std::string text, float textSize, float thickness) :
+    BaseItem(text, textSize, thickness)
+{
+	this->backColor = color_preset::WHITE_GREY;
+	this->doDrawBack = true;
+}
+
+template<typename V>
+DropdownList<V>::SimpleItem::SimpleItem(std::string text, V value, float textSize, float thickness) :
+    BaseItem(text, textSize, thickness),
+    value(value)
+{
+	this->backColor = color_preset::WHITE;
+	this->doDrawBack = true;
+}
+
+template<typename V>
+DropdownList<V>::DropdownList(const std::string& label, const ScreenData& layoutScreen, int maxItem, std::shared_ptr<FlexibleScaler> parentScaler) : GUI(label, layoutScreen, parentScaler)
 {
     Label_ = label;
     baseColor = color_preset::GREY;
@@ -59,11 +69,13 @@ DropdownList::DropdownList(const std::string& label, const ScreenData& layoutScr
     SetMaxItem(maxItem);
 }
 
-DropdownList::~DropdownList()
+template<typename V>
+DropdownList<V>::~DropdownList()
 {
 }
 
-void DropdownList::GUIUpdate(float deltaTime)
+template<typename V>
+void DropdownList<V>::GUIUpdate(float deltaTime)
 {
     //Panel_->SetPositionX(GetDefaultScaler()->CalculatePositionRateX(GetDefaultScaler()->GetDiffX()));
     //Panel_->SetPositionY(GetDefaultScaler()->CalculatePositionRateY(GetDefaultScaler()->GetDiffY()) + PanelOffsetY_);
@@ -135,7 +147,7 @@ void DropdownList::GUIUpdate(float deltaTime)
 
         l_ItemCount++;
     }
-
+    
     if (IsChangedSelect())
     {
         UpdateSelected();
@@ -151,14 +163,16 @@ void DropdownList::GUIUpdate(float deltaTime)
     Panel_->SetScreenHeight(engine::LimitRange(Panel_->GetScreenHeight(), PanelHeight_, 0.f));
 }
 
-void DropdownList::Draw()
+template <class V>
+void DropdownList<V>::Draw()
 {
     ScreenData fixed = DefaultScaler_->Calculate(ScreenData(2.f, 97.f, 98.f, 1.f));
     SetDrawBlendMode(AlphaBlendMode_, engine::CastToInt(((100.f - Panel_->GetTransparent()) / 100.f) * 255.f));
     DrawLine(fixed.posX, fixed.posY, fixed.posX + fixed.width, fixed.posY, baseColor);
 }
 
-void DropdownList::AddPanel()
+template <class V>
+void DropdownList<V>::AddPanel()
 {
     if (!IsPanelAdded_)
     {
@@ -175,13 +189,15 @@ void DropdownList::AddPanel()
     }
 }
 
-void DropdownList::ResetAnimation()
+template <class V>
+void DropdownList<V>::ResetAnimation()
 {
     timerCount = 0.f;
     IsListOpening_ = true;
 }
 
-void DropdownList::InvertOpening()
+template <class V>
+void DropdownList<V>::InvertOpening()
 {
     if (IsListOpened_)
         CloseList();
@@ -189,7 +205,8 @@ void DropdownList::InvertOpening()
         OpenList();
 }
 
-void DropdownList::OpenList()
+template <class V>
+void DropdownList<V>::OpenList()
 {
     ResetAnimation();
 
@@ -198,7 +215,8 @@ void DropdownList::OpenList()
     TriangleLabel_->SetLabel("▲");
 }
 
-void DropdownList::CloseList()
+template <class V>
+void DropdownList<V>::CloseList()
 {
     ResetAnimation();
 
@@ -207,7 +225,8 @@ void DropdownList::CloseList()
     TriangleLabel_->SetLabel("▼");
 }
 
-void DropdownList::SetSelectedItemNum(int num)
+template <class V>
+void DropdownList<V>::SetSelectedItemNum(int num)
 {
     if (num > ItemCount_ || num < 0) return;
     SelectedItem_ = num;
@@ -215,28 +234,49 @@ void DropdownList::SetSelectedItemNum(int num)
     UpdateSelected();
 }
 
-int DropdownList::GetSelectedItemNum() const
+template <class V>
+int DropdownList<V>::GetSelectedItemNum() const
 {
     if (SelectedItem_ > Items_.size()) return Items_.size() - 1;
     return SelectedItem_;
 }
 
-DropdownList::SimpleItem DropdownList::GetSelectedItem() const
+template <class V>
+std::shared_ptr<typename DropdownList<V>::BaseItem> DropdownList<V>::GetSelectedItem() const
 {
     if (SelectedItem_ > Items_.size()) return ItemData_[Items_.size() - 1];
     return ItemData_[SelectedItem_];
 }
 
-bool DropdownList::IsChangedSelect() const
+template <class V>
+std::optional<V> DropdownList<V>::GetSelectedItemValue() const
+{
+    int index;
+    if (SelectedItem_ > Items_.size())
+    {
+        index = Items_.size() - 1;
+    }
+    else
+    {
+        index = SelectedItem_;
+    }
+
+    auto item = std::static_pointer_cast<SimpleItem>(ItemData_[index]);
+    return item->value;
+}
+
+template <class V>
+bool DropdownList<V>::IsChangedSelect() const
 {
     return (SelectedItem_ != BeforeSelectedItem_) && IsEnable();
 }
 
-void DropdownList::UpdateSelected()
+template <class V>
+void DropdownList<V>::UpdateSelected()
 {
-    if(ItemData_[SelectedItem_].isSection)
+    if(typeid(ItemData_[SelectedItem_]) == typeid(std::shared_ptr<Separator>))
     {
-        while (ItemData_[SelectedItem_].isSection)
+        while (typeid(ItemData_[SelectedItem_]) == typeid(std::shared_ptr<Separator>))
         {
             if ((SelectedItem_ + 1) > ItemData_.size() || Items_[SelectedItem_ + 1].expired()) break;
             SelectedItem_++;
@@ -248,7 +288,8 @@ void DropdownList::UpdateSelected()
     SelectedLabel_->AdjustFont();
 }
 
-void DropdownList::SetMaxItem(int num)
+template <class V>
+void DropdownList<V>::SetMaxItem(int num)
 {
     ItemCount_ = num;
 
@@ -260,7 +301,8 @@ void DropdownList::SetMaxItem(int num)
     Panel_->RefreshChildren();
 }
 
-void DropdownList::AddItem(int num, const std::shared_ptr<Button>& item) // private
+template <class V>
+void DropdownList<V>::AddItem(int num, const std::shared_ptr<Button>& item) // private
 {
     AddPanel();
     item->SetPositionY(item->GetDefaultScaler()->CalculatePositionRateY(DefaultScaler_->CalculateHeight(100.f)) * ItemCount_);
@@ -276,32 +318,43 @@ void DropdownList::AddItem(int num, const std::shared_ptr<Button>& item) // priv
     UpdateSelected();
 }
 
-void DropdownList::AddItem(int num, const SimpleItem& item)
+template <class V>
+void DropdownList<V>::AddBaseItem(int num, std::shared_ptr<BaseItem> item)
 {
-    auto btn = std::make_shared<Button>(item.text, ScreenData(0.f, 0.f, 100.f, -1.f), Panel_->GetDefaultScaler());
-    btn->isDrawBase = item.doDrawBack;
-    btn->textColor = item.textColor;
-    btn->baseColor = item.backColor;
+    auto btn = std::make_shared<Button>(item->text, ScreenData(0.f, 0.f, 100.f, -1.f), Panel_->GetDefaultScaler());
+    btn->isDrawBase = item->doDrawBack;
+    btn->textColor = item->textColor;
+    btn->baseColor = item->backColor;
     btn->GetTextLabelInstance()->AdjustmentFontSize_ = false;
-    btn->GetTextLabelInstance()->ChangeFontSize(engine::CastToInt(Panel_->GetDefaultScaler()->CalculateHeight(item.textSize)));
-    btn->GetTextLabelInstance()->ChangeFontThickness(engine::CastToInt(Panel_->GetDefaultScaler()->CalculateHeight(item.textThickness)));
-    btn->GetTextLabelInstance()->SetTextAlign(item.align);
+    btn->GetTextLabelInstance()->ChangeFontSize(engine::CastToInt(Panel_->GetDefaultScaler()->CalculateHeight(item->textSize)));
+    btn->GetTextLabelInstance()->ChangeFontThickness(engine::CastToInt(Panel_->GetDefaultScaler()->CalculateHeight(item->textThickness)));
+    btn->GetTextLabelInstance()->SetTextAlign(item->align());
     btn->animationColor = color_preset::DARK_GREY;
-    btn->SetEnable(!item.isSection);
-
+    btn->SetEnable(item->isEnabledOnInit());
     ItemData_[num] = item;
     AddItem(num, btn);
 }
 
-void DropdownList::AddItem(int num, const std::string& label, boost::any value, bool isSection)
+template <class V>
+void DropdownList<V>::AddSeparator(int num, const std::string& label)
 {
     AddPanel();
-    auto l_Item = SimpleItem(label, isSection);
-    l_Item.value = value;
-    AddItem(num, l_Item);
+    auto l_Item = std::make_shared<Separator>(label);
+    Logger_->Info("Separator");
+    AddBaseItem(num, l_Item);
 }
 
-std::shared_ptr<Scene> DropdownList::GetPanelInstance()
+template <class V>
+void DropdownList<V>::AddSimpleItem(int num, const std::string& label, V value)
+{
+    AddPanel();
+    auto l_Item = std::make_shared<SimpleItem>(label, value);
+    Logger_->Info("SimpleItem");
+    AddBaseItem(num, l_Item);
+}
+
+template <class V>
+std::shared_ptr<Scene> DropdownList<V>::GetPanelInstance()
 {
     return Panel_;
 }
