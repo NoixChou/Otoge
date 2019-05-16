@@ -15,7 +15,7 @@ public:
         float textThickness;
         virtual Label::TextAlignment align() { return Label::TextAlignment::center | Label::TextAlignment::middle; }
         unsigned textColor = color_preset::BLACK;
-        unsigned backColor = color_preset::WHITE;
+        unsigned backColor;
         bool doDrawBack = false;
         virtual bool isEnabledOnInit() { return true; }
         BaseItem(std::string text, float textSize, float thickness);

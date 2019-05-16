@@ -18,6 +18,8 @@ template<typename V>
 DropdownList<V>::Separator::Separator(std::string text, float textSize, float thickness) :
     BaseItem(text, textSize, thickness)
 {
+	this->backColor = color_preset::WHITE_GREY;
+	this->doDrawBack = true;
 }
 
 template<typename V>
@@ -25,6 +27,8 @@ DropdownList<V>::SimpleItem::SimpleItem(std::string text, V value, float textSiz
     BaseItem(text, textSize, thickness),
     value(value)
 {
+	this->backColor = color_preset::WHITE;
+	this->doDrawBack = true;
 }
 
 template<typename V>
