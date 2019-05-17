@@ -66,7 +66,7 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
         DisplaySectionLabel_ = std::make_shared<Label>("ディスプレイ", ScreenData(0.f, 0.f, 100.f, 2.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
         DisplaySectionLabel_->textAlign = Label::TextAlignment::center | Label::TextAlignment::middle;
         DisplaySectionLabel_->AdjustmentFontSize_ = false;
-        DisplaySectionLabel_->ChangeFontSize(DisplaySectionLabel_->GetDefaultScaler()->CalculateHeight(80.f));
+        DisplaySectionLabel_->ChangeFontSize(engine::CastToInt(DisplaySectionLabel_->GetDefaultScaler()->CalculateHeight(80.f)));
         DisplaySectionLabel_->ChangeFontThickness(2);
         BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(DisplaySectionLabel_));
 

@@ -81,7 +81,7 @@ void DropdownList<V>::GUIUpdate(float deltaTime)
 {
     //Panel_->SetPositionX(GetDefaultScaler()->CalculatePositionRateX(GetDefaultScaler()->GetDiffX()));
     //Panel_->SetPositionY(GetDefaultScaler()->CalculatePositionRateY(GetDefaultScaler()->GetDiffY()) + PanelOffsetY_);
-    if(SelectedItem_ > Items_.size()) SelectedItem_ = Items_.size() - 1;
+    if(SelectedItem_ > engine::CastToInt(Items_.size())) SelectedItem_ = Items_.size() - 1;
     if(IsDownMouse())
     {
         timerCount = 0.f;
@@ -107,16 +107,16 @@ void DropdownList<V>::GUIUpdate(float deltaTime)
 
         if (IsListOpened_)
         {
-            Panel_->SetTransparent(l_EaseOpen(timerCount, l_TotalTime, 100.f, 0.f));
+            Panel_->SetTransparent(l_EaseOpen(timerCount, l_TotalTime, 100., 0.));
             //Panel_->SetPositionY(l_EaseOpen(timerCount, l_TotalTime, GetPositionY() + GetScreenHeight(), GetPositionY()));
             Panel_->SetPositionY(GetPositionY() + GetScreenHeight());
-            Panel_->SetScreenHeight(l_EaseOpen(timerCount, l_TotalTime, PanelHeight_, 0.f));
+            Panel_->SetScreenHeight(l_EaseOpen(timerCount, l_TotalTime, PanelHeight_, 0.));
         }else
         {
-            Panel_->SetTransparent(l_EaseClose(timerCount, l_TotalTime, 0.f, 100.f));
+            Panel_->SetTransparent(l_EaseClose(timerCount, l_TotalTime, 0., 100.));
             //Panel_->SetPositionY(l_EaseClose(timerCount, l_TotalTime, GetPositionY(), GetPositionY() + GetScreenHeight()));
             Panel_->SetPositionY(GetPositionY());
-            Panel_->SetScreenHeight(l_EaseClose(timerCount, l_TotalTime, 0.f, PanelHeight_));
+            Panel_->SetScreenHeight(l_EaseClose(timerCount, l_TotalTime, 0., PanelHeight_));
         }
         if (timerCount > (l_TotalTime + 0.1f))
         {
@@ -166,7 +166,7 @@ void DropdownList<V>::Draw()
 {
     ScreenData fixed = DefaultScaler_->Calculate(ScreenData(2.f, 97.f, 98.f, 1.f));
     SetDrawBlendMode(AlphaBlendMode_, engine::CastToInt(((100.f - Panel_->GetTransparent()) / 100.f) * 255.f));
-    DrawLine(fixed.posX, fixed.posY, fixed.posX + fixed.width, fixed.posY, baseColor);
+    DrawLine(engine::CastToInt(fixed.posX), engine::CastToInt(fixed.posY), engine::CastToInt(fixed.posX + fixed.width), engine::CastToInt(fixed.posY), baseColor);
 }
 
 template <class V>
@@ -252,7 +252,7 @@ std::optional<V> DropdownList<V>::GetSelectedItemValue() const
     int index;
     if (SelectedItem_ > Items_.size())
     {
-        index = Items_.size() - 1;
+        index = engine::CastToInt(Items_.size()) - 1;
     }
     else
     {

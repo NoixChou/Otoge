@@ -31,12 +31,12 @@ FlexibleScaler::~FlexibleScaler()
 
 void FlexibleScaler::ApplyWindowSizeChanges()
 {
-    GlobalInstance_->SetScreenWidth(DxSettings::windowWidth);
-    GlobalInstance_->SetScreenHeight(DxSettings::windowHeight);
-    Logger::LowLevelLog("Scalers Count: " + std::to_string(Scalers_.size()), "Flex Scaler");
+    GlobalInstance_->SetScreenWidth(engine::CastToFloat(DxSettings::windowWidth));
+    GlobalInstance_->SetScreenHeight(engine::CastToFloat(DxSettings::windowHeight));
+    Logger::LowLevelLog("Scalers Count: " + std::to_string(Scalers_.size()), "FlexScaler");
     for(auto s : Scalers_)
     {
-        Logger::LowLevelLog("Reset " + std::to_string(s->GetScreenWidth()), "Flex       Scaler");
+        Logger::LowLevelLog("Reset " + std::to_string(s->GetScreenWidth()), "FlexScaler");
         s->SetScreenWidth(s->CalculateWidth(GlobalInstance_->CalculatePositionRateX(s->GetScreenWidth())));
         s->SetScreenHeight(s->CalculateHeight(GlobalInstance_->CalculatePositionRateY(s->GetScreenHeight())));
     }
@@ -44,7 +44,6 @@ void FlexibleScaler::ApplyWindowSizeChanges()
 
 std::shared_ptr<FlexibleScaler> FlexibleScaler::GetWindowBasedInstance()
 {
-    Logger::LowLevelLog("WindowBased!", "INFO FlexScaler");
     return GlobalInstance_;
 }
 

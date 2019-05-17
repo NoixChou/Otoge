@@ -60,13 +60,13 @@ void Button::Draw()
         {
             if (IsOnMouse())
             {
-                RawSizeX_ = Easing::OutExp(timerCount, totalTime, 0.f, DefaultScaler_->CalculateWidth(2.f));
-                RawSizeY_ = Easing::OutExp(timerCount, totalTime, 0.f, DefaultScaler_->CalculateHeight(2.f));
+                RawSizeX_ = Easing::OutExp(timerCount, totalTime, 0., DefaultScaler_->CalculateWidth(2.));
+                RawSizeY_ = Easing::OutExp(timerCount, totalTime, 0., DefaultScaler_->CalculateHeight(2.));
             }
             if (!IsOnMouse() || IsHoldMouse())
             {
-                RawSizeX_ = Easing::OutBounce(timerCount, totalTime, DefaultScaler_->CalculateWidth(2.f), 0.f);
-                RawSizeY_ = Easing::OutBounce(timerCount, totalTime, DefaultScaler_->CalculateHeight(2.f), 0.f);
+                RawSizeX_ = Easing::OutBounce(timerCount, totalTime, DefaultScaler_->CalculateWidth(2.), 0.);
+                RawSizeY_ = Easing::OutBounce(timerCount, totalTime, DefaultScaler_->CalculateHeight(2.), 0.);
             }
 
             if (totalTime <= timerCount)
