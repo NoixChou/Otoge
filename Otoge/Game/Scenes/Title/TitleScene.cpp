@@ -17,7 +17,7 @@ std::weak_ptr<Scene> TitleScene::SettingScene_;
 TitleScene::TitleScene() : Scene("TitleScene")
 {
     // メニュー開閉ボタン
-    auto l_MenuOpener = std::make_shared<RoundedButton>("おなまえ", ScreenData(40.f, 40.f, 20.f, 20.f, true), DefaultScaler_);
+    auto l_MenuOpener = std::make_shared<Button>("おなまえ", ScreenData(40.f, 40.f, 20.f, 20.f, true), DefaultScaler_);
     MenuOpener_ = l_MenuOpener;
     MenuOpener_.lock()->GetTextLabelInstance()->AdjustmentFontSize_ = false;
     MenuOpener_.lock()->baseColor = color_preset::BLUE;
@@ -35,7 +35,7 @@ TitleScene::TitleScene() : Scene("TitleScene")
     AddChildTask(std::static_pointer_cast<Task>(MenuGroup_.lock()));
     MenuGroup_.lock()->SetEnable(false);
 
-    auto l_MenuPlay = std::make_shared<RoundedButton>("Play", ScreenData(0.f, 0.f, 100.f / 3.f, 100.f), MenuGroup_.lock()->GetDefaultScaler());
+    auto l_MenuPlay = std::make_shared<Button>("Play", ScreenData(0.f, 0.f, 100.f / 3.f, 100.f), MenuGroup_.lock()->GetDefaultScaler());
     MenuPlay_ = l_MenuPlay;
     MenuPlay_.lock()->GetTextLabelInstance()->AdjustmentFontSize_ = false;
     MenuPlay_.lock()->baseColor = color_preset::DEEP_ORANGE;
@@ -45,7 +45,7 @@ TitleScene::TitleScene() : Scene("TitleScene")
     MenuPlay_.lock()->SetTransparent(100.f);
     MenuGroup_.lock()->AddChildTask(std::static_pointer_cast<Task>(MenuPlay_.lock()));
 
-    auto l_MenuOption = std::make_shared<RoundedButton>("Option", ScreenData(MenuPlay_.lock()->GetScreenWidth(), 0.f, 100.f / 3.f, MenuPlay_.lock()->GetScreenHeight()), MenuGroup_.lock()->GetDefaultScaler());
+    auto l_MenuOption = std::make_shared<Button>("Option", ScreenData(MenuPlay_.lock()->GetScreenWidth(), 0.f, 100.f / 3.f, MenuPlay_.lock()->GetScreenHeight()), MenuGroup_.lock()->GetDefaultScaler());
     MenuOption_ = l_MenuOption;
     MenuOption_.lock()->GetTextLabelInstance()->AdjustmentFontSize_ = false;
     MenuOption_.lock()->baseColor = color_preset::BLUE_GREY;
@@ -55,7 +55,7 @@ TitleScene::TitleScene() : Scene("TitleScene")
     MenuOption_.lock()->SetTransparent(100.f);
     MenuGroup_.lock()->AddChildTask(std::static_pointer_cast<Task>(MenuOption_.lock()));
 
-    auto l_MenuClose = std::make_shared<RoundedButton>("Exit", ScreenData(MenuPlay_.lock()->GetScreenWidth() + MenuOption_.lock()->GetScreenWidth(), 0.f, 100.f / 3.f, MenuOption_.lock()->GetScreenHeight()), MenuGroup_.lock()->GetDefaultScaler());
+    auto l_MenuClose = std::make_shared<Button>("Exit", ScreenData(MenuPlay_.lock()->GetScreenWidth() + MenuOption_.lock()->GetScreenWidth(), 0.f, 100.f / 3.f, MenuOption_.lock()->GetScreenHeight()), MenuGroup_.lock()->GetDefaultScaler());
     MenuClose_ = l_MenuClose;
     MenuClose_.lock()->baseColor = color_preset::DARK_GREY;
     MenuClose_.lock()->animationColor = GetColor(33, 33, 33);

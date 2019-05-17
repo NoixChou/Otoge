@@ -18,7 +18,7 @@ template<typename V>
 DropdownList<V>::Separator::Separator(std::string text, float textSize, float thickness) :
     BaseItem(text, textSize, thickness)
 {
-	this->backColor = color_preset::WHITE_GREY;
+	this->backColor = color_preset::GREY;
 	this->doDrawBack = true;
 }
 
@@ -27,7 +27,7 @@ DropdownList<V>::SimpleItem::SimpleItem(std::string text, V value, float textSiz
     BaseItem(text, textSize, thickness),
     value(value)
 {
-	this->backColor = color_preset::WHITE;
+	this->backColor = color_preset::WHITE_GREY;
 	this->doDrawBack = true;
 }
 
@@ -44,7 +44,7 @@ DropdownList<V>::DropdownList(const std::string& label, const ScreenData& layout
     SelectedLabel_->baseColor = textColor;
     SelectedLabel_->AdjustmentFontSize_ = true;
     //SelectedLabel_->ChangeFontSize(engine::CastToInt(SelectedLabel_->GetDefaultScaler()->CalculateHeight(70.f)));
-    SelectedLabel_->ChangeFontThickness(8);
+    SelectedLabel_->ChangeFontThickness(4);
     SelectedLabel_->SetTextAlign(Label::TextAlignment::left | Label::TextAlignment::middle);
     AddChildTask(std::static_pointer_cast<Task>(SelectedLabel_));
 

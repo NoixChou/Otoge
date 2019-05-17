@@ -100,14 +100,19 @@ void Scene::Update(float deltaTime)
     if(IsVisible())
     {
         // 現在の描画設定を保持
-        int currentBuffer = GetDrawScreen();
-        int currentBlendMode = DX_BLENDMODE_NOBLEND, currentBlendParam = 255;
-        GetDrawBlendMode(&currentBlendMode, &currentBlendParam);
+        int l_CurrentBuffer = GetDrawScreen();
+        int l_CurrentBlendMode = DX_BLENDMODE_NOBLEND, l_CurrentBlendParam = 255;
+        int l_CurrentDrawMode;
+
+        GetDrawBlendMode(&l_CurrentBlendMode, &l_CurrentBlendParam);
+        l_CurrentDrawMode = GetDrawMode();
 
         // 描画
         SetDrawScreen(SceneBuffer_);
-        SetDrawBlendMode(currentBlendMode, currentBlendParam);
-        if(IsBufferUpdate_ || IsChangedSize_)
+        SetDrawMode(DX_DRAWMODE_NEAREST);
+        SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
+
+        if(IsUpdateBuffer_ || IsChangedSize_)
         {
             ClearDrawScreen();
             if(isCallSceneDrawer) Draw();
@@ -115,7 +120,7 @@ void Scene::Update(float deltaTime)
         }
 
         // 元の描画設定に戻す
-        SetDrawBlendMode(currentBlendMode, currentBlendParam);
+        SetDrawBlendMode(l_CurrentBlendMode, l_CurrentBlendParam);
 
         // 子タスクの更新処理
         TaskManager::UpdateTasks(children, childrenQueues, TickSpeed_, deltaTime);
@@ -125,17 +130,18 @@ void Scene::Update(float deltaTime)
         {
             SetDrawBlendMode(AlphaBlendMode_, 127);
             DrawFormatString(0, 0, color_preset::LIGHT_BLUE, "+%.2f", DefaultScaler_->GetDiffX());
-            SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+            SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
         }
 
         // 元の描画設定に戻す
-        SetDrawScreen(currentBuffer);
-        SetDrawBlendMode(currentBlendMode, currentBlendParam);
+        SetDrawScreen(l_CurrentBuffer);
+        SetDrawMode(l_CurrentDrawMode);
+        SetDrawBlendMode(l_CurrentBlendMode, l_CurrentBlendParam);
 
         // シーンバッファを描画(透明度も考慮)
         if(static_cast<int>(Transparency_) < 100) SetDrawBlendMode(AlphaBlendMode_,
                                                                    static_cast<int>((Transparency_ / 100.f) * 255.f));
-        else SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+        else SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
 
         //  親よりはみ出た部分を描画しないように調整
         float l_DrawPosX = Screen_.posX, l_DrawPosY = Screen_.posY;
@@ -161,7 +167,7 @@ void Scene::Update(float deltaTime)
                       SceneBuffer_, TRUE);
 
         // 元の描画設定に戻す
-        SetDrawBlendMode(currentBlendMode, currentBlendParam);
+        SetDrawBlendMode(l_CurrentBlendMode, l_CurrentBlendParam);
 
         // デバッグ用の枠を描画
         if(IsDrawFrame_)

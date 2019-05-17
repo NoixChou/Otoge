@@ -46,12 +46,11 @@ void GUI::SceneUpdate(float deltaTime)
 {
     if(IsUseFont_ && FontHandle_ == -1 && !Label_.empty())
     {
-        if(character::HasDoubleByteString(Label_)) ChangeFont(
-            SettingManager::GetGlobal()->Get<std::string>(game_config::SETTINGS_FONT_NAME).get().c_str(), -1, 1, -1);
-        else ChangeFont(
-            SettingManager::GetGlobal()->Get<std::string>(game_config::SETTINGS_ALPHABET_FONT_NAME).get().c_str(), -1,
-            1, -1);
-        if(AdjustmentFontSize_) AdjustFont();
+        if(character::HasDoubleByteString(Label_))
+            ChangeFont(SettingManager::GetGlobal()->Get<std::string>(game_config::SETTINGS_FONT_NAME).get().c_str(), -1, 1, -1);
+        else
+            ChangeFont(SettingManager::GetGlobal()->Get<std::string>(game_config::SETTINGS_ALPHABET_FONT_NAME).get().c_str(), -1, 1, -1);
+        AdjustFont();
     }
     if((IsChangedSize()) && AdjustmentFontSize_)
     {
@@ -83,16 +82,12 @@ void GUI::AdjustFont()
     //    (engine::CompareTolerance(FontStringCalculator::GetStringWidth(FontHandle_, Label_), GetRawScreenWidth(), 0.01f) != 0))
     {
         ChangeFontSize(engine::CastToInt(GetRawScreenHeight()));
-        if(FontStringCalculator::GetStringWidth(FontHandle_, Label_) > GetRawScreenWidth())
-        {
-            ChangeFontSize(engine::CastToInt(GetRawScreenWidth()) / static_cast<int>(Label_.length()));
-        }
-        /*while (FontStringCalculator::GetStringWidth(FontHandle_, Label_) > GetRawScreenWidth())
+        while (FontStringCalculator::GetStringWidth(FontHandle_, Label_) > GetRawScreenWidth())
         {
             if (GetFontSize() <= 1) break;
             ChangeFontSize(GetFontSize() - 1);
             //ChangeFontSize(engine::CastToInt(GetRawScreenWidth()) / static_cast<int>(Label_.length()));
-        }*/
+        }
     }
 }
 

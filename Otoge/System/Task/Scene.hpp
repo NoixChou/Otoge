@@ -14,7 +14,7 @@ protected:
     std::shared_ptr<FlexibleScaler> ParentScaler_ = nullptr;
     std::shared_ptr<FlexibleScaler> DefaultScaler_ = nullptr;
     bool IsCalculated_ = false;
-    bool IsBufferUpdate_ = true;
+    bool IsUpdateBuffer_ = true;
     int AlphaBlendMode_ = DX_BLENDMODE_PMA_ALPHA;
 public:
     using DrawFunction = std::function<void()>;

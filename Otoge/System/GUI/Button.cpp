@@ -32,6 +32,35 @@ void Button::GUIUpdate(float deltaTime)
 {
     TextLabel_->SetLabel(Label_);
     TextLabel_->baseColor = textColor;
+
+    const float totalTime = 0.4f;
+    if (IsBeginOnMouse() || IsEndOnMouse() || IsDownMouse())
+    {
+        timerCount = 0.f;
+        MovingSize_ = true;
+    }
+
+    if (MovingSize_)
+    {
+        if (IsOnMouse())
+        {
+            RawSizeX_ = Easing::OutExp(timerCount, totalTime, 0.0, DefaultScaler_->CalculateWidth(2.f));
+            RawSizeY_ = Easing::OutExp(timerCount, totalTime, 0.0, DefaultScaler_->CalculateHeight(2.f));
+        }
+        if (!IsOnMouse() || IsHoldMouse())
+        {
+            RawSizeX_ = Easing::OutBounce(timerCount, totalTime, DefaultScaler_->CalculateWidth(2.f), 0.0);
+            RawSizeY_ = Easing::OutBounce(timerCount, totalTime, DefaultScaler_->CalculateHeight(2.f), 0.0);
+        }
+
+        if (totalTime <= timerCount)
+        {
+            timerCount = totalTime;
+            MovingSize_ = false;
+
+        }
+    }
+
     if(IsDownMouse())
     {
         timerCount = 0.f;
@@ -49,33 +78,6 @@ void Button::Draw()
 {
     if (isDrawBase)
     {
-        const float totalTime = 0.4f;
-        if (IsBeginOnMouse() || IsEndOnMouse() || IsDownMouse())
-        {
-            timerCount = 0.f;
-            MovingSize_ = true;
-        }
-
-        if (MovingSize_)
-        {
-            if (IsOnMouse())
-            {
-                RawSizeX_ = Easing::OutExp(timerCount, totalTime, 0., DefaultScaler_->CalculateWidth(2.));
-                RawSizeY_ = Easing::OutExp(timerCount, totalTime, 0., DefaultScaler_->CalculateHeight(2.));
-            }
-            if (!IsOnMouse() || IsHoldMouse())
-            {
-                RawSizeX_ = Easing::OutBounce(timerCount, totalTime, DefaultScaler_->CalculateWidth(2.), 0.);
-                RawSizeY_ = Easing::OutBounce(timerCount, totalTime, DefaultScaler_->CalculateHeight(2.), 0.);
-            }
-
-            if (totalTime <= timerCount)
-            {
-                timerCount = totalTime;
-                MovingSize_ = false;
-
-            }
-        }
         DrawBox(engine::CastToInt(RawSizeX_), engine::CastToInt(RawSizeY_), engine::CastToInt(GetRawScreenWidth() - RawSizeX_), engine::CastToInt(GetRawScreenHeight() - RawSizeY_), baseColor, TRUE);
     }
 
@@ -83,8 +85,7 @@ void Button::Draw()
     {
         //Logger_->Debug("btn Draw");
         SetDrawBlendMode(AlphaBlendMode_, 20);
-        DrawBox(0, 0, engine::CastToInt(GetRawScreenWidth()), engine::CastToInt(GetRawScreenHeight()),
-                color_preset::BLACK, TRUE);
+        DrawBox(engine::CastToInt(RawSizeX_), engine::CastToInt(RawSizeY_), engine::CastToInt(GetRawScreenWidth() - RawSizeX_), engine::CastToInt(GetRawScreenHeight() - RawSizeY_), color_preset::BLACK, TRUE);
     }
 }
 
@@ -148,7 +149,7 @@ void ButtonPushedAnimate::Draw()
     l_Circle.width = Size_;
     l_Circle.height = Size_;
     const auto l_Fixed = ParentScaler_->Calculate(l_Circle);
-    SetDrawBlendMode(DX_BLENDMODE_PMA_ADD, 128);
+    SetDrawBlendMode(DX_BLENDMODE_PMA_INVSRC, 255);
     DrawCircle(engine::CastToInt(l_Fixed.posX), engine::CastToInt(l_Fixed.posY),
         engine::CastToInt(l_Fixed.width + l_Fixed.height / 2.0f), GetColor(255, 255, 255), TRUE);
 }

@@ -29,7 +29,7 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
     AddChildTask(std::static_pointer_cast<Task>(TitleBar_.lock()));
 
     CloseButton_ = std::make_shared<Button>("< Close", ScreenData(0.f, 0.f, 20.f, 100.f), TitleBar_.lock()->GetDefaultScaler());
-    CloseButton_->isDrawBase = false;
+    CloseButton_->isDrawBase = true;
     CloseButton_->baseColor = color_preset::WHITE;
     CloseButton_->animationColor = color_preset::DARK_GREY;
     CloseButton_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
@@ -96,6 +96,7 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
     }
 
     FullscreenCheck_ = std::make_shared<CheckBox>("フルスクリーン", ScreenData(WindowSizeList_->GetPositionX() + WindowSizeList_->GetScreenWidth() + 1.5f, WindowSizeDescription_->GetPositionY(), 25.f, 1.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
+    FullscreenCheck_->GetTextLabelInstance()->ChangeFontThickness(4);
     BodyPanel_->GetPanelInstance()->AddChildTask(FullscreenCheck_);
 
     VSyncCheck_ = std::make_shared<CheckBox>("垂直同期", ScreenData(WindowSizeList_->GetPositionX(), WindowSizeDescription_->GetPositionY() + WindowSizeDescription_->GetScreenHeight() + 1.5f, 20.f, 1.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
