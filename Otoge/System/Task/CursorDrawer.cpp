@@ -12,10 +12,8 @@ CursorDrawer::~CursorDrawer()
 
 void CursorDrawer::SceneUpdate(float deltaTime)
 {
-
 }
 
 void CursorDrawer::Draw()
 {
-
 }

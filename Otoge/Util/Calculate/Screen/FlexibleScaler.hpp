@@ -11,6 +11,7 @@ private:
     float Scale_;
 
     static std::shared_ptr<FlexibleScaler> GlobalInstance_;
+    static std::vector<FlexibleScaler*> Scalers_;
 
 public:
     bool lockTop = true;
@@ -20,6 +21,8 @@ public:
 
     FlexibleScaler(float screenWidth, float screenHeight, float scale = 1.0f);
     ~FlexibleScaler();
+
+    static void ApplyWindowSizeChanges();
 
     /// <summary>
     /// ウィンドウサイズを基準にしたスケーラーのインスタンスを取得

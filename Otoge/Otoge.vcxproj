@@ -23,6 +23,7 @@
     <ProjectGuid>{5580C451-34FA-4E67-8601-E3827BB807AE}</ProjectGuid>
     <RootNamespace>Otoge</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ShowAllFiles>true</ShowAllFiles>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -31,6 +32,9 @@
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
     <SpectreMitigation>false</SpectreMitigation>
+    <LocalDebuggerWorkingDirectory>$(SolutionDir)\WorkDir</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommand>$(SolutionDir)Bin\$(Configuration)\$(PlatformTarget)\$(TargetName)$(TargetExt)</LocalDebuggerCommand>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -39,6 +43,9 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
     <SpectreMitigation>false</SpectreMitigation>
+    <LocalDebuggerWorkingDirectory>$(SolutionDir)\WorkDir</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommand>$(SolutionDir)Bin\$(Configuration)\$(PlatformTarget)\$(TargetName)$(TargetExt)</LocalDebuggerCommand>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -46,6 +53,9 @@
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
     <SpectreMitigation>false</SpectreMitigation>
+    <LocalDebuggerWorkingDirectory>$(SolutionDir)\WorkDir</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommand>$(SolutionDir)Bin\$(Configuration)\$(PlatformTarget)\$(TargetName)$(TargetExt)</LocalDebuggerCommand>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -54,6 +64,9 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
     <SpectreMitigation>false</SpectreMitigation>
+    <LocalDebuggerWorkingDirectory>$(SolutionDir)\WorkDir</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommand>$(SolutionDir)Bin\$(Configuration)\$(PlatformTarget)\$(TargetName)$(TargetExt)</LocalDebuggerCommand>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -73,7 +86,18 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)Bin\$(Configuration)\$(PlatformTarget)</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)Bin\$(Configuration)\$(PlatformTarget)</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)Bin\$(Configuration)\$(PlatformTarget)</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)Bin\$(Configuration)\$(PlatformTarget)</OutDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -88,9 +112,9 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ProgramDataBaseFileName>$(SolutionDir)PDB\$(Configuration)\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
-      <DebugInformationFormat>None</DebugInformationFormat>
-      <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>../DxLib;L:/syuto/boost_1_63_0/lib/$(PlatformTarget)</AdditionalLibraryDirectories>
@@ -104,7 +128,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../DxLib; $(BOOST_DIR) ;System/PrecompiledHeader</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../DxLib;$(BOOST_DIR);System/PrecompiledHeader</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
@@ -112,9 +136,9 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ProgramDataBaseFileName>$(SolutionDir)PDB\$(Configuration)\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
-      <DebugInformationFormat>None</DebugInformationFormat>
-      <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>../DxLib;L:/syuto/boost_1_63_0/lib/$(PlatformTarget)</AdditionalLibraryDirectories>
@@ -139,8 +163,9 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ProgramDataBaseFileName>$(SolutionDir)PDB\$(Configuration)\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <DebugInformationFormat>None</DebugInformationFormat>
-      <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -168,8 +193,9 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ProgramDataBaseFileName>$(SolutionDir)PDB\$(Configuration)\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <DebugInformationFormat>None</DebugInformationFormat>
-      <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -181,9 +207,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\Scenes\Play\Game3DTest.cpp" />
     <ClCompile Include="Game\Scenes\Title\Setting\SettingScene.cpp" />
+    <ClCompile Include="System\GUI\CheckBox.cpp" />
+    <ClCompile Include="System\GUI\DropdownList.cpp" />
+    <ClCompile Include="System\GUI\RoundedButton.cpp" />
     <ClCompile Include="System\GUI\ScrollablePanel.cpp" />
     <ClCompile Include="System\GUI\SlideBar.cpp" />
+    <ClCompile Include="System\GUI\SpringButton.cpp" />
     <ClCompile Include="System\Task\CursorDrawer.cpp" />
     <ClCompile Include="Util\Calculate\Animation\Easing.cpp" />
     <ClCompile Include="System\Buffer\BufferManager.cpp" />
@@ -213,10 +244,15 @@
     <ClCompile Include="Util\Window\DxSettings.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Scenes\Play\Game3DTest.hpp" />
     <ClInclude Include="Game\Scenes\Title\Setting\SettingScene.hpp" />
     <ClInclude Include="System\GlobalMethod.hpp" />
+    <ClInclude Include="System\GUI\CheckBox.hpp" />
+    <ClInclude Include="System\GUI\DropdownList.hpp" />
+    <ClInclude Include="System\GUI\RoundedButton.hpp" />
     <ClInclude Include="System\GUI\ScrollablePanel.hpp" />
     <ClInclude Include="System\GUI\SlideBar.hpp" />
+    <ClInclude Include="System\GUI\SpringButton.hpp" />
     <ClInclude Include="System\Task\CursorDrawer.hpp" />
     <ClInclude Include="Util\Calculate\Animation\Easing.hpp" />
     <ClInclude Include="System\Buffer\BufferManager.hpp" />
@@ -233,6 +269,7 @@
     <ClInclude Include="Util\Calculate\ScreenData.h" />
     <ClInclude Include="Util\Calculate\Screen\FontStringCalculator.hpp" />
     <ClInclude Include="Util\Calculate\Screen\FlexibleScaler.hpp" />
+    <ClInclude Include="Util\Encoding\CharacterType.hpp" />
     <ClInclude Include="Util\Encoding\EncodingConverter.h" />
     <ClInclude Include="Util\Setting\SettingManager.h" />
     <ClInclude Include="System\Config.h" />
@@ -241,6 +278,7 @@
     <ClInclude Include="Util\Debug\DebugScene.hpp" />
     <ClInclude Include="Util\Debug\Logger.h" />
     <ClInclude Include="System\PrecompiledHeader\pch.h" />
+    <ClInclude Include="Util\Visual\Color.hpp" />
     <ClInclude Include="Util\Window\DxSettings.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

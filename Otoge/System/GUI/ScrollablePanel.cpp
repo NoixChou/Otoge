@@ -2,30 +2,29 @@
 #include "../Input/MouseManager.hpp"
 #include "../../Util/Calculate/Animation/Easing.hpp"
 #include "../GlobalMethod.hpp"
+#include "../../Util/Visual/Color.hpp"
 
-ScrollablePanel::ScrollablePanel(const std::string& label, const ScreenData& layoutScreen, const ScreenData& panelScreen, std::shared_ptr<FlexibleScaler> parentScaler) : GUI(label + "<ScrollablePanel>", layoutScreen, parentScaler)
+ScrollablePanel::ScrollablePanel(const std::string& label, const ScreenData& layoutScreen,
+                                 const ScreenData& panelScreen, std::shared_ptr<FlexibleScaler> parentScaler) : GUI(
+    label + "<ScrollablePanel>", layoutScreen, parentScaler)
 {
     Label_ = label;
-    baseColor = GetColor(230, 230, 230);
-    animationColor = GetColor(180, 180, 180);
-
+    baseColor = color_preset::LIGHT_GREY;
     Panel_ = std::make_shared<Scene>(label + "<panel>", panelScreen, DefaultScaler_);
     AddChildTask(std::static_pointer_cast<Task>(Panel_));
 }
 
 ScrollablePanel::~ScrollablePanel()
 {
-
 }
 
 void ScrollablePanel::GUIUpdate(float deltaTime)
 {
     float l_TotalTime = 0.5f;
-
     if(IsOnMouse())
     {
         float mouseVel = MouseManager::GetInstance()->GetMouseWheelAccel();
-        if (mouseVel != 0.f)
+        if(mouseVel != 0.f)
         {
             ResetAnimation();
         }
@@ -40,9 +39,7 @@ void ScrollablePanel::GUIUpdate(float deltaTime)
     {
         ResetAnimation();
     }
-
     ScrollPosition_ = engine::LimitRange(ScrollPosition_, l_ScrollMin, 0.f);
-
     if(timerCount > l_TotalTime)
     {
         timerCount = l_TotalTime;
@@ -53,7 +50,7 @@ void ScrollablePanel::Draw()
 {
 }
 
-std::shared_ptr<Scene> ScrollablePanel::GetPanelInstance()
+std::shared_ptr<Scene> ScrollablePanel::GetPanelInstance() const
 {
     return Panel_;
 }

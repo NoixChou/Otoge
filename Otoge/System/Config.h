@@ -15,7 +15,7 @@ namespace game_config
     constexpr auto GAME_SCREEN_WIDTH = 1024;
     constexpr auto GAME_SCREEN_HEIGHT = 720;
 
-    constexpr auto GAME_APP_DEFAULT_FONT = "ＭＳ　ゴシック"; // デフォルトのフォント
+    constexpr auto GAME_APP_DEFAULT_FONT = "MS Gothic"; // デフォルトのフォント
 
     // 設定ファイル
     constexpr auto SETTINGS_PATH = "system.";
@@ -28,6 +28,8 @@ namespace game_config
     constexpr auto SETTINGS_AA_QUALITY = "system.graphic.antialiasing.quality";
 
     constexpr auto SETTINGS_FONT_NAME = "system.display.font.default";
+    constexpr auto SETTINGS_ALPHABET_FONT_NAME = "system.display.font.alphabet";
+    constexpr auto SETTINGS_NUMBER_FONT_NAME = "system.display.font.number";
     constexpr auto SETTINGS_FONT_DRAWTYPE = "system.display.font.draw_type";
 
     constexpr auto SETTINGS_DEBUG_DRAW_SCENE_FRAME = "system.debug.scene.draw_frame";

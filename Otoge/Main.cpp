@@ -5,12 +5,13 @@
 #include "System/Task/TaskManager.hpp"
 #include "System/Input/KeyboardManager.hpp"
 #include "System/Input/MouseManager.hpp"
-
 #include "System/Config.h"
 #include "Util/Window/DxSettings.hpp"
 #include "System/GlobalMethod.hpp"
 #include "System/Task/CursorDrawer.hpp"
 #include "Util/Calculate/Animation/Easing.hpp"
+#include "Util/Visual/Color.hpp"
+#include "Util/Encoding/EncodingConverter.h"
 using namespace std;
 
 // 前方宣言
@@ -27,11 +28,8 @@ shared_ptr<SettingManager> g_SystemSettings;
 int WINAPI WinMain(const HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
     Initialize();
-    
     Loop();
-
     Terminate();
-
     return 0;
 }
 
@@ -43,66 +41,63 @@ void PreInitialize()
     g_SystemSettings->Load(true);
     g_SystemSettings->SetDefault(game_config::SETTINGS_FULLSCREEN, false);
     g_SystemSettings->SetDefault(game_config::SETTINGS_VSYNC, false);
-    g_SystemSettings->SetDefault(game_config::SETTINGS_RES_WIDTH, 1024);
-    g_SystemSettings->SetDefault(game_config::SETTINGS_RES_HEIGHT, 720);
+    g_SystemSettings->SetDefault(game_config::SETTINGS_RES_WIDTH, 1920);
+    g_SystemSettings->SetDefault(game_config::SETTINGS_RES_HEIGHT, 1080);
     g_SystemSettings->SetDefault(game_config::SETTINGS_AA_SAMPLE, 2);
     g_SystemSettings->SetDefault(game_config::SETTINGS_AA_QUALITY, 2);
-
-	g_SystemSettings->SetDefault<std::string>(game_config::SETTINGS_FONT_NAME, game_config::GAME_APP_DEFAULT_FONT);
-	g_SystemSettings->SetDefault(game_config::SETTINGS_FONT_DRAWTYPE, DX_FONTTYPE_NORMAL);
-
+    g_SystemSettings->SetDefault<std::string>(game_config::SETTINGS_FONT_NAME, game_config::GAME_APP_DEFAULT_FONT);
+    g_SystemSettings->SetDefault<std::string>(game_config::SETTINGS_ALPHABET_FONT_NAME,
+        game_config::GAME_APP_DEFAULT_FONT);
+    g_SystemSettings->SetDefault<std::string>(game_config::SETTINGS_NUMBER_FONT_NAME,
+        game_config::GAME_APP_DEFAULT_FONT);
+    g_SystemSettings->SetDefault(game_config::SETTINGS_FONT_DRAWTYPE, DX_FONTTYPE_NORMAL);
     g_SystemSettings->SetDefault(game_config::SETTINGS_DEBUG_DRAW_SCENE_FRAME, false);
-	g_SystemSettings->SetDefault(game_config::SETTINGS_DEBUG_DRAW_DTASK_POINT, false);
-
+    g_SystemSettings->SetDefault(game_config::SETTINGS_DEBUG_DRAW_DTASK_POINT, false);
     g_SystemSettings->SetDefault(game_config::SETTINGS_MOUSE_AREA_LIMIT, false);
     g_SystemSettings->SetDefault(game_config::SETTINGS_MOUSE_USEORIGINAL, true);
     g_SystemSettings->Save();
     g_SystemSettings->SetGlobal();
-
     DxSettings::windowWidth = g_SystemSettings->Get<int>(game_config::SETTINGS_RES_WIDTH).get();
     DxSettings::windowHeight = g_SystemSettings->Get<int>(game_config::SETTINGS_RES_HEIGHT).get();
     DxSettings::isFullScreen = g_SystemSettings->Get<bool>(game_config::SETTINGS_FULLSCREEN).get();
     DxSettings::doVSync = g_SystemSettings->Get<bool>(game_config::SETTINGS_VSYNC).get();
     DxSettings::antialiasingSample = g_SystemSettings->Get<int>(game_config::SETTINGS_AA_SAMPLE).get();
     DxSettings::antialiasingQuality = g_SystemSettings->Get<int>(game_config::SETTINGS_AA_QUALITY).get();
-
     DxSettings::useOriginalCursor = g_SystemSettings->Get<bool>(game_config::SETTINGS_MOUSE_USEORIGINAL).get();
-
     ChangeWindowMode(!DxSettings::isFullScreen); // ウィンドウモード/フルスクリーン
     SetUseCharCodeFormat(DX_CHARCODEFORMAT_UTF8); // 文字コード
-    SetMainWindowText((static_cast<std::string>(game_config::GAME_APP_NAME) + " v" + static_cast<std::string>(game_config::GAME_APP_VER)).c_str()); // ウィンドウのタイトル
+    SetMainWindowText(
+        (static_cast<std::string>(game_config::GAME_APP_NAME) + " v" + static_cast<std::string>(game_config::
+            GAME_APP_VER)).c_str()); // ウィンドウのタイトル
     SetAlwaysRunFlag(TRUE); // 常に処理
     SetWaitVSyncFlag(engine::CastToInt(DxSettings::doVSync)); // 垂直同期
     SetFontUseAdjustSizeFlag(FALSE);
     SetUseFPUPreserveFlag(TRUE);
     SetGraphMode(DxSettings::windowWidth, DxSettings::windowHeight, 32);
     SetFullSceneAntiAliasingMode(DxSettings::antialiasingSample, DxSettings::antialiasingQuality);
-
-	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
+    SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
+    SetUseDirect3DVersion(DX_DIRECT3D_9EX);
 }
 
 // 初期化
 void Initialize()
 {
     PreInitialize();
-
-    if(DxLib_Init() == -1)
+    if (DxLib_Init() == -1)
     {
         // DXライブラリ 初期化失敗
         g_Logger->Critical("DXライブラリ初期化 失敗");
-        MessageBox(nullptr, "DXライブラリの初期化に失敗しました。", "error", MB_OK | MB_ICONERROR);
+        MessageBox(nullptr, encoding::ConvertUtf8ToSJIS("DXライブラリの初期化に失敗しました。").c_str(), "error", MB_OK | MB_ICONERROR);
         exit(-1);
     }
     g_Logger->Info("DXライブラリ初期化 成功");
 
     // 3D設定
+    SetDrawScreen(DX_SCREEN_BACK);
     SetUseZBuffer3D(TRUE);
     SetWriteZBuffer3D(TRUE);
-    SetDrawScreen(DX_SCREEN_BACK);
-
-    SetDrawMode(DX_DRAWMODE_BILINEAR);
+    SetDrawMode(DX_DRAWMODE_NEAREST);
     SetMouseDispFlag(TRUE); // マウスカーソルの表示
-
     // コンポーネント初期化
     FlexibleScaler::CreateWindowBasedInstance();
     FlexibleScaler::GetWindowBasedInstance()->SetScale(1.0f);
@@ -114,53 +109,46 @@ void Initialize()
     TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(KeyboardManager::GetInstance()));
     TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(MouseManager::GetInstance()));
     TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(make_shared<DebugScene>()));
-	TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(make_shared<TitleScene>()));
-
-    if(DxSettings::useOriginalCursor)
+    TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(make_shared<TitleScene>()));
+    if (DxSettings::useOriginalCursor)
     {
-        auto cursorDrawer = make_shared<CursorDrawer>();
-        cursorDrawer->SetDrawFunction([=]
+        auto l_CursorDrawer = make_shared<CursorDrawer>();
+        l_CursorDrawer->SetDrawFunction([=]
             {
                 //LoadGraphScreen(MouseManager::GetInstance()->GetMouseX() - 32, MouseManager::GetInstance()->GetMouseY() - 32, "cursor.png", TRUE);
-                float cursorSize = 1.0f;
-                static float currentSize = 0.f;
-                const float totalTime = 0.5f;
-
-                const float ReleasedSize = 1.7f;
-                const float HoldingSize = 1.0f;
+                float l_CursorSize = 1.0f;
+                static float l_CurrentSize = 0.f;
+                const float l_TotalTime = 0.5f;
+                const float l_ReleasedSize = 1.4f;
+                const float l_HoldingSize = 0.7f;
                 Easing::EaseFunction ease = Easing::OutExp;
-
-                if (MouseManager::GetInstance()->IsDownButton(MOUSE_INPUT_LEFT))
-                    currentSize = cursorDrawer->GetDefaultScaler()->CalculateHeight(ReleasedSize), cursorDrawer->timerCount = 0.f;
-                if (MouseManager::GetInstance()->IsReleaseButton(MOUSE_INPUT_LEFT))
-                    currentSize = cursorDrawer->GetDefaultScaler()->CalculateHeight(HoldingSize), cursorDrawer->timerCount = 0.f;
+                if (MouseManager::GetInstance()->IsDownButton(MOUSE_INPUT_LEFT)) l_CurrentSize = l_CursorDrawer->GetDefaultScaler()->CalculateHeight(l_ReleasedSize), l_CursorDrawer->timerCount = 0.f;
+                if (MouseManager::GetInstance()->IsReleaseButton(MOUSE_INPUT_LEFT)) l_CurrentSize = l_CursorDrawer->GetDefaultScaler()->CalculateHeight(l_HoldingSize), l_CursorDrawer->timerCount = 0.f;
                 if (MouseManager::GetInstance()->IsHoldButton(MOUSE_INPUT_LEFT))
-                    cursorSize = ease(cursorDrawer->timerCount, totalTime, cursorDrawer->GetDefaultScaler()->CalculateHeight(HoldingSize), currentSize);
-                else
-                    cursorSize = Easing::OutBounce(cursorDrawer->timerCount, totalTime, cursorDrawer->GetDefaultScaler()->CalculateHeight(ReleasedSize), currentSize);
-
-                if(cursorDrawer->timerCount > totalTime)
-                {
-                    cursorDrawer->timerCount = totalTime;
-                }
+                    l_CursorSize = engine::CastToFloat(
+                        ease(l_CursorDrawer->timerCount, l_TotalTime,
+                            l_CursorDrawer->GetDefaultScaler()->CalculateHeight(l_HoldingSize), l_CurrentSize)
+                    );
+                else l_CursorSize = engine::CastToFloat(Easing::OutExp(l_CursorDrawer->timerCount, l_TotalTime, l_CursorDrawer->GetDefaultScaler()->CalculateHeight(l_ReleasedSize), l_CurrentSize));
                 
-                DrawCircle(MouseManager::GetInstance()->GetMouseX(), MouseManager::GetInstance()->GetMouseY(), engine::CastToInt(cursorSize) - 1, GetColor(255, 240, 240), TRUE);
-                DrawCircle(MouseManager::GetInstance()->GetMouseX(), MouseManager::GetInstance()->GetMouseY(), engine::CastToInt(cursorSize), GetColor(0, 0, 0), FALSE);
+                if (l_CursorDrawer->timerCount > l_TotalTime)
+                {
+                    l_CursorDrawer->timerCount = l_TotalTime;
+                }
+                DrawCircle(MouseManager::GetInstance()->GetMouseX(), MouseManager::GetInstance()->GetMouseY(), engine::CastToInt(l_CursorSize) - 1, color_preset::WHITE, TRUE);
+                DrawCircle(MouseManager::GetInstance()->GetMouseX(), MouseManager::GetInstance()->GetMouseY(), engine::CastToInt(l_CursorSize), color_preset::BLACK, FALSE);
             });
-        TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(cursorDrawer));
-
+        TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(l_CursorDrawer));
     }
 }
 
 // メインループ
 void Loop()
 {
-    while(ProcessMessage() != -1 && !TaskManager::GetInstance()->IsGameExit())
+    while (ProcessMessage() != -1 && !TaskManager::GetInstance()->IsGameExit())
     {
-		if(KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_A))
-	        TaskManager::GetInstance()->Tick(0.5f);
-		else
-			TaskManager::GetInstance()->Tick(1.0f);
+        if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_TAB)) TaskManager::GetInstance()->Tick(0.1f);
+        else TaskManager::GetInstance()->Tick(1.0f);
     }
 }
 

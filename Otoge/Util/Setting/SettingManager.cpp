@@ -1,5 +1,6 @@
 ﻿#include "SettingManager.h"
 #include "../Encoding/EncodingConverter.h"
+
 using namespace std;
 
 SettingManager *SettingManager::GlobalSettings_ = nullptr;

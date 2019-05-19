@@ -12,26 +12,22 @@ Task::~Task()
     IsLiving_ = false;
     IsRunning_ = false;
     IsInitialized_ = false;
-
     Logger_->Info("タスク開放");
 }
 
-bool Task::Initialize(int taskID)
+bool Task::Initialize(int taskId)
 {
     //ID = taskID;
     IsInitialized_ = true;
     IsLiving_ = true;
     IsRunning_ = true;
-
     return true;
 }
 
 bool Task::Terminate()
 {
     IsTerminated_ = true;
-
     IsRunning_ = false;
-
     return true;
 }
 
@@ -57,8 +53,6 @@ std::string Task::GetName() const
 
     return ID;
 }*/
-
-
 bool Task::CanRunning() const
 {
     return IsInitialized_ && IsLiving_;
@@ -78,35 +72,29 @@ bool Task::GetOldEnables() const
 bool Task::IsEnable() const
 {
     auto l_ModalTask = TaskManager::GetInstance()->GetModalTask();
-
-    if (!l_ModalTask.expired())
+    if(!l_ModalTask.expired())
     {
-        return IsOnModal();
+        return IsOnModal() && IsRawEnable();
     }
     return IsRawEnable();
 }
 
 bool Task::IsRawEnable() const
 {
-    if (!parentTask.expired())
+    if(!parentTask.expired())
     {
-        if (!parentTask.lock()->IsEnable()) return false;
+        return parentTask.lock()->IsEnable() && IsEnable_;
     }
-
     return IsEnable_;
 }
 
-
 bool Task::IsOnModal() const
 {
-    if (TaskManager::GetInstance()->GetModalTask().lock() == shared_from_this())
+    if(TaskManager::GetInstance()->GetModalTask().lock() == shared_from_this())
     {
         return true;
     }
-
-    if (!parentTask.expired())
-        return parentTask.lock()->IsOnModal();
-
+    if(!parentTask.expired()) return parentTask.lock()->IsOnModal();
     return false;
 }
 
@@ -130,10 +118,9 @@ bool Task::IsRunning() const
     return IsRunning_;
 }
 
-
 float Task::GetTickSpeed() const
 {
-    if (!CanRunning()) return -1;
+    if(!CanRunning()) return -1;
     return TickSpeed_;
 }
 
@@ -159,11 +146,9 @@ bool Task::HasLifespan() const
 
 float Task::GetLifespan() const
 {
-    if (!CanRunning()) return -1;
-
+    if(!CanRunning()) return -1;
     return Lifespan_;
 }
-
 
 void Task::SetLifespan(float lifespan)
 {
@@ -172,7 +157,6 @@ void Task::SetLifespan(float lifespan)
 
 void Task::ChildUpdate(float deltaTime)
 {
-    
 }
 
 bool Task::AddChildTask(const TaskPointer& task)
@@ -185,10 +169,10 @@ bool Task::AddChildTask(const TaskPointer& task)
 
 std::vector<Task::TaskPointer>& Task::GetChildren()
 {
-	return children;
+    return children;
 }
 
 std::vector<Task::TaskPointer>& Task::GetChildrenQueues()
 {
-	return childrenQueues;
+    return childrenQueues;
 }

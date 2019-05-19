@@ -1,11 +1,9 @@
 ﻿#include "KeyboardManager.hpp"
-
 std::shared_ptr<KeyboardManager> KeyboardManager::Instance_ = nullptr;
 
 KeyboardManager::KeyboardManager() : Task("KeyboardManager")
 {
     KeyInputs_.reset(new char[256], std::default_delete<char[]>());
-
     Logger_->Info("キーボード入力管理 初期化完了");
 }
 
@@ -27,7 +25,7 @@ std::shared_ptr<KeyboardManager> KeyboardManager::GetInstance()
 
 void KeyboardManager::CreateInstance()
 {
-    if (!Instance_)
+    if(!Instance_)
     {
         Instance_.reset(new KeyboardManager);
     }
@@ -38,45 +36,43 @@ void KeyboardManager::DestroyInstance()
     Instance_.reset();
 }
 
-
 void KeyboardManager::Update(float deltaTime)
 {
-    char buf[256];
-    GetHitKeyStateAll(buf);
-    for (int i = 0; i < 256; i++)
+    char l_Buf[256];
+    GetHitKeyStateAll(l_Buf);
+    for(int i = 0; i < 256; i++)
     {
-        if (buf[i])
+        if(l_Buf[i])
         { // 現在押されている
-            if (KeyInputs_.get()[i] == 0) KeyInputs_.get()[i] = 1; // 押し始め
-            else if (KeyInputs_.get()[i] == 1) KeyInputs_.get()[i] = 2; // 押している
-            
+            if(KeyInputs_.get()[i] == 0) KeyInputs_.get()[i] = 1; // 押し始め
+            else if(KeyInputs_.get()[i] == 1) KeyInputs_.get()[i] = 2; // 押している
         }
-        // 現在押されていない
-        else if (KeyInputs_.get()[i] == 1 || KeyInputs_.get()[i] == 2) KeyInputs_.get()[i] = 3; // 離した
+            // 現在押されていない
+        else if(KeyInputs_.get()[i] == 1 || KeyInputs_.get()[i] == 2) KeyInputs_.get()[i] = 3; // 離した
         else KeyInputs_.get()[i] = 0; // 離している
     }
 }
 
 char KeyboardManager::GetKeyStatus(int key)
 {
-    if (!ValidateKeyRange(key)) return false;
+    if(!ValidateKeyRange(key)) return false;
     return KeyInputs_.get()[key];
 }
 
 bool KeyboardManager::IsDownKey(int key)
 {
-    if (!ValidateKeyRange(key)) return false;
+    if(!ValidateKeyRange(key)) return false;
     return KeyInputs_.get()[key] == 1;
 }
 
 bool KeyboardManager::IsHoldKey(int key)
 {
-    if (!ValidateKeyRange(key)) return false;
+    if(!ValidateKeyRange(key)) return false;
     return KeyInputs_.get()[key] == 2;
 }
 
 bool KeyboardManager::IsReleaseKey(int key)
 {
-    if (!ValidateKeyRange(key)) return false;
+    if(!ValidateKeyRange(key)) return false;
     return KeyInputs_.get()[key] == 3;
 }
