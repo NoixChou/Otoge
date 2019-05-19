@@ -53,9 +53,9 @@ float FontStringCalculator::GetStringCenterVertical(int fontHandle)
 VECTOR FontStringCalculator::GetStringCenterInBox(int fontHandle, const std::string& string,
                                                   const ScreenData& screenBox)
 {
-    VECTOR result;
-    result.x = (screenBox.width / 2) - GetStringCenterHorizontal(fontHandle, string);
-    result.y = (screenBox.height / 2) - GetStringCenterVertical(fontHandle);
-    result.z = 0.f;
-    return result;
+    VECTOR l_Result;
+    l_Result.x = (screenBox.width / 2) - GetStringCenterHorizontal(fontHandle, string);
+    l_Result.y = (screenBox.height / 2) - GetStringCenterVertical(fontHandle);
+    l_Result.z = 0.f;
+    return l_Result;
 }

@@ -14,6 +14,6 @@ public:
     ~ScrollablePanel();
     void GUIUpdate(float deltaTime) override;
     void Draw() override;
-    std::shared_ptr<Scene> GetPanelInstance();
+    std::shared_ptr<Scene> GetPanelInstance() const;
     void ResetAnimation();
 };

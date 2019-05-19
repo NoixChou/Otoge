@@ -16,12 +16,9 @@ Button::Button(const std::string& label, const ScreenData& layoutScreen,
     //mouseOverColor = color_preset::LIGHT_GREY;
     TextLabel_ = std::make_shared<Label>(Label_, ScreenData(0.f, 0.f, 100.f, 100.f), DefaultScaler_);
     TextLabel_->baseColor = textColor;
-    TextLabel_->AdjustmentFontSize_ = AdjustmentFontSize_;
+    TextLabel_->adjustmentFontSize = adjustmentFontSize;
     TextLabel_->textAlign = Label::TextAlignment::center | Label::TextAlignment::middle;
     AddChildTask(std::static_pointer_cast<Task>(TextLabel_));
-
-    RawSizeX_ = DefaultScaler_->CalculateWidth(2.f);
-    RawSizeY_ = DefaultScaler_->CalculateHeight(2.f);
 }
 
 Button::~Button()
@@ -33,44 +30,33 @@ void Button::GUIUpdate(float deltaTime)
     TextLabel_->SetLabel(Label_);
     TextLabel_->baseColor = textColor;
 
-    const float totalTime = 0.4f;
-    if (IsBeginOnMouse() || IsEndOnMouse() || IsDownMouse())
+    if (CurrentTextFontSize_ == -1 && !TextLabel_->GetLabel().empty())
     {
-        timerCount = 0.f;
-        MovingSize_ = true;
-    }
-
-    if (MovingSize_)
-    {
-        if (IsOnMouse())
-        {
-            RawSizeX_ = Easing::OutExp(timerCount, totalTime, 0.0, DefaultScaler_->CalculateWidth(2.f));
-            RawSizeY_ = Easing::OutExp(timerCount, totalTime, 0.0, DefaultScaler_->CalculateHeight(2.f));
-        }
-        if (!IsOnMouse() || IsHoldMouse())
-        {
-            RawSizeX_ = Easing::OutBounce(timerCount, totalTime, DefaultScaler_->CalculateWidth(2.f), 0.0);
-            RawSizeY_ = Easing::OutBounce(timerCount, totalTime, DefaultScaler_->CalculateHeight(2.f), 0.0);
-        }
-
-        if (totalTime <= timerCount)
-        {
-            timerCount = totalTime;
-            MovingSize_ = false;
-
-        }
+        CurrentTextFontSize_ = TextLabel_->GetFontSize();
     }
 
     if(IsDownMouse())
     {
         timerCount = 0.f;
-        AddChildTask(std::static_pointer_cast<Task>(std::make_shared<ButtonPushedAnimate>(
-            DefaultScaler_->
-            CalculatePositionRateX(
-                MouseManager::GetInstance()->GetMouseXf() - GetRawPositionX() - ParentScaler_->GetDiffX()),
-            DefaultScaler_->CalculatePositionRateY(
-                MouseManager::GetInstance()->GetMouseYf() - GetRawPositionY() - ParentScaler_->GetDiffY()),
-            animationColor, 20.f, DefaultScaler_)));
+        if (TextLabel_)
+        {
+            TextLabel_->AddChildTask(std::static_pointer_cast<Task>(std::make_shared<ButtonPushedAnimate>(
+                DefaultScaler_->
+                CalculatePositionRateX(
+                    MouseManager::GetInstance()->GetMouseXf() - GetRawPositionX() - ParentScaler_->GetDiffX()),
+                DefaultScaler_->CalculatePositionRateY(
+                    MouseManager::GetInstance()->GetMouseYf() - GetRawPositionY() - ParentScaler_->GetDiffY()),
+                animationColor, 20.f, DefaultScaler_)));
+        }else
+        {
+            AddChildTask(std::static_pointer_cast<Task>(std::make_shared<ButtonPushedAnimate>(
+                DefaultScaler_->
+                CalculatePositionRateX(
+                    MouseManager::GetInstance()->GetMouseXf() - GetRawPositionX() - ParentScaler_->GetDiffX()),
+                DefaultScaler_->CalculatePositionRateY(
+                    MouseManager::GetInstance()->GetMouseYf() - GetRawPositionY() - ParentScaler_->GetDiffY()),
+                animationColor, 20.f, DefaultScaler_)));
+        }
     }
 }
 
@@ -150,8 +136,10 @@ void ButtonPushedAnimate::Draw()
     l_Circle.height = Size_;
     const auto l_Fixed = ParentScaler_->Calculate(l_Circle);
     SetDrawBlendMode(DX_BLENDMODE_PMA_INVSRC, 255);
-    DrawCircle(engine::CastToInt(l_Fixed.posX), engine::CastToInt(l_Fixed.posY),
-        engine::CastToInt(l_Fixed.width + l_Fixed.height / 2.0f), GetColor(255, 255, 255), TRUE);
+    DrawCircleAA(
+        engine::CastToInt(l_Fixed.posX), engine::CastToInt(l_Fixed.posY),
+        engine::CastToInt(l_Fixed.width + l_Fixed.height / 2.0f),
+        engine::CastToInt(l_Fixed.width + l_Fixed.height / 2.0f) / 2, GetColor(255, 255, 255), TRUE);
 }
 
 void ButtonPushedAnimate::SizeAnimationProcess(float deltaTime)

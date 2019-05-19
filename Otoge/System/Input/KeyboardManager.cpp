@@ -38,11 +38,11 @@ void KeyboardManager::DestroyInstance()
 
 void KeyboardManager::Update(float deltaTime)
 {
-    char buf[256];
-    GetHitKeyStateAll(buf);
+    char l_Buf[256];
+    GetHitKeyStateAll(l_Buf);
     for(int i = 0; i < 256; i++)
     {
-        if(buf[i])
+        if(l_Buf[i])
         { // 現在押されている
             if(KeyInputs_.get()[i] == 0) KeyInputs_.get()[i] = 1; // 押し始め
             else if(KeyInputs_.get()[i] == 1) KeyInputs_.get()[i] = 2; // 押している

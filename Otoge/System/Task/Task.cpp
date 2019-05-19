@@ -15,7 +15,7 @@ Task::~Task()
     Logger_->Info("タスク開放");
 }
 
-bool Task::Initialize(int taskID)
+bool Task::Initialize(int taskId)
 {
     //ID = taskID;
     IsInitialized_ = true;

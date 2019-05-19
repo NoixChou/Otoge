@@ -19,7 +19,7 @@ TitleScene::TitleScene() : Scene("TitleScene")
     // メニュー開閉ボタン
     auto l_MenuOpener = std::make_shared<Button>("おなまえ", ScreenData(40.f, 40.f, 20.f, 20.f, true), DefaultScaler_);
     MenuOpener_ = l_MenuOpener;
-    MenuOpener_.lock()->GetTextLabelInstance()->AdjustmentFontSize_ = false;
+    MenuOpener_.lock()->GetTextLabelInstance()->adjustmentFontSize = false;
     MenuOpener_.lock()->baseColor = color_preset::BLUE;
     MenuOpener_.lock()->GetTextLabelInstance()->ChangeFontThickness(1);
     MenuOpener_.lock()->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
@@ -37,7 +37,7 @@ TitleScene::TitleScene() : Scene("TitleScene")
 
     auto l_MenuPlay = std::make_shared<Button>("Play", ScreenData(0.f, 0.f, 100.f / 3.f, 100.f), MenuGroup_.lock()->GetDefaultScaler());
     MenuPlay_ = l_MenuPlay;
-    MenuPlay_.lock()->GetTextLabelInstance()->AdjustmentFontSize_ = false;
+    MenuPlay_.lock()->GetTextLabelInstance()->adjustmentFontSize = false;
     MenuPlay_.lock()->baseColor = color_preset::DEEP_ORANGE;
     MenuPlay_.lock()->animationColor = color_preset::DEEP_ORANGE;
     MenuPlay_.lock()->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
@@ -47,7 +47,7 @@ TitleScene::TitleScene() : Scene("TitleScene")
 
     auto l_MenuOption = std::make_shared<Button>("Option", ScreenData(MenuPlay_.lock()->GetScreenWidth(), 0.f, 100.f / 3.f, MenuPlay_.lock()->GetScreenHeight()), MenuGroup_.lock()->GetDefaultScaler());
     MenuOption_ = l_MenuOption;
-    MenuOption_.lock()->GetTextLabelInstance()->AdjustmentFontSize_ = false;
+    MenuOption_.lock()->GetTextLabelInstance()->adjustmentFontSize = false;
     MenuOption_.lock()->baseColor = color_preset::BLUE_GREY;
     MenuOption_.lock()->animationColor = color_preset::DARK_BLUE_GREY;
     MenuOption_.lock()->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
@@ -59,7 +59,7 @@ TitleScene::TitleScene() : Scene("TitleScene")
     MenuClose_ = l_MenuClose;
     MenuClose_.lock()->baseColor = color_preset::DARK_GREY;
     MenuClose_.lock()->animationColor = GetColor(33, 33, 33);
-    MenuClose_.lock()->GetTextLabelInstance()->AdjustmentFontSize_ = false;
+    MenuClose_.lock()->GetTextLabelInstance()->adjustmentFontSize = false;
     MenuClose_.lock()->textColor = color_preset::GREY;
     MenuClose_.lock()->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
     MenuClose_.lock()->GetTextLabelInstance()->ChangeFontThickness(2);
@@ -104,11 +104,11 @@ void TitleScene::SceneUpdate(float deltaTime)
     if(MenuOpener_.lock()->IsClickedMouse())
     {
         timerCount = 0.0f;
-		isOpened = !isOpened;
-		isMoving = true;
+		IsOpened_ = !IsOpened_;
+		IsMoving_ = true;
 	}
     
-    if(isMoving)
+    if(IsMoving_)
     {
         if (MenuPlay_.lock()->GetRawPositionX() + MenuGroup_.lock()->GetRawPositionX() < MenuOpener_.lock()->GetRawPositionX())
             MenuPlay_.lock()->SetTransparent(0.f);
@@ -128,7 +128,7 @@ void TitleScene::SceneUpdate(float deltaTime)
         float totalTime = 0.5f;
         Easing::EaseFunction ease = Easing::OutQuint;
 
-        if(isOpened)
+        if(IsOpened_)
         {
             MenuOpener_.lock()->SetPositionX(engine::CastToFloat(ease(timerCount, totalTime, 20.f, 40.f)));
             MenuGroup_.lock()->SetPositionX(engine::CastToFloat(ease(timerCount, totalTime, 40.f, 20.f)));
@@ -143,8 +143,8 @@ void TitleScene::SceneUpdate(float deltaTime)
 
         if(timerCount > totalTime)
         {
-            isMoving = false;
-            MenuGroup_.lock()->SetEnable(isOpened);
+            IsMoving_ = false;
+            MenuGroup_.lock()->SetEnable(IsOpened_);
         }
     }
 
@@ -174,12 +174,7 @@ void TitleScene::SceneUpdate(float deltaTime)
 
 void TitleScene::Draw()
 {
-    ScreenData d;
-    d.posX = 0.f;
-    d.posY = 0.f;
-    d.width = 100.f;
-    d.height = 100.f;
-    ScreenData fixed = DefaultScaler_->Calculate(d);
+    ScreenData fixed = DefaultScaler_->Calculate(ScreenData(0.f, 0.f, 100.f, 100.f));
     
     DrawBox(engine::CastToInt(fixed.posX),
             engine::CastToInt(fixed.posY),

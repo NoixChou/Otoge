@@ -47,9 +47,9 @@ void PreInitialize()
     g_SystemSettings->SetDefault(game_config::SETTINGS_AA_QUALITY, 2);
     g_SystemSettings->SetDefault<std::string>(game_config::SETTINGS_FONT_NAME, game_config::GAME_APP_DEFAULT_FONT);
     g_SystemSettings->SetDefault<std::string>(game_config::SETTINGS_ALPHABET_FONT_NAME,
-                                              game_config::GAME_APP_DEFAULT_FONT);
+        game_config::GAME_APP_DEFAULT_FONT);
     g_SystemSettings->SetDefault<std::string>(game_config::SETTINGS_NUMBER_FONT_NAME,
-                                              game_config::GAME_APP_DEFAULT_FONT);
+        game_config::GAME_APP_DEFAULT_FONT);
     g_SystemSettings->SetDefault(game_config::SETTINGS_FONT_DRAWTYPE, DX_FONTTYPE_NORMAL);
     g_SystemSettings->SetDefault(game_config::SETTINGS_DEBUG_DRAW_SCENE_FRAME, false);
     g_SystemSettings->SetDefault(game_config::SETTINGS_DEBUG_DRAW_DTASK_POINT, false);
@@ -83,7 +83,7 @@ void PreInitialize()
 void Initialize()
 {
     PreInitialize();
-    if(DxLib_Init() == -1)
+    if (DxLib_Init() == -1)
     {
         // DXライブラリ 初期化失敗
         g_Logger->Critical("DXライブラリ初期化 失敗");
@@ -96,7 +96,7 @@ void Initialize()
     SetDrawScreen(DX_SCREEN_BACK);
     SetUseZBuffer3D(TRUE);
     SetWriteZBuffer3D(TRUE);
-    SetDrawMode(DX_DRAWMODE_BILINEAR);
+    SetDrawMode(DX_DRAWMODE_NEAREST);
     SetMouseDispFlag(TRUE); // マウスカーソルの表示
     // コンポーネント初期化
     FlexibleScaler::CreateWindowBasedInstance();
@@ -110,53 +110,44 @@ void Initialize()
     TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(MouseManager::GetInstance()));
     TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(make_shared<DebugScene>()));
     TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(make_shared<TitleScene>()));
-    if(DxSettings::useOriginalCursor)
+    if (DxSettings::useOriginalCursor)
     {
-        auto cursorDrawer = make_shared<CursorDrawer>();
-        cursorDrawer->SetDrawFunction([=]
-        {
-            //LoadGraphScreen(MouseManager::GetInstance()->GetMouseX() - 32, MouseManager::GetInstance()->GetMouseY() - 32, "cursor.png", TRUE);
-            float cursorSize = 1.0f;
-            static float currentSize = 0.f;
-            const float totalTime = 0.5f;
-            const float ReleasedSize = 1.4f;
-            const float HoldingSize = 0.7f;
-            Easing::EaseFunction ease = Easing::OutExp;
-            if(MouseManager::GetInstance()->IsDownButton(MOUSE_INPUT_LEFT)) currentSize = cursorDrawer
-                                                                                          ->GetDefaultScaler()->
-                                                                                          CalculateHeight(ReleasedSize),
-                cursorDrawer->timerCount = 0.f;
-            if(MouseManager::GetInstance()->IsReleaseButton(MOUSE_INPUT_LEFT)) currentSize = cursorDrawer
-                                                                                             ->GetDefaultScaler()->
-                                                                                             CalculateHeight(
-                                                                                                 HoldingSize),
-                cursorDrawer->timerCount = 0.f;
-            if(MouseManager::GetInstance()->IsHoldButton(MOUSE_INPUT_LEFT)) cursorSize = engine::CastToFloat(
-                ease(cursorDrawer->timerCount, totalTime,
-                     cursorDrawer->GetDefaultScaler()->CalculateHeight(HoldingSize), currentSize));
-            else cursorSize = engine::CastToFloat(Easing::OutExp(cursorDrawer->timerCount, totalTime,
-                                                                 cursorDrawer
-                                                                 ->GetDefaultScaler()->CalculateHeight(ReleasedSize),
-                                                                 currentSize));
-            if(cursorDrawer->timerCount > totalTime)
+        auto l_CursorDrawer = make_shared<CursorDrawer>();
+        l_CursorDrawer->SetDrawFunction([=]
             {
-                cursorDrawer->timerCount = totalTime;
-            }
-            DrawCircle(MouseManager::GetInstance()->GetMouseX(), MouseManager::GetInstance()->GetMouseY(),
-                       engine::CastToInt(cursorSize) - 1, color_preset::WHITE, TRUE);
-            DrawCircle(MouseManager::GetInstance()->GetMouseX(), MouseManager::GetInstance()->GetMouseY(),
-                       engine::CastToInt(cursorSize), color_preset::BLACK, FALSE);
-        });
-        TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(cursorDrawer));
+                //LoadGraphScreen(MouseManager::GetInstance()->GetMouseX() - 32, MouseManager::GetInstance()->GetMouseY() - 32, "cursor.png", TRUE);
+                float l_CursorSize = 1.0f;
+                static float l_CurrentSize = 0.f;
+                const float l_TotalTime = 0.5f;
+                const float l_ReleasedSize = 1.4f;
+                const float l_HoldingSize = 0.7f;
+                Easing::EaseFunction ease = Easing::OutExp;
+                if (MouseManager::GetInstance()->IsDownButton(MOUSE_INPUT_LEFT)) l_CurrentSize = l_CursorDrawer->GetDefaultScaler()->CalculateHeight(l_ReleasedSize), l_CursorDrawer->timerCount = 0.f;
+                if (MouseManager::GetInstance()->IsReleaseButton(MOUSE_INPUT_LEFT)) l_CurrentSize = l_CursorDrawer->GetDefaultScaler()->CalculateHeight(l_HoldingSize), l_CursorDrawer->timerCount = 0.f;
+                if (MouseManager::GetInstance()->IsHoldButton(MOUSE_INPUT_LEFT))
+                    l_CursorSize = engine::CastToFloat(
+                        ease(l_CursorDrawer->timerCount, l_TotalTime,
+                            l_CursorDrawer->GetDefaultScaler()->CalculateHeight(l_HoldingSize), l_CurrentSize)
+                    );
+                else l_CursorSize = engine::CastToFloat(Easing::OutExp(l_CursorDrawer->timerCount, l_TotalTime, l_CursorDrawer->GetDefaultScaler()->CalculateHeight(l_ReleasedSize), l_CurrentSize));
+                
+                if (l_CursorDrawer->timerCount > l_TotalTime)
+                {
+                    l_CursorDrawer->timerCount = l_TotalTime;
+                }
+                DrawCircle(MouseManager::GetInstance()->GetMouseX(), MouseManager::GetInstance()->GetMouseY(), engine::CastToInt(l_CursorSize) - 1, color_preset::WHITE, TRUE);
+                DrawCircle(MouseManager::GetInstance()->GetMouseX(), MouseManager::GetInstance()->GetMouseY(), engine::CastToInt(l_CursorSize), color_preset::BLACK, FALSE);
+            });
+        TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(l_CursorDrawer));
     }
 }
 
 // メインループ
 void Loop()
 {
-    while(ProcessMessage() != -1 && !TaskManager::GetInstance()->IsGameExit())
+    while (ProcessMessage() != -1 && !TaskManager::GetInstance()->IsGameExit())
     {
-        if(KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_TAB)) TaskManager::GetInstance()->Tick(0.1f);
+        if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_TAB)) TaskManager::GetInstance()->Tick(0.1f);
         else TaskManager::GetInstance()->Tick(1.0f);
     }
 }

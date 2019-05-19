@@ -2,14 +2,16 @@
 #include "../GlobalMethod.hpp"
 #include "../../Util/Calculate/Animation/Easing.hpp"
 
-RoundedButton::RoundedButton(const std::string& label, const ScreenData& layoutScreen, const std::shared_ptr<FlexibleScaler>& parentScaler) : Button(label, layoutScreen, parentScaler)
+template<class T>
+RoundedButton<T>::RoundedButton(const std::string& label, const ScreenData& layoutScreen, const std::shared_ptr<FlexibleScaler>& parentScaler) : T(label, layoutScreen, parentScaler)
 {
 }
 
-void RoundedButton::Draw()
+template<class T>
+void RoundedButton<T>::Draw()
 {
-    if (isDrawBase)
+    if (T::isDrawBase)
     {
-        DrawRoundRect(engine::CastToInt(RawSizeX_), engine::CastToInt(RawSizeY_), engine::CastToInt(GetRawScreenWidth() - RawSizeX_), engine::CastToInt(GetRawScreenHeight() - RawSizeY_), engine::CastToInt(GetRawScreenWidth()) / 20, engine::CastToInt(GetRawScreenWidth()) / 20, baseColor, TRUE);
+        DrawRoundRect(engine::CastToInt(T::RawSizeX_), engine::CastToInt(T::RawSizeY_), engine::CastToInt(T::GetRawScreenWidth() - T::RawSizeX_), engine::CastToInt(T::GetRawScreenHeight() - T::RawSizeY_), engine::CastToInt(T::GetRawScreenWidth()) / 18, engine::CastToInt(T::GetRawScreenWidth()) / 18, T::baseColor, TRUE);
     }
 }

@@ -61,8 +61,8 @@ void TaskManager::SetModalTask(Task::WeakTaskPointer task)
 void TaskManager::UnsetModalTask()
 {
     if(ModalTask_.expired()) return;
-    auto l_lockedModalTask = ModalTask_.lock();
-    l_lockedModalTask->SetEnable(l_lockedModalTask->GetOldEnables());
+    auto l_LockedModalTask = ModalTask_.lock();
+    l_LockedModalTask->SetEnable(l_LockedModalTask->GetOldEnables());
     ModalTask_.reset();
 }
 
@@ -71,17 +71,17 @@ std::vector<Task::TaskPointer>::iterator TaskManager::GetCurrentProcessTask()
     return ProcessingTask_;
 }
 
-int TaskManager::GetTaskCount()
+int TaskManager::GetTaskCount() const
 {
     return static_cast<int>(Tasks_.size());
 }
 
-float TaskManager::GetFrameRate()
+float TaskManager::GetFrameRate() const
 {
     return Fps_;
 }
 
-bool TaskManager::IsGameExit()
+bool TaskManager::IsGameExit() const
 {
     return IsGameExit_;
 }
@@ -99,26 +99,26 @@ void TaskManager::Tick(float tickSpeed = 1.0f)
     PrevClockCount_ = ClockCount_;
     ClockCount_ = high_resolution_clock::now();
     auto l_ProcessLoad = duration_cast<microseconds>(ClockCount_ - PrevClockCount_).count();
-    const auto m_DeltaTime = l_ProcessLoad / 1000000.0f;
-    static float fps_interval_count = 0.0f;
-    fps_interval_count += m_DeltaTime;
-    if(fps_interval_count > 1.0f)
+    const auto l_DeltaTime = l_ProcessLoad / 1000000.0f;
+    static float l_FpsIntervalCount = 0.0f;
+    l_FpsIntervalCount += l_DeltaTime;
+    if(l_FpsIntervalCount > 1.0f)
     {
         Fps_ = 1000000.0f / l_ProcessLoad;
-        fps_interval_count = 0.0f;
+        l_FpsIntervalCount = 0.0f;
     }
-    static float deltCount = 0.f;
-    deltCount += m_DeltaTime;
-    if(!DxSettings::doVSync || deltCount > (1.f / 60.f))
+    static float l_DeltCount = 0.f;
+    l_DeltCount += l_DeltaTime;
+    if(!DxSettings::doVSync || l_DeltCount > (1.f / 60.f))
     {
         ClearDrawScreen();
         clsDx();
     }
-    UpdateTasks(Tasks_, TaskQueues_, tickSpeed, m_DeltaTime);
-    if(!DxSettings::doVSync || deltCount > (1.f / 60.f))
+    UpdateTasks(Tasks_, TaskQueues_, tickSpeed, l_DeltaTime);
+    if(!DxSettings::doVSync || l_DeltCount > (1.f / 60.f))
     {
         ScreenFlip();
-        deltCount = 0.f;
+        l_DeltCount = 0.f;
     }
 }
 
@@ -129,6 +129,9 @@ void TaskManager::UpdateTasks(std::vector<Task::TaskPointer>& tasks, std::vector
     {
         UpdatePriority(tasks);
     }
+
+    if (tasks.empty()) return;
+
     auto l_Task = tasks.begin();
     for(l_Task; l_Task != tasks.end(); ++l_Task)
     {
@@ -160,8 +163,7 @@ void TaskManager::UpdateTasks(std::vector<Task::TaskPointer>& tasks, std::vector
             (*l_Task)->SetLifespan((*l_Task)->GetLifespan() - fixedDeltaTime);
             if((*l_Task)->GetLifespan() < 0.0f) (*l_Task)->Terminate();
         }
-        if(duration_cast<milliseconds>(high_resolution_clock::now() - l_BeginTime).count() > 3.f) Logger::LowLevelLog(
-            "Task [" + (*l_Task)->GetName() + "] is too late. 3ms<", "WARN");
+        if(duration_cast<milliseconds>(high_resolution_clock::now() - l_BeginTime).count() > 3.f) Logger::LowLevelLog("Task [" + (*l_Task)->GetName() + "] is too late. 3ms<", "WARN");
     }
     l_Task = tasks.begin();
     for(l_Task; l_Task != tasks.end(); ++l_Task)
@@ -169,6 +171,9 @@ void TaskManager::UpdateTasks(std::vector<Task::TaskPointer>& tasks, std::vector
         if((*l_Task)->IsTerminated())
         {
             l_Task = tasks.erase(l_Task);
+
+            if (l_Task == tasks.begin() && l_Task == tasks.end()) break;
+            if (l_Task == tasks.begin()) continue;
             --l_Task;
         }
     }

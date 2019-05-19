@@ -49,10 +49,10 @@ public:
     template< typename T >
     boost::optional<T> Get(const std::string& dataPath)
     {
-        if(boost::optional<T> value = SettingsTree_.get_optional<T>(dataPath))
+        if(boost::optional<T> l_Value = SettingsTree_.get_optional<T>(dataPath))
         {
-            Logger_->Debug("取得成功: " + dataPath + " = " + std::to_string(value.get()));
-            return value;
+            Logger_->Debug("取得成功: " + dataPath + " = " + std::to_string(l_Value.get()));
+            return l_Value;
         }
         Logger_->Error("取得失敗: " + dataPath);
         return boost::none;
@@ -61,10 +61,10 @@ public:
     template<>
     boost::optional<std::string> Get(const std::string& dataPath)
     {
-        if(boost::optional<std::string> value = SettingsTree_.get_optional<std::string>(dataPath))
+        if(boost::optional<std::string> l_Value = SettingsTree_.get_optional<std::string>(dataPath))
         {
-            Logger_->Debug("取得成功: " + dataPath + " = " + value.get());
-            return value;
+            Logger_->Debug("取得成功: " + dataPath + " = " + l_Value.get());
+            return l_Value;
         }
         Logger_->Error("取得失敗: " + dataPath);
         return boost::none;

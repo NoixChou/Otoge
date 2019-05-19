@@ -14,7 +14,7 @@ protected:
     bool IsUseFont_ = false;
     int FontHandle_ = -1;
 public:
-    bool AdjustmentFontSize_ = true;
+    bool adjustmentFontSize = true;
     unsigned baseColor;
     GUI(const std::string& guiName, const ScreenData& layoutScreen,
         std::shared_ptr<FlexibleScaler> parentScaler = nullptr, bool isUseFont = false);
@@ -24,7 +24,7 @@ public:
     void Draw() override = 0;
     void OnReCalculateScreen() override;
     void SetLabel(const std::string& label);
-    std::string GetLabel();
+    std::string GetLabel() const;
     void AdjustFont();
     bool ChangeFont(const char* fontName = nullptr, int size = -1, int thickness = -1, int fontType = -1);
     bool ChangeFontSize(int size = -1);

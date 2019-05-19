@@ -36,7 +36,7 @@ DebugScene::DebugScene() : Scene("DebugScene")
         FpsDescLabel_->baseColor = color_preset::LEAF_GREEN;
         FpsDescLabel_->textAlign = Label::TextAlignment::bottom | Label::TextAlignment::center;
         FpsDescLabel_->ChangeFontThickness(2);
-        FpsDescLabel_->AdjustmentFontSize_ = false;
+        FpsDescLabel_->adjustmentFontSize = false;
         FpsDescLabel_->ChangeFontSize(static_cast<int>(l_FpsPanel->GetDefaultScaler()->CalculateHeight(70.f)));
         l_FpsPanel->AddChildTask(std::static_pointer_cast<Task>(FpsDescLabel_));
     }
@@ -68,7 +68,7 @@ DebugScene::DebugScene() : Scene("DebugScene")
         DeltaTimeDescLabel_->baseColor = color_preset::LEMON_YELLOW;
         DeltaTimeDescLabel_->textAlign = Label::TextAlignment::bottom | Label::TextAlignment::center;
         DeltaTimeDescLabel_->ChangeFontThickness(6);
-        DeltaTimeDescLabel_->AdjustmentFontSize_ = false;
+        DeltaTimeDescLabel_->adjustmentFontSize = false;
         DeltaTimeDescLabel_->ChangeFontSize(
             static_cast<int>(l_DeltaTimePanel->GetDefaultScaler()->CalculateHeight(80.f)));
         l_DeltaTimePanel->AddChildTask(std::static_pointer_cast<Task>(DeltaTimeDescLabel_));

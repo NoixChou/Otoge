@@ -2,12 +2,12 @@
 #include "../Encoding/EncodingConverter.h"
 using namespace std;
 
-int Logger::userCount = 0;
+int Logger::LoggerCount_ = 0;
 
 Logger::Logger(const string &moduleName)
 {
 #ifdef _DEBUG
-    if (userCount == 0)
+    if (LoggerCount_ == 0)
     {
         AllocConsole();
 
@@ -21,7 +21,7 @@ Logger::Logger(const string &moduleName)
     }
 #endif
 
-    userCount++;
+    LoggerCount_++;
     this->ModuleName_ = moduleName;
     //Debug("Logger added, logger count: " + to_string(userCount));
 }
@@ -29,11 +29,11 @@ Logger::Logger(const string &moduleName)
 
 Logger::~Logger()
 {
-    userCount--;
+    LoggerCount_--;
     //Debug("Logger removed, logger count: " + to_string(userCount));
 
 #ifdef _DEBUG
-    if (userCount == 0) {
+    if (LoggerCount_ == 0) {
         Log("Remove console");
         FreeConsole();
     }

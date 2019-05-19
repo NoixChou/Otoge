@@ -6,6 +6,7 @@
 #include "../../Util/Visual/Color.hpp"
 #include "TaskManager.hpp"
 #include "../../Util/Window/DxSettings.hpp"
+
 int DrawableTask::TemporaryDrawBuffer_ = -1;
 int DrawableTask::BufferWidth_ = -1;
 int DrawableTask::BufferHeight_ = -1;
@@ -46,11 +47,11 @@ void DrawableTask::Update(float deltaTime)
     PreUpdate(deltaTime);
     if(IsVisible_ && static_cast<int>(Transparency_) > 0)
     {
-        int currentBuffer = GetDrawScreen();
-        int currentBlendMode = DX_BLENDMODE_NOBLEND, currentBlendParam = 255;
-        GetDrawBlendMode(&currentBlendMode, &currentBlendParam);
+        int l_CurrentBuffer = GetDrawScreen();
+        int l_CurrentBlendMode = DX_BLENDMODE_NOBLEND, l_CurrentBlendParam = 255;
+        GetDrawBlendMode(&l_CurrentBlendMode, &l_CurrentBlendParam);
         SetDrawScreen(TemporaryDrawBuffer_);
-        SetDrawBlendMode(currentBlendMode, currentBlendParam);
+        SetDrawBlendMode(l_CurrentBlendMode, l_CurrentBlendParam);
         ClearDrawScreen();
 
         /* 描画始め */
@@ -68,12 +69,12 @@ void DrawableTask::Update(float deltaTime)
         }
 
         /* 描画終わり */
-        SetDrawScreen(currentBuffer);
-        SetDrawBlendMode(currentBlendMode, currentBlendParam);
+        SetDrawScreen(l_CurrentBuffer);
+        SetDrawBlendMode(l_CurrentBlendMode, l_CurrentBlendParam);
         if(static_cast<int>(Transparency_) < 100) SetDrawBlendMode(
             DX_BLENDMODE_PMA_ALPHA, static_cast<int>((Transparency_ / 100.f) * 255.f));
         DrawExtendGraph(0, 0, BufferWidth_, BufferHeight_, TemporaryDrawBuffer_, TRUE);
-        SetDrawBlendMode(currentBlendMode, currentBlendParam);
+        SetDrawBlendMode(l_CurrentBlendMode, l_CurrentBlendParam);
     }
 }
 

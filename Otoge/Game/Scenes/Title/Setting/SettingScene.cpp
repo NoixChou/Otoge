@@ -13,6 +13,7 @@
 #include "../../../../Util/Visual/Color.hpp"
 #include "../../../../System/GUI/CheckBox.hpp"
 #include "../../../../Util/Window/DxSettings.hpp"
+#include "../../../../System/GUI/RoundedButton.cpp"
 
 SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
 {
@@ -32,7 +33,7 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
     CloseButton_->isDrawBase = true;
     CloseButton_->baseColor = color_preset::WHITE;
     CloseButton_->animationColor = color_preset::DARK_GREY;
-    CloseButton_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
+    CloseButton_->GetTextLabelInstance()->adjustmentFontSize = false;
     CloseButton_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(2.f)));
     CloseButton_->GetTextLabelInstance()->ChangeFontThickness(1);
     CloseButton_->SetPriority(5.f);
@@ -41,7 +42,7 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
     auto l_TitleLabel = std::make_shared<Label>("設定", ScreenData(0.0f, 0.0f, 100.f, CloseButton_->GetScreenHeight()), TitleBar_.lock()->GetDefaultScaler());
     l_TitleLabel->SetTextAlign(Label::TextAlignment::center | Label::TextAlignment::middle);
     l_TitleLabel->baseColor = color_preset::BLACK;
-    l_TitleLabel->AdjustmentFontSize_ = false;
+    l_TitleLabel->adjustmentFontSize = false;
     l_TitleLabel->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(3.f)));
     l_TitleLabel->ChangeFontThickness(1);
     TitleBar_.lock()->AddChildTask(std::static_pointer_cast<Task>(l_TitleLabel));
@@ -65,7 +66,7 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
     {
         DisplaySectionLabel_ = std::make_shared<Label>("ディスプレイ", ScreenData(0.f, 0.f, 100.f, 2.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
         DisplaySectionLabel_->textAlign = Label::TextAlignment::center | Label::TextAlignment::middle;
-        DisplaySectionLabel_->AdjustmentFontSize_ = false;
+        DisplaySectionLabel_->adjustmentFontSize = false;
         DisplaySectionLabel_->ChangeFontSize(engine::CastToInt(DisplaySectionLabel_->GetDefaultScaler()->CalculateHeight(80.f)));
         DisplaySectionLabel_->ChangeFontThickness(2);
         BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(DisplaySectionLabel_));
@@ -73,7 +74,7 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
         {
             WindowSizeDescription_ = std::make_shared<Label>("解像度:", ScreenData(0.f, DisplaySectionLabel_->GetScreenHeight(), 20.f, 1.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
             WindowSizeDescription_->textAlign = Label::TextAlignment::left | Label::TextAlignment::bottom;
-            WindowSizeDescription_->AdjustmentFontSize_ = true;
+            WindowSizeDescription_->adjustmentFontSize = true;
             //WindowSizeDescription_->ChangeFontSize(engine::CastToInt(WindowSizeDescription_->GetDefaultScaler()->CalculateHeight(60.f)));
             WindowSizeDescription_->ChangeFontThickness(2);
             BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(WindowSizeDescription_));
@@ -184,18 +185,18 @@ void SettingScene::SceneUpdate(float deltaTime)
     // 解像度
     if(WindowSizeList_->IsChangedSelect() && IsEnable())
     {
-		int WindowWidth = SettingManager::GetGlobal()->Get<int>(game_config::SETTINGS_RES_WIDTH).get();
-        int WindowHeight = SettingManager::GetGlobal()->Get<int>(game_config::SETTINGS_RES_HEIGHT).get();
+		int l_WindowWidth = SettingManager::GetGlobal()->Get<int>(game_config::SETTINGS_RES_WIDTH).get();
+        int l_WindowHeight = SettingManager::GetGlobal()->Get<int>(game_config::SETTINGS_RES_HEIGHT).get();
 
-        std::optional<std::pair<int, int>> ItemValue = WindowSizeList_->GetSelectedItemValue();
-		if (!ItemValue.has_value()) return;
-		std::tie(WindowWidth, WindowHeight) = ItemValue.value();
+        std::optional<std::pair<int, int>> l_ItemValue = WindowSizeList_->GetSelectedItemValue();
+		if (!l_ItemValue.has_value()) return;
+		std::tie(l_WindowWidth, l_WindowHeight) = l_ItemValue.value();
 
-        SettingManager::GetGlobal()->Set(game_config::SETTINGS_RES_WIDTH, WindowWidth);
-        SettingManager::GetGlobal()->Set(game_config::SETTINGS_RES_HEIGHT, WindowHeight);
-        DxSettings::windowWidth = WindowWidth;
-        DxSettings::windowHeight = WindowHeight;
-        SetGraphMode(WindowWidth, WindowHeight, 32);
+        SettingManager::GetGlobal()->Set(game_config::SETTINGS_RES_WIDTH, l_WindowWidth);
+        SettingManager::GetGlobal()->Set(game_config::SETTINGS_RES_HEIGHT, l_WindowHeight);
+        DxSettings::windowWidth = l_WindowWidth;
+        DxSettings::windowHeight = l_WindowHeight;
+        SetGraphMode(l_WindowWidth, l_WindowHeight, 32);
         FlexibleScaler::ApplyWindowSizeChanges();
         ReCalculateScreen();
     }

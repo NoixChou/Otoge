@@ -21,17 +21,17 @@ CheckBox::CheckBox(const std::string& label, const ScreenData& layoutScreen,
     CheckButton_->ChangeDrawFunction([=]
     {
         auto l_SizeSubVal = 15.f;
-        auto fixed = CheckButton_->GetDefaultScaler()->Calculate(0.f + l_SizeSubVal, 0.f + l_SizeSubVal,
+        auto l_Fixed = CheckButton_->GetDefaultScaler()->Calculate(0.f + l_SizeSubVal, 0.f + l_SizeSubVal,
                                                                  100.f - (l_SizeSubVal), 100.f - (l_SizeSubVal));
-        float round = CheckButton_->GetDefaultScaler()->CalculateHeight(30.f);
-        float thick = CheckButton_->GetDefaultScaler()->CalculateHeight(8.f);
-        thick /= 2.f;
-        DrawRoundRectAA(fixed.posX + thick, fixed.posY + thick, fixed.width - thick, fixed.height - thick, round, round,
-                        engine::CastToInt(round), CheckButton_->textColor, FALSE, thick * 2.f);
+        float l_Round = CheckButton_->GetDefaultScaler()->CalculateHeight(30.f);
+        float l_Thick = CheckButton_->GetDefaultScaler()->CalculateHeight(8.f);
+        l_Thick /= 2.f;
+        DrawRoundRectAA(l_Fixed.posX + l_Thick, l_Fixed.posY + l_Thick, l_Fixed.width - l_Thick, l_Fixed.height - l_Thick, l_Round, l_Round,
+                        engine::CastToInt(l_Round), CheckButton_->textColor, FALSE, l_Thick * 2.f);
         if(IsChecked_)
         {
-            DrawRoundRectAA(fixed.posX + thick + 0.5f, fixed.posY + thick + 0.5f, fixed.width - thick - 0.5f,
-                            fixed.height - thick - 0.5f, round - 1.f, round - 1.f, engine::CastToInt(round - 1),
+            DrawRoundRectAA(l_Fixed.posX + l_Thick + 0.5f, l_Fixed.posY + l_Thick + 0.5f, l_Fixed.width - l_Thick - 0.5f,
+                            l_Fixed.height - l_Thick - 0.5f, l_Round - 1.f, l_Round - 1.f, engine::CastToInt(l_Round - 1),
                             CheckButton_->baseColor, TRUE);
         }
     });
@@ -40,7 +40,7 @@ CheckBox::CheckBox(const std::string& label, const ScreenData& layoutScreen,
         label, ScreenData(CheckButton_->GetScreenWidth(), 2.f, 100.f - CheckButton_->GetScreenWidth(), 96.f),
         DefaultScaler_);
     TextLabel_->baseColor = textColor;
-    TextLabel_->AdjustmentFontSize_ = true;
+    TextLabel_->adjustmentFontSize = true;
     TextLabel_->ChangeFontThickness(1);
     TextLabel_->SetTextAlign(Label::TextAlignment::center | Label::TextAlignment::middle);
     AddChildTask(std::static_pointer_cast<Task>(TextLabel_));

@@ -5,6 +5,7 @@
 #include "../Task/TaskManager.hpp"
 #include "../../Util/Visual/Color.hpp"
 #include "../../Util/Calculate/Screen/FontStringCalculator.hpp"
+#include "../GUI/SpringButton.hpp"
 
 template<typename V>
 DropdownList<V>::BaseItem::BaseItem(std::string text, float textSize, float thickness) :
@@ -42,7 +43,7 @@ DropdownList<V>::DropdownList(const std::string& label, const ScreenData& layout
 
     SelectedLabel_ = std::make_shared<Label>("", ScreenData(0.f, 0.f, 90.f, 100.f), DefaultScaler_);
     SelectedLabel_->baseColor = textColor;
-    SelectedLabel_->AdjustmentFontSize_ = true;
+    SelectedLabel_->adjustmentFontSize = true;
     //SelectedLabel_->ChangeFontSize(engine::CastToInt(SelectedLabel_->GetDefaultScaler()->CalculateHeight(70.f)));
     SelectedLabel_->ChangeFontThickness(4);
     SelectedLabel_->SetTextAlign(Label::TextAlignment::left | Label::TextAlignment::middle);
@@ -50,7 +51,7 @@ DropdownList<V>::DropdownList(const std::string& label, const ScreenData& layout
 
     TriangleLabel_ = std::make_shared<Label>("▼", ScreenData(90.f, 0.f, 10.f, 100.f), DefaultScaler_);
     TriangleLabel_->baseColor = baseColor;
-    TriangleLabel_->AdjustmentFontSize_ = false;
+    TriangleLabel_->adjustmentFontSize = false;
     TriangleLabel_->ChangeFontSize(engine::CastToInt(TriangleLabel_->GetDefaultScaler()->CalculateWidth(100.f)));
     TriangleLabel_->SetTextAlign(Label::TextAlignment::center | Label::TextAlignment::middle);
     AddChildTask(std::static_pointer_cast<Task>(TriangleLabel_));
@@ -101,13 +102,13 @@ void DropdownList<V>::GUIUpdate(float deltaTime)
 
     if(IsListOpening_)
     {
-        Easing::EaseFunction l_EaseOpen = Easing::OutExp;
+        Easing::EaseFunction l_EaseOpen = Easing::OutBounce;
         Easing::EaseFunction l_EaseClose = Easing::OutExp;
         float l_TotalTime = 0.5f;
 
         if (IsListOpened_)
         {
-            Panel_->SetTransparent(l_EaseOpen(timerCount, l_TotalTime, 100., 0.));
+            Panel_->SetTransparent(Easing::OutExp(timerCount, l_TotalTime, 100., 0.));
             //Panel_->SetPositionY(l_EaseOpen(timerCount, l_TotalTime, GetPositionY() + GetScreenHeight(), GetPositionY()));
             Panel_->SetPositionY(GetPositionY() + GetScreenHeight());
             Panel_->SetScreenHeight(l_EaseOpen(timerCount, l_TotalTime, PanelHeight_, 0.));
@@ -174,10 +175,10 @@ void DropdownList<V>::AddPanel()
 {
     if (!IsPanelAdded_)
     {
-        auto parentScene = std::dynamic_pointer_cast<Scene>(parentTask.lock());
-        if (parentScene)
+        auto l_ParentScene = std::dynamic_pointer_cast<Scene>(parentTask.lock());
+        if (l_ParentScene)
         {
-            parentScene->AddChildTask(std::static_pointer_cast<Task>(Panel_));
+            l_ParentScene->AddChildTask(std::static_pointer_cast<Task>(Panel_));
         }
         else
         {
@@ -249,18 +250,18 @@ std::shared_ptr<typename DropdownList<V>::BaseItem> DropdownList<V>::GetSelected
 template <class V>
 std::optional<V> DropdownList<V>::GetSelectedItemValue() const
 {
-    int index;
+    int l_Index;
     if (SelectedItem_ > Items_.size())
     {
-        index = engine::CastToInt(Items_.size()) - 1;
+        l_Index = engine::CastToInt(Items_.size()) - 1;
     }
     else
     {
-        index = SelectedItem_;
+        l_Index = SelectedItem_;
     }
 
-    auto item = std::static_pointer_cast<SimpleItem>(ItemData_[index]);
-    return item->value;
+    auto l_Item = std::static_pointer_cast<SimpleItem>(ItemData_[l_Index]);
+    return l_Item->value;
 }
 
 template <class V>
@@ -318,18 +319,18 @@ void DropdownList<V>::AddItem(int num, const std::shared_ptr<Button>& item) // p
 template <class V>
 void DropdownList<V>::AddBaseItem(int num, std::shared_ptr<BaseItem> item)
 {
-    auto btn = std::make_shared<Button>(item->text, ScreenData(0.f, 0.f, 100.f, -1.f), Panel_->GetDefaultScaler());
-    btn->isDrawBase = item->doDrawBack;
-    btn->textColor = item->textColor;
-    btn->baseColor = item->backColor;
-    btn->GetTextLabelInstance()->AdjustmentFontSize_ = false;
-    btn->GetTextLabelInstance()->ChangeFontSize(engine::CastToInt(Panel_->GetDefaultScaler()->CalculateHeight(item->textSize)));
-    btn->GetTextLabelInstance()->ChangeFontThickness(engine::CastToInt(Panel_->GetDefaultScaler()->CalculateHeight(item->textThickness)));
-    btn->GetTextLabelInstance()->SetTextAlign(item->align());
-    btn->animationColor = color_preset::DARK_GREY;
-    btn->SetEnable(item->isEnabledOnInit());
+    auto l_Btn = std::make_shared<SpringButton>(item->text, ScreenData(0.f, 0.f, 100.f, -1.f), Panel_->GetDefaultScaler());
+    l_Btn->isDrawBase = item->doDrawBack;
+    l_Btn->textColor = item->textColor;
+    l_Btn->baseColor = item->backColor;
+    l_Btn->GetTextLabelInstance()->adjustmentFontSize = false;
+    l_Btn->GetTextLabelInstance()->ChangeFontSize(engine::CastToInt(Panel_->GetDefaultScaler()->CalculateHeight(item->textSize)));
+    l_Btn->GetTextLabelInstance()->ChangeFontThickness(engine::CastToInt(Panel_->GetDefaultScaler()->CalculateHeight(item->textThickness)));
+    l_Btn->GetTextLabelInstance()->SetTextAlign(item->Align());
+    l_Btn->animationColor = color_preset::DARK_GREY;
+    l_Btn->SetEnable(item->IsEnabledOnInit());
     ItemData_[num] = item;
-    AddItem(num, btn);
+    AddItem(num, l_Btn);
 }
 
 template <class V>

@@ -29,7 +29,7 @@ public:
     float timerCount = 0.f; // deltaTime蓄積
     Task(const std::string& taskName);
     virtual ~Task();
-    bool Initialize(int taskID);
+    bool Initialize(int taskId);
     virtual void Update(float deltaTime) = 0;
     bool Terminate();
     void Pause();

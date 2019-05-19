@@ -13,19 +13,19 @@ public:
         std::string text = "";
         float textSize;
         float textThickness;
-        virtual Label::TextAlignment align() { return Label::TextAlignment::center | Label::TextAlignment::middle; }
+        virtual Label::TextAlignment Align() { return Label::TextAlignment::center | Label::TextAlignment::middle; }
         unsigned textColor = color_preset::BLACK;
         unsigned backColor;
         bool doDrawBack = false;
-        virtual bool isEnabledOnInit() { return true; }
+        virtual bool IsEnabledOnInit() { return true; }
         BaseItem(std::string text, float textSize, float thickness);
     };
     struct Separator :
         public BaseItem
     {
-        Label::TextAlignment align() { return Label::TextAlignment::left | Label::TextAlignment::middle; }
+        Label::TextAlignment Align() override { return Label::TextAlignment::left | Label::TextAlignment::middle; }
 
-        bool isEnabledOnInit() { return false; }
+        bool IsEnabledOnInit() override { return false; }
         Separator(std::string text, float textSize = 65.f, float thickness = 3.f);
     };
     struct SimpleItem :

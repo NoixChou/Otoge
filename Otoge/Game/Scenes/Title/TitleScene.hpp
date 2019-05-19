@@ -6,8 +6,8 @@
 class TitleScene : public Scene
 {
 private:
-    bool isOpened = false;
-    bool isMoving = false;
+    bool IsOpened_ = false;
+    bool IsMoving_ = false;
 
     std::weak_ptr<Button> MenuOpener_;
     std::weak_ptr<Scene> MenuGroup_;

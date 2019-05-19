@@ -16,10 +16,10 @@ Scene::Scene(const std::string& sceneName, float sceneWidth, float sceneHeight, 
     // parentScalerがnullの場合 ウィンドウベースのスケーラをセット
     if(parentScaler == nullptr)
     {
-        const auto parentScene = std::static_pointer_cast<Scene>(parentTask);
-        if(parentScene != nullptr)
+        const auto l_ParentScene = std::static_pointer_cast<Scene>(parentTask);
+        if(l_ParentScene != nullptr)
         {
-            parentScaler = parentScene->GetDefaultScaler();
+            parentScaler = l_ParentScene->GetDefaultScaler();
         }
         else
         {
@@ -183,15 +183,15 @@ void Scene::Update(float deltaTime)
 
 void Scene::ReCalculateScreen()
 {
-    bool doRefreshBuffer = false;
+    bool l_DoRefreshBuffer = false;
     if(!IsCalculated_)
     {
         //PreLayoutScreen_ = Screen_;
         IsCalculated_ = true;
-        doRefreshBuffer = true;
+        l_DoRefreshBuffer = true;
     }
-    if(ParentScaler_->Calculate(PreLayoutScreen_).width != Screen_.width) doRefreshBuffer = true;
-    if(ParentScaler_->Calculate(PreLayoutScreen_).height != Screen_.height) doRefreshBuffer = true;
+    if(ParentScaler_->Calculate(PreLayoutScreen_).width != Screen_.width) l_DoRefreshBuffer = true;
+    if(ParentScaler_->Calculate(PreLayoutScreen_).height != Screen_.height) l_DoRefreshBuffer = true;
     if(DefaultScaler_ == nullptr)
     {
         Screen_ = ParentScaler_->Calculate(PreLayoutScreen_);
@@ -201,10 +201,10 @@ void Scene::ReCalculateScreen()
             PreLayoutScreen_.height = Screen_.height;
         }
         DefaultScaler_ = std::make_shared<FlexibleScaler>(Screen_.width, Screen_.height, 1.0f);
-        doRefreshBuffer = true;
+        l_DoRefreshBuffer = true;
     }
     RefreshScaler();
-    if(doRefreshBuffer) RefreshDrawBuffer();
+    if(l_DoRefreshBuffer) RefreshDrawBuffer();
     RefreshChildren();
     OnReCalculateScreen();
 }

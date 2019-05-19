@@ -10,8 +10,8 @@ namespace encoding
     // ***************************************************************************
     inline std::wstring ConvertUtf8ToUtf16(char const* iString)
     {
-        std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
-        return converter.from_bytes(iString);
+        std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> l_Converter;
+        return l_Converter.from_bytes(iString);
     }
 
     inline std::wstring ConvertUtf8ToUtf16(std::string const& iString)
@@ -24,8 +24,8 @@ namespace encoding
     // ***************************************************************************
     inline std::string ConvertUtf16ToUtf8(wchar_t const* iString)
     {
-        std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
-        return converter.to_bytes(iString);
+        std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> l_Converter;
+        return l_Converter.to_bytes(iString);
     }
 
     inline std::string ConvertUtf16ToUtf8(std::wstring const& iString)
@@ -48,11 +48,11 @@ namespace encoding
     // ***************************************************************************
     inline std::string ConvertUtf16ToSJIS(wchar_t const* iString)
     {
-        const int len = WideCharToMultiByte(CP_ACP, 0, iString, -1, nullptr, 0, nullptr, nullptr);
+        const int l_Len = WideCharToMultiByte(CP_ACP, 0, iString, -1, nullptr, 0, nullptr, nullptr);
         std::string aShiftJis;
-        aShiftJis.resize(len);
-        WideCharToMultiByte(CP_ACP, 0, iString, -1, &*aShiftJis.begin(), len, nullptr, nullptr);
-        aShiftJis.resize(len - 1);
+        aShiftJis.resize(l_Len);
+        WideCharToMultiByte(CP_ACP, 0, iString, -1, &*aShiftJis.begin(), l_Len, nullptr, nullptr);
+        aShiftJis.resize(l_Len - 1);
         return aShiftJis;
     }
 

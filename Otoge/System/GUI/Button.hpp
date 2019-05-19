@@ -6,6 +6,7 @@
 class Button : public GUI
 {
 private:
+    int CurrentTextFontSize_ = -1;
     std::shared_ptr<Label> TextLabel_;
 protected:
     float RawSizeX_ = 0.f;
@@ -16,6 +17,7 @@ public:
     unsigned textColor;
     unsigned animationColor;
     unsigned mouseOverColor;
+
     Button(const std::string& label, const ScreenData& layoutScreen,
            std::shared_ptr<FlexibleScaler> parentScaler = nullptr);
     ~Button();

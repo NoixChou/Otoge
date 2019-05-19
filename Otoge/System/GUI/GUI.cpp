@@ -52,7 +52,7 @@ void GUI::SceneUpdate(float deltaTime)
             ChangeFont(SettingManager::GetGlobal()->Get<std::string>(game_config::SETTINGS_ALPHABET_FONT_NAME).get().c_str(), -1, 1, -1);
         AdjustFont();
     }
-    if((IsChangedSize()) && AdjustmentFontSize_)
+    if((IsChangedSize()) && adjustmentFontSize)
     {
         AdjustFont();
     }
@@ -70,7 +70,7 @@ void GUI::SetLabel(const std::string& label)
     Label_ = label;
 }
 
-std::string GUI::GetLabel()
+std::string GUI::GetLabel() const
 {
     return Label_;
 }
@@ -97,12 +97,12 @@ bool GUI::ChangeFont(const char* fontName, int size, int thickness, int fontType
     {
         if(fontName != nullptr && size != -1 && thickness != -1)
         {
-            TCHAR l_fontName[512];
-            int l_size;
-            int l_thickness;
-            if(GetFontStateToHandle(l_fontName, &l_size, &l_thickness, FontHandle_))
+            TCHAR l_FontName[512];
+            int l_Size;
+            int l_Thickness;
+            if(GetFontStateToHandle(l_FontName, &l_Size, &l_Thickness, FontHandle_))
             {
-                if(fontName == l_fontName && size == l_size && thickness == l_thickness) return true;
+                if(fontName == l_FontName && size == l_Size && thickness == l_Thickness) return true;
             }
         }
     }
@@ -141,24 +141,24 @@ bool GUI::ChangeFont(const char* fontName, int size, int thickness, int fontType
 
 bool GUI::ChangeFontSize(int size)
 {
-    TCHAR fontName[512];
-    int thickness;
-    int fontType;
-    if(GetFontStateToHandle(fontName, nullptr, &thickness, FontHandle_, &fontType) != -1)
+    TCHAR l_FontName[512];
+    int l_Thickness;
+    int l_FontType;
+    if(GetFontStateToHandle(l_FontName, nullptr, &l_Thickness, FontHandle_, &l_FontType) != -1)
     {
-        return ChangeFont(fontName, size, thickness, fontType);
+        return ChangeFont(l_FontName, size, l_Thickness, l_FontType);
     }
     return ChangeFont(nullptr, size, -1, -1);
 }
 
 bool GUI::ChangeFontThickness(int thickness)
 {
-    TCHAR fontName[512];
-    int size;
-    int fontType;
-    if(GetFontStateToHandle(fontName, &size, nullptr, FontHandle_, &fontType) != -1)
+    TCHAR l_FontName[512];
+    int l_Size;
+    int l_FontType;
+    if(GetFontStateToHandle(l_FontName, &l_Size, nullptr, FontHandle_, &l_FontType) != -1)
     {
-        return ChangeFont(fontName, size, thickness, fontType);
+        return ChangeFont(l_FontName, l_Size, thickness, l_FontType);
     }
     return ChangeFont(nullptr, -1, thickness, -1);
 }
@@ -170,9 +170,9 @@ int GUI::GetFontHandle() const
 
 int GUI::GetFontSize() const
 {
-    int fontSize = 0;
-    GetFontStateToHandle(nullptr, &fontSize, nullptr, FontHandle_);
-    return fontSize;
+    int l_FontSize = 0;
+    GetFontStateToHandle(nullptr, &l_FontSize, nullptr, FontHandle_);
+    return l_FontSize;
 }
 
 void GUI::RemoveFont()

@@ -33,7 +33,7 @@ public:
     void SetMouseY(int y);
     void SetMouseX(float x);
     void SetMouseY(float y);
-    bool IsMovedMouse();
+    bool IsMovedMouse() const;
     int GetMouseXVel();
     int GetMouseYVel();
     float GetMouseXVelf();

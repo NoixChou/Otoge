@@ -4,7 +4,7 @@ class Logger
 {
 private:
     std::string ModuleName_;
-    static int userCount;
+    static int LoggerCount_;
 
 public:
     Logger(const std::string &moduleName = "");

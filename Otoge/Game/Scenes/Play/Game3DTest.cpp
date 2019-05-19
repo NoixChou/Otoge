@@ -25,7 +25,7 @@ Game3DTest::Game3DTest(): Scene("Game3DTest", 100.f, 100.f)
     Camera_Initialize();
 
     BackButton_ = std::make_shared<Button>("< Back", ScreenData(0.f, 0.f, 10.f, 4.0f), DefaultScaler_);
-    BackButton_->GetTextLabelInstance()->AdjustmentFontSize_ = false;
+    BackButton_->GetTextLabelInstance()->adjustmentFontSize = false;
     BackButton_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(2.f)));
     BackButton_->GetTextLabelInstance()->ChangeFontThickness(1);
     AddChildTask(std::static_pointer_cast<Task>(BackButton_));
@@ -59,11 +59,11 @@ void Game3DTest::OnStartedFadeOut()
 
 void Game3DTest::SceneFadeIn(float deltaTime)
 {
-    const float totalTime = 1.0f;
+    const float l_TotalTime = 1.0f;
     Easing::EaseFunction ease = Easing::OutExp;
-    SetTransparent(engine::CastToFloat(ease(timerCount, totalTime, 100.f, 0.f)));
-    SetPositionX(engine::CastToFloat(ease(timerCount, totalTime, 0.f, -GetScreenWidth())));
-    if(timerCount > totalTime)
+    SetTransparent(engine::CastToFloat(ease(timerCount, l_TotalTime, 100.f, 0.f)));
+    SetPositionX(engine::CastToFloat(ease(timerCount, l_TotalTime, 0.f, -GetScreenWidth())));
+    if(timerCount > l_TotalTime)
     {
         IsFadingIn_ = false;
     }
@@ -71,11 +71,11 @@ void Game3DTest::SceneFadeIn(float deltaTime)
 
 void Game3DTest::SceneFadeOut(float deltaTime)
 {
-    const float totalTime = 1.0f;
+    const float l_TotalTime = 1.0f;
     Easing::EaseFunction ease = Easing::OutExp;
-    SetTransparent(engine::CastToFloat(ease(timerCount, totalTime, 0.f, 100.f)));
-    SetPositionX(engine::CastToFloat(ease(timerCount, totalTime, -GetScreenWidth(), 0.f)));
-    if(timerCount > totalTime)
+    SetTransparent(engine::CastToFloat(ease(timerCount, l_TotalTime, 0.f, 100.f)));
+    SetPositionX(engine::CastToFloat(ease(timerCount, l_TotalTime, -GetScreenWidth(), 0.f)));
+    if(timerCount > l_TotalTime)
     {
         IsFadingOut_ = false;
         TaskManager::GetInstance()->AddTask(std::static_pointer_cast<Task>(std::make_shared<TitleScene>()));
@@ -370,16 +370,16 @@ void Game3DTest::Chara_Move(CHARA* ch, VECTOR MoveVector)
 
                 // 壁に当たったら壁に遮られない移動成分分だけ移動する
                 {
-                    VECTOR SlideVec;	// キャラクターをスライドさせるベクトル
+                    VECTOR l_SlideVec;	// キャラクターをスライドさせるベクトル
                     // 進行方向ベクトルと壁ポリゴンの法線ベクトルに垂直なベクトルを算出
-                    SlideVec = VCross(MoveVector, Poly->Normal);
+                    l_SlideVec = VCross(MoveVector, Poly->Normal);
 
                     // 算出したベクトルと壁ポリゴンの法線ベクトルに垂直なベクトルを算出、これが
                     // 元の移動成分から壁方向の移動成分を抜いたベクトル
-                    SlideVec = VCross(Poly->Normal, SlideVec);
+                    l_SlideVec = VCross(Poly->Normal, l_SlideVec);
 
                     // それを移動前の座標に足したものを新たな座標とする
-                    NowPos = VAdd(OldPos, SlideVec);
+                    NowPos = VAdd(OldPos, l_SlideVec);
                 }
 
                 // 新たな移動座標で壁ポリゴンと当たっていないかどうかを判定する

@@ -104,7 +104,7 @@ void MouseManager::SetMouseY(float y)
     SetMouseY(engine::CastToInt(y));
 }
 
-bool MouseManager::IsMovedMouse()
+bool MouseManager::IsMovedMouse() const
 {
     auto currentTask = TaskManager::GetInstance()->GetCurrentProcessTask();
     if((*currentTask) != nullptr && !(*currentTask)->IsEnable()) return false;

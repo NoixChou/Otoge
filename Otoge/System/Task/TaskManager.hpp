@@ -25,15 +25,15 @@ public:
     static std::shared_ptr<TaskManager> GetInstance();
     static void CreateInstance();
     static void DestroyInstance();
-    float GetFrameRate();
-    bool IsGameExit();
+    float GetFrameRate() const;
+    bool IsGameExit() const;
     void GameExit();
     Task::WeakTaskPointer GetModalTask() const;
     void SetModalTask();
     void SetModalTask(Task::WeakTaskPointer task);
     void UnsetModalTask();
     std::vector<Task::TaskPointer>::iterator GetCurrentProcessTask();
-    int GetTaskCount();
+    int GetTaskCount() const;
     bool AddTask(const Task::TaskPointer& task);
 
     template< class T >
