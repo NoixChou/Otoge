@@ -64,19 +64,20 @@ void PreInitialize()
     DxSettings::antialiasingSample = g_SystemSettings->Get<int>(game_config::SETTINGS_AA_SAMPLE).get();
     DxSettings::antialiasingQuality = g_SystemSettings->Get<int>(game_config::SETTINGS_AA_QUALITY).get();
     DxSettings::useOriginalCursor = g_SystemSettings->Get<bool>(game_config::SETTINGS_MOUSE_USEORIGINAL).get();
+
     ChangeWindowMode(!DxSettings::isFullScreen); // ウィンドウモード/フルスクリーン
     SetUseCharCodeFormat(DX_CHARCODEFORMAT_UTF8); // 文字コード
     SetMainWindowText(
         (static_cast<std::string>(game_config::GAME_APP_NAME) + " v" + static_cast<std::string>(game_config::
             GAME_APP_VER)).c_str()); // ウィンドウのタイトル
     SetAlwaysRunFlag(TRUE); // 常に処理
-    SetWaitVSyncFlag(engine::CastToInt(DxSettings::doVSync)); // 垂直同期
+    SetWaitVSyncFlag(FALSE); // 垂直同期
     SetFontUseAdjustSizeFlag(FALSE);
     SetUseFPUPreserveFlag(TRUE);
     SetGraphMode(DxSettings::windowWidth, DxSettings::windowHeight, 32);
     SetFullSceneAntiAliasingMode(DxSettings::antialiasingSample, DxSettings::antialiasingQuality);
     SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
-    SetUseDirect3DVersion(DX_DIRECT3D_9EX);
+    //SetUseDirect3DVersion(DX_DIRECT3D_9EX);
 }
 
 // 初期化
@@ -96,6 +97,7 @@ void Initialize()
     SetDrawScreen(DX_SCREEN_BACK);
     SetUseZBuffer3D(TRUE);
     SetWriteZBuffer3D(TRUE);
+
     SetDrawMode(DX_DRAWMODE_NEAREST);
     SetMouseDispFlag(TRUE); // マウスカーソルの表示
     // コンポーネント初期化
@@ -135,8 +137,8 @@ void Initialize()
                 {
                     l_CursorDrawer->timerCount = l_TotalTime;
                 }
-                DrawCircle(MouseManager::GetInstance()->GetMouseX(), MouseManager::GetInstance()->GetMouseY(), engine::CastToInt(l_CursorSize) - 1, color_preset::WHITE, TRUE);
-                DrawCircle(MouseManager::GetInstance()->GetMouseX(), MouseManager::GetInstance()->GetMouseY(), engine::CastToInt(l_CursorSize), color_preset::BLACK, FALSE);
+                DrawCircleAA(MouseManager::GetInstance()->GetMouseX(), MouseManager::GetInstance()->GetMouseY(), engine::CastToInt(l_CursorSize) - 1, 100, color_preset::WHITE, TRUE);
+                DrawCircleAA(MouseManager::GetInstance()->GetMouseX(), MouseManager::GetInstance()->GetMouseY(), engine::CastToInt(l_CursorSize), 100, color_preset::BLACK, FALSE);
             });
         TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(l_CursorDrawer));
     }
@@ -155,8 +157,8 @@ void Loop()
 // 終了処理
 void Terminate()
 {
-    TaskManager::DestroyInstance();
     KeyboardManager::DestroyInstance();
     MouseManager::DestroyInstance();
+    TaskManager::DestroyInstance();
     FlexibleScaler::DestroyWindowBasedInstance();
 }

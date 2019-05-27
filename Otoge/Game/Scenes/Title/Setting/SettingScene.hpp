@@ -25,6 +25,11 @@ private:
     //std::shared_ptr<DropdownList> JapaneseFontList_;
     //std::shared_ptr<DropdownList> AlphabetFontList_;
 
+    std::shared_ptr<Label> DebugSectionLabel_;
+    std::shared_ptr<Label> DebugSectionCaution_;
+    std::shared_ptr<CheckBox> SceneFrameDrawCheck_;
+    std::shared_ptr<CheckBox> DrawablePointDrawCheck_;
+
     std::vector<std::pair<std::string, std::pair<int, int>>> AllowWindowSizes_;
 
 public:

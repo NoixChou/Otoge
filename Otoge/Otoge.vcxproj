@@ -207,8 +207,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Game\Scenes\Play\Game3DTest.cpp" />
     <ClCompile Include="Game\Scenes\Title\Setting\SettingScene.cpp" />
+    <ClCompile Include="Game\Scenes\Play\MusicSelect\MusicSelectScene.cpp" />
     <ClCompile Include="System\GUI\CheckBox.cpp" />
     <ClCompile Include="System\GUI\DropdownList.cpp" />
     <ClCompile Include="System\GUI\RoundedButton.cpp" />
@@ -244,8 +244,8 @@
     <ClCompile Include="Util\Window\DxSettings.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Game\Scenes\Play\Game3DTest.hpp" />
     <ClInclude Include="Game\Scenes\Title\Setting\SettingScene.hpp" />
+    <ClInclude Include="Game\Scenes\Play\MusicSelect\MusicSelectScene.hpp" />
     <ClInclude Include="System\GlobalMethod.hpp" />
     <ClInclude Include="System\GUI\CheckBox.hpp" />
     <ClInclude Include="System\GUI\DropdownList.hpp" />

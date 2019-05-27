@@ -65,9 +65,11 @@ public:
 
     void AddPanel();
     void ResetAnimation();
+
     void InvertOpening();
     void OpenList();
     void CloseList();
+    bool IsOpenList();
 
     void SetSelectedItemNum(int num);
     int GetSelectedItemNum() const;

@@ -224,6 +224,12 @@ void DropdownList<V>::CloseList()
     TriangleLabel_->SetLabel("▼");
 }
 
+template< typename V >
+bool DropdownList<V>::IsOpenList()
+{
+    return IsListOpened_;
+}
+
 template <class V>
 void DropdownList<V>::SetSelectedItemNum(int num)
 {
@@ -313,13 +319,14 @@ void DropdownList<V>::AddItem(int num, const std::shared_ptr<Button>& item) // p
 
     Panel_->AddChildTask(std::static_pointer_cast<Task>(item));
 
+    item->GetTextLabelInstance()->ReCalculateScreen();
     UpdateSelected();
 }
 
 template <class V>
 void DropdownList<V>::AddBaseItem(int num, std::shared_ptr<BaseItem> item)
 {
-    auto l_Btn = std::make_shared<SpringButton>(item->text, ScreenData(0.f, 0.f, 100.f, -1.f), Panel_->GetDefaultScaler());
+    std::shared_ptr<SpringButton> l_Btn = std::make_shared<SpringButton>(item->text, ScreenData(0.f, 0.f, 100.f, -1.f), Panel_->GetDefaultScaler());
     l_Btn->isDrawBase = item->doDrawBack;
     l_Btn->textColor = item->textColor;
     l_Btn->baseColor = item->backColor;

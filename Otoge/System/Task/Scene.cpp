@@ -102,10 +102,8 @@ void Scene::Update(float deltaTime)
         // 現在の描画設定を保持
         int l_CurrentBuffer = GetDrawScreen();
         int l_CurrentBlendMode = DX_BLENDMODE_NOBLEND, l_CurrentBlendParam = 255;
-        int l_CurrentDrawMode;
-
+        int l_CurrentDrawMode = GetDrawMode();
         GetDrawBlendMode(&l_CurrentBlendMode, &l_CurrentBlendParam);
-        l_CurrentDrawMode = GetDrawMode();
 
         // 描画
         SetDrawScreen(SceneBuffer_);
@@ -120,6 +118,7 @@ void Scene::Update(float deltaTime)
         }
 
         // 元の描画設定に戻す
+        SetDrawMode(l_CurrentDrawMode);
         SetDrawBlendMode(l_CurrentBlendMode, l_CurrentBlendParam);
 
         // 子タスクの更新処理
@@ -160,9 +159,8 @@ void Scene::Update(float deltaTime)
             l_DrawSrcY += -Screen_.posY;
         }
         if(l_DrawWidth > ParentScaler_->GetScreenWidth()) l_DrawWidth -= l_DrawWidth - ParentScaler_->GetScreenWidth();
-        if(l_DrawHeight > ParentScaler_->GetScreenHeight()) l_DrawHeight -= l_DrawHeight - ParentScaler_->
-            GetScreenHeight();
-        DrawRectGraph(engine::CastToInt(l_DrawPosX), engine::CastToInt(l_DrawPosY), engine::CastToInt(l_DrawSrcX),
+        if(l_DrawHeight > ParentScaler_->GetScreenHeight()) l_DrawHeight -= l_DrawHeight - ParentScaler_->GetScreenHeight();
+        DrawRectGraphF(l_DrawPosX, l_DrawPosY, engine::CastToInt(l_DrawSrcX),
                       engine::CastToInt(l_DrawSrcY), engine::CastToInt(l_DrawWidth), engine::CastToInt(l_DrawHeight),
                       SceneBuffer_, TRUE);
 
@@ -277,7 +275,7 @@ void Scene::StartFadeOut()
 void Scene::StopFade()
 {
     if(IsFadingIn_) OnStoppedFadeIn();
-    if(IsFadingOut_) OnStartedFadeOut();
+    if(IsFadingOut_) OnStoppedFadeOut();
     IsFadingIn_ = false;
     IsFadingOut_ = false;
 }

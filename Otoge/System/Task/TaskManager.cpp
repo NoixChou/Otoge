@@ -107,19 +107,14 @@ void TaskManager::Tick(float tickSpeed = 1.0f)
         Fps_ = 1000000.0f / l_ProcessLoad;
         l_FpsIntervalCount = 0.0f;
     }
-    static float l_DeltCount = 0.f;
-    l_DeltCount += l_DeltaTime;
-    if(!DxSettings::doVSync || l_DeltCount > (1.f / 60.f))
-    {
-        ClearDrawScreen();
-        clsDx();
-    }
+
+    ClearDrawScreen();
+    clsDx();
+
     UpdateTasks(Tasks_, TaskQueues_, tickSpeed, l_DeltaTime);
-    if(!DxSettings::doVSync || l_DeltCount > (1.f / 60.f))
-    {
-        ScreenFlip();
-        l_DeltCount = 0.f;
-    }
+
+    ScreenFlip();
+    if (DxSettings::doVSync) WaitVSync(1);
 }
 
 void TaskManager::UpdateTasks(std::vector<Task::TaskPointer>& tasks, std::vector<Task::TaskPointer>& queues,

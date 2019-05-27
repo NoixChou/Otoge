@@ -112,19 +112,22 @@ bool GUI::ChangeFont(const char* fontName, int size, int thickness, int fontType
         if(fontType == -1) fontType = GetDefaultFontDrawType();
         if(FontHandle_ == -1)
         {
-            std::string l_Fontstr = SettingManager::GetGlobal()
-                                    ->Get<std::string>(game_config::SETTINGS_FONT_NAME).get();
+            if (size % 2 != 0) size--;
+            thickness += 8;
+
+            std::string l_Fontstr = SettingManager::GetGlobal()->Get<std::string>(game_config::SETTINGS_FONT_NAME).get();
             if(fontName == nullptr)
             {
                 fontName = l_Fontstr.c_str();
                 if(!character::HasDoubleByteString(Label_))
                 {
-                    l_Fontstr = SettingManager::GetGlobal()
-                                ->Get<std::string>(game_config::SETTINGS_ALPHABET_FONT_NAME).get();
+                    l_Fontstr = SettingManager::GetGlobal()->Get<std::string>(game_config::SETTINGS_ALPHABET_FONT_NAME).get();
                     fontName = l_Fontstr.c_str();
                     Logger_->Debug("英字フォントに切り替えます: " + l_Fontstr);
                 }
             }
+
+            SetFontCacheUsePremulAlphaFlag(TRUE);
             FontHandle_ = CreateFontToHandle(fontName, size, thickness, fontType);
         }
         else

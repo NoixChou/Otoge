@@ -8,7 +8,7 @@ Label::Label(const std::string& label, const ScreenData& layoutScreen,
              std::shared_ptr<FlexibleScaler> parentScaler) : GUI(label + "\"<Label>\"", layoutScreen, parentScaler,
                                                                  true)
 {
-    baseColor = color_preset::BLACK;
+    baseColor = color_preset::DARK_GREY;
     Label_ = label;
     textAlign = TextAlignment::left | TextAlignment::top;
 }
