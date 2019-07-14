@@ -16,6 +16,7 @@ private:
     bool IsGameRestart_ = false;
     int FrameCount_ = 0;
     int StartCount_ = 0;
+    float DeltaTime_ = 0.f;
     float Fps_ = 0.f;
 protected:
     static std::shared_ptr<TaskManager> Instance_;
@@ -26,6 +27,7 @@ public:
     static void CreateInstance();
     static void DestroyInstance();
     float GetFrameRate() const;
+    float GetGlobalDeltaTime() const;
     bool IsGameExit() const;
     void GameExit();
     Task::WeakTaskPointer GetModalTask() const;

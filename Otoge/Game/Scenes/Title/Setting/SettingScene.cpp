@@ -7,18 +7,25 @@
 #include "../../../../System/GUI/Button.hpp"
 #include "../../../../System/GUI/Label.hpp"
 #include "../../../../Util/Calculate/Animation/Easing.hpp"
-#include "../../../../System/GUI/SlideBar.hpp"
 #include "../../../../System/GlobalMethod.hpp"
 #include "../../../../System/GUI/DropdownList.cpp"
 #include "../../../../Util/Visual/Color.hpp"
 #include "../../../../System/GUI/CheckBox.hpp"
 #include "../../../../Util/Window/DxSettings.hpp"
-#include "../../../../System/GUI/RoundedButton.cpp"
+#include "../../../../System/Font/FontHandleCreator.hpp"
 
 SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
 {
-    const float l_HeaderFontSize = 80.f;
-    const int l_HeaderFontThickness = 16;
+    const float l_HeaderFontSize = 2.5f;
+    const int l_HeaderFontThickness = 4;
+
+    const int l_HeaderFontHandle = FontHandleCreator::Create(engine::CastToInt(DefaultScaler_->CalculateHeight(l_HeaderFontSize)), l_HeaderFontThickness);
+    
+    const float l_ItemFontSize = 1.5f;
+    const int l_ItemFontThickness = 1;
+
+    const int l_ItemFontHandle = FontHandleCreator::Create(engine::CastToInt(DefaultScaler_->CalculateHeight(l_ItemFontSize)), l_ItemFontThickness);
+
 
     auto l_TitleBar = std::make_shared<Scene>("titlebar", ScreenData(0.f, 0.f, 100.f, 5.f), DefaultScaler_);
     TitleBar_ = l_TitleBar;
@@ -56,14 +63,14 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
     AddChildTask(std::static_pointer_cast<Task>(BodyPanel_));
 
 	{
-		AllowWindowSizes_.push_back(std::make_pair("16:9 WIDE", std::make_pair(0, 0)));
-		AllowWindowSizes_.push_back(std::make_pair("1920x1080", std::make_pair(1920, 1080)));
-		AllowWindowSizes_.push_back(std::make_pair("1600x1024", std::make_pair(1600, 1024)));
-		AllowWindowSizes_.push_back(std::make_pair("1440x900", std::make_pair(1440, 900)));
-		AllowWindowSizes_.push_back(std::make_pair("1280x720", std::make_pair(1280, 720)));
-		AllowWindowSizes_.push_back(std::make_pair("4:3 STD", std::make_pair(0, 0)));
-		AllowWindowSizes_.push_back(std::make_pair("1280x1024", std::make_pair(1280, 1024)));
-		AllowWindowSizes_.push_back(std::make_pair("800x600", std::make_pair(800, 600)));
+		AllowWindowSizes_.emplace_back(std::make_pair("16:9 WIDE", std::make_pair(0, 0)));
+		AllowWindowSizes_.emplace_back(std::make_pair("1920x1080", std::make_pair(1920, 1080)));
+		AllowWindowSizes_.emplace_back(std::make_pair("1600x1024", std::make_pair(1600, 1024)));
+		AllowWindowSizes_.emplace_back(std::make_pair("1440x900", std::make_pair(1440, 900)));
+		AllowWindowSizes_.emplace_back(std::make_pair("1280x720", std::make_pair(1280, 720)));
+		AllowWindowSizes_.emplace_back(std::make_pair("4:3 STD", std::make_pair(0, 0)));
+		AllowWindowSizes_.emplace_back(std::make_pair("1280x1024", std::make_pair(1280, 1024)));
+		AllowWindowSizes_.emplace_back(std::make_pair("800x600", std::make_pair(800, 600)));
 	}
 
     float l_TopPosition = 0.f;
@@ -72,19 +79,17 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
         DisplaySectionLabel_ = std::make_shared<Label>("ディスプレイ", ScreenData(0.f, l_TopPosition, 100.f, 2.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
         DisplaySectionLabel_->textAlign = Label::TextAlignment::center | Label::TextAlignment::middle;
         DisplaySectionLabel_->adjustmentFontSize = false;
-        DisplaySectionLabel_->ChangeFontSize(engine::CastToInt(DisplaySectionLabel_->GetDefaultScaler()->CalculateHeight(l_HeaderFontSize)));
-        DisplaySectionLabel_->ChangeFontThickness(l_HeaderFontThickness);
+        DisplaySectionLabel_->SetFontHandle(l_HeaderFontHandle);
         BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(DisplaySectionLabel_));
 
         {
-            WindowSizeDescription_ = std::make_shared<Label>("解像度:", ScreenData(0.f, l_TopPosition + DisplaySectionLabel_->GetScreenHeight(), 20.f, 1.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
-            WindowSizeDescription_->textAlign = Label::TextAlignment::left | Label::TextAlignment::bottom;
-            WindowSizeDescription_->adjustmentFontSize = true;
-            //WindowSizeDescription_->ChangeFontSize(engine::CastToInt(WindowSizeDescription_->GetDefaultScaler()->CalculateHeight(60.f)));
-            WindowSizeDescription_->ChangeFontThickness(9);
+            WindowSizeDescription_ = std::make_shared<Label>("解像度:", ScreenData(0.f, l_TopPosition + DisplaySectionLabel_->GetScreenHeight(), 12.f, 1.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
+            WindowSizeDescription_->textAlign = Label::TextAlignment::right | Label::TextAlignment::middle;
+            WindowSizeDescription_->adjustmentFontSize = false;
+            WindowSizeDescription_->SetFontHandle(l_ItemFontHandle);
             BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(WindowSizeDescription_));
 
-            WindowSizeList_ = std::make_shared<DropdownList<std::pair<int, int>>>("WindowSizeList", ScreenData(WindowSizeDescription_->GetScreenWidth(), WindowSizeDescription_->GetPositionY(), 20.f, WindowSizeDescription_->GetScreenHeight() + 0.0f), AllowWindowSizes_.size(), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
+            WindowSizeList_ = std::make_shared<DropdownList<std::pair<int, int>>>("WindowSizeList", ScreenData(WindowSizeDescription_->GetScreenWidth(), WindowSizeDescription_->GetPositionY(), 22.f, WindowSizeDescription_->GetScreenHeight() + 0.0f), AllowWindowSizes_.size(), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
             BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(WindowSizeList_));
 
             int l_ItemCount = 0;
@@ -101,11 +106,13 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
         }
 
         FullscreenCheck_ = std::make_shared<CheckBox>("フルスクリーン", ScreenData(WindowSizeDescription_->GetPositionX(), WindowSizeDescription_->GetPositionY() + WindowSizeDescription_->GetScreenHeight() + 0.5f, 25.f, 1.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
-        FullscreenCheck_->GetTextLabelInstance()->ChangeFontThickness(6);
+        FullscreenCheck_->GetTextLabelInstance()->adjustmentFontSize = false;
+        FullscreenCheck_->GetTextLabelInstance()->SetFontHandle(l_ItemFontHandle);
         BodyPanel_->GetPanelInstance()->AddChildTask(FullscreenCheck_);
 
         VSyncCheck_ = std::make_shared<CheckBox>("垂直同期", ScreenData(WindowSizeDescription_->GetPositionX(), FullscreenCheck_->GetPositionY() + FullscreenCheck_->GetScreenHeight() + 0.3f, FullscreenCheck_->GetScreenWidth(), 1.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
-        VSyncCheck_->GetTextLabelInstance()->ChangeFontThickness(6);
+        VSyncCheck_->GetTextLabelInstance()->adjustmentFontSize = false;
+        VSyncCheck_->GetTextLabelInstance()->SetFontHandle(l_ItemFontHandle);
         BodyPanel_->GetPanelInstance()->AddChildTask(VSyncCheck_);
     }
 
@@ -115,35 +122,40 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
         InterfaceSectionLabel_ = std::make_shared<Label>("インターフェイス", ScreenData(0.f, l_TopPosition, 100.f, 2.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
         InterfaceSectionLabel_->textAlign = Label::TextAlignment::center | Label::TextAlignment::middle;
         InterfaceSectionLabel_->adjustmentFontSize = false;
-        InterfaceSectionLabel_->ChangeFontSize(engine::CastToInt(InterfaceSectionLabel_->GetDefaultScaler()->CalculateHeight(l_HeaderFontSize)));
-        InterfaceSectionLabel_->ChangeFontThickness(l_HeaderFontThickness);
+        InterfaceSectionLabel_->SetFontHandle(l_HeaderFontHandle);
         BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(InterfaceSectionLabel_));
+
+        UseSystemCursorCheck_ = std::make_shared<CheckBox>("OSのカーソルを使用する", ScreenData(WindowSizeDescription_->GetPositionX(), InterfaceSectionLabel_->GetPositionY() + InterfaceSectionLabel_->GetScreenHeight() + 0.3f, 33.f, 1.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
+        UseSystemCursorCheck_->GetTextLabelInstance()->adjustmentFontSize = false;
+        UseSystemCursorCheck_->GetTextLabelInstance()->SetFontHandle(l_ItemFontHandle);
+        BodyPanel_->GetPanelInstance()->AddChildTask(UseSystemCursorCheck_);
     }
 
-    l_TopPosition = InterfaceSectionLabel_->GetPositionY() + InterfaceSectionLabel_->GetScreenHeight() + 0.6f;
+    l_TopPosition = UseSystemCursorCheck_->GetPositionY() + UseSystemCursorCheck_->GetScreenHeight() + 0.6f;
 
     {
         DebugSectionLabel_ = std::make_shared<Label>("デバッグ", ScreenData(0.f, l_TopPosition, 100.f, 2.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
         DebugSectionLabel_->textAlign = Label::TextAlignment::center | Label::TextAlignment::middle;
         DebugSectionLabel_->adjustmentFontSize = false;
-        DebugSectionLabel_->ChangeFontSize(engine::CastToInt(DebugSectionLabel_->GetDefaultScaler()->CalculateHeight(l_HeaderFontSize)));
-        DebugSectionLabel_->ChangeFontThickness(l_HeaderFontThickness);
+        DebugSectionLabel_->SetFontHandle(l_HeaderFontHandle);
         BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(DebugSectionLabel_));
 
         DebugSectionCaution_ = std::make_shared<Label>("⚠ 開発者向け/試験中の機能です", ScreenData(0.f, l_TopPosition + DebugSectionLabel_->GetScreenHeight(), 100.f, 2.f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
         DebugSectionCaution_->baseColor = color_preset::ORANGE;
         DebugSectionCaution_->textAlign = Label::TextAlignment::center | Label::TextAlignment::middle;
         DebugSectionCaution_->adjustmentFontSize = false;
-        DebugSectionCaution_->ChangeFontSize(engine::CastToInt(DebugSectionCaution_->GetDefaultScaler()->CalculateHeight(65.f)));
-        DebugSectionCaution_->ChangeFontThickness(8);
+        DebugSectionCaution_->ChangeFontSize(engine::CastToInt(DefaultScaler_->CalculateHeight(l_HeaderFontSize)));
+        DebugSectionCaution_->ChangeFontThickness(l_ItemFontThickness);
         BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(DebugSectionCaution_));
 
         SceneFrameDrawCheck_ = std::make_shared<CheckBox>(game_config::SETTINGS_DEBUG_DRAW_SCENE_FRAME, ScreenData(WindowSizeDescription_->GetPositionX(), DebugSectionCaution_->GetPositionY() + DebugSectionCaution_->GetScreenHeight() + 0.3f, 47.f, 1.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
-        SceneFrameDrawCheck_->GetTextLabelInstance()->ChangeFontThickness(16);
+        SceneFrameDrawCheck_->GetTextLabelInstance()->adjustmentFontSize = false;
+        SceneFrameDrawCheck_->GetTextLabelInstance()->SetFontHandle(l_ItemFontHandle);
         BodyPanel_->GetPanelInstance()->AddChildTask(SceneFrameDrawCheck_);
 
         DrawablePointDrawCheck_ = std::make_shared<CheckBox>(game_config::SETTINGS_DEBUG_DRAW_DTASK_POINT, ScreenData(WindowSizeDescription_->GetPositionX(), SceneFrameDrawCheck_->GetPositionY() + SceneFrameDrawCheck_->GetScreenHeight() + 0.3f, SceneFrameDrawCheck_->GetScreenWidth(), 1.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
-        DrawablePointDrawCheck_->GetTextLabelInstance()->ChangeFontThickness(16);
+        DrawablePointDrawCheck_->GetTextLabelInstance()->adjustmentFontSize = false;
+        DrawablePointDrawCheck_->GetTextLabelInstance()->SetFontHandle(l_ItemFontHandle);
         BodyPanel_->GetPanelInstance()->AddChildTask(DrawablePointDrawCheck_);
     }
 
@@ -170,7 +182,7 @@ void SettingScene::OnStartedFadeIn()
 
     if(l_CurrentSize != AllowWindowSizes_.end())
     {
-        WindowSizeList_->SetSelectedItemNum(engine::CastToInt(std::distance(AllowWindowSizes_.begin(), l_CurrentSize)));
+        WindowSizeList_->SetSelectedItemNum(engine::CastToInt(std::distance(AllowWindowSizes_.begin(), l_CurrentSize)), false);
     }
 
     // フルスクリーン
@@ -180,6 +192,10 @@ void SettingScene::OnStartedFadeIn()
     // 垂直同期
     auto l_DoVSync = SettingManager::GetGlobal()->Get<bool>(game_config::SETTINGS_VSYNC);
     if (l_DoVSync) VSyncCheck_->SetChecked(l_DoVSync.get());
+
+    // カーソル
+    auto l_UseSysCursor = SettingManager::GetGlobal()->Get<bool>(game_config::SETTINGS_MOUSE_USEORIGINAL);
+    if (l_UseSysCursor) UseSystemCursorCheck_->SetChecked(!l_UseSysCursor.get());
 
     // デバッグ - Sceneの枠描画
     auto l_DrawSceneFrame = SettingManager::GetGlobal()->Get<bool>(game_config::SETTINGS_DEBUG_DRAW_SCENE_FRAME);
@@ -261,6 +277,7 @@ void SettingScene::SceneUpdate(float deltaTime)
     {
         VSyncCheck_->SetEnable(false);
         FullscreenCheck_->SetEnable(false);
+        UseSystemCursorCheck_->SetEnable(false);
         SceneFrameDrawCheck_->SetEnable(false);
         DrawablePointDrawCheck_->SetEnable(false);
         return;
@@ -269,6 +286,7 @@ void SettingScene::SceneUpdate(float deltaTime)
 
     VSyncCheck_->SetEnable(true);
     FullscreenCheck_->SetEnable(true);
+    UseSystemCursorCheck_->SetEnable(true);
     SceneFrameDrawCheck_->SetEnable(true);
     DrawablePointDrawCheck_->SetEnable(true);
 
@@ -287,6 +305,13 @@ void SettingScene::SceneUpdate(float deltaTime)
         DxSettings::doVSync = VSyncCheck_->IsChecked();
     }
 
+    // カーソル
+    if (UseSystemCursorCheck_->IsChanged())
+    {
+        SettingManager::GetGlobal()->Set(game_config::SETTINGS_MOUSE_USEORIGINAL, !UseSystemCursorCheck_->IsChecked());
+        DxSettings::useOriginalCursor = UseSystemCursorCheck_->IsChecked();
+    }
+
     // デバッグ - Sceneの枠描画
     if (SceneFrameDrawCheck_->IsChanged())
     {
@@ -303,6 +328,7 @@ void SettingScene::SceneUpdate(float deltaTime)
 void SettingScene::Draw()
 {
     ScreenData l_FixedContentField = DefaultScaler_->Calculate(0.f, 0.f, 100.f, 100.f);
+    //SetDrawBlendMode(AlphaBlendMode_, 127);
     DrawBox(engine::CastToInt(l_FixedContentField.posX), engine::CastToInt(l_FixedContentField.posY),
             engine::CastToInt(l_FixedContentField.width), engine::CastToInt(l_FixedContentField.height), color_preset::LIGHT_GREY, TRUE);
 }

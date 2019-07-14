@@ -80,8 +80,10 @@ void GUI::AdjustFont()
     //if (((FontStringCalculator::GetStringWidth(FontHandle_, Label_) > GetRawScreenWidth()) &&
     //    (FontStringCalculator::GetStringHeight(FontHandle_) > GetRawScreenHeight())) ||
     //    (engine::CompareTolerance(FontStringCalculator::GetStringWidth(FontHandle_, Label_), GetRawScreenWidth(), 0.01f) != 0))
+    //ChangeFontSize(engine::CastToInt(GetRawScreenHeight()));
     {
         ChangeFontSize(engine::CastToInt(GetRawScreenHeight()));
+        
         while (FontStringCalculator::GetStringWidth(FontHandle_, Label_) > GetRawScreenWidth())
         {
             if (GetFontSize() <= 1) break;
@@ -113,7 +115,6 @@ bool GUI::ChangeFont(const char* fontName, int size, int thickness, int fontType
         if(FontHandle_ == -1)
         {
             if (size % 2 != 0) size--;
-            thickness += 8;
 
             std::string l_Fontstr = SettingManager::GetGlobal()->Get<std::string>(game_config::SETTINGS_FONT_NAME).get();
             if(fontName == nullptr)
@@ -164,6 +165,17 @@ bool GUI::ChangeFontThickness(int thickness)
         return ChangeFont(l_FontName, l_Size, thickness, l_FontType);
     }
     return ChangeFont(nullptr, -1, thickness, -1);
+}
+
+void GUI::SetFontHandle(int fontHandle)
+{
+    if (CheckFontHandleValid(fontHandle) == FALSE) return;
+
+    RemoveFont();
+    IsUseFont_ = false;
+    FontHandle_ = fontHandle;
+
+    Logger_->Debug("生成済みフォントハンドルをセット");
 }
 
 int GUI::GetFontHandle() const

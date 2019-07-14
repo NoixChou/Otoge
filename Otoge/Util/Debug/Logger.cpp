@@ -43,8 +43,26 @@ Logger::~Logger()
 void Logger::Log(std::string const& message, std::string const& tag)
 {
 #ifdef _DEBUG
+    time_t l_GlobalTime;
+    time(&l_GlobalTime);
+    const auto l_LocalTime = localtime(&l_GlobalTime);
+
+    std::stringstream l_TimeStr;
+    if (l_LocalTime->tm_hour < 10)
+        l_TimeStr << "0";
+    l_TimeStr << l_LocalTime->tm_hour << ":";
+    if (l_LocalTime->tm_min < 10)
+        l_TimeStr << "0";
+    l_TimeStr << l_LocalTime->tm_min << ":";
+    if (l_LocalTime->tm_sec < 10)
+        l_TimeStr << "0";
+    l_TimeStr << l_LocalTime->tm_sec;
+
+    printf("[%s] ", l_TimeStr.str().c_str());
+    OutputDebugString(std::string("[" + l_TimeStr.str() + "] ").c_str());
+
     printf("[%s]", (tag).c_str());
-    OutputDebugString(("[" + tag + "] ").c_str());
+    OutputDebugString(std::string("[" + tag + "] ").c_str());
 
     if (ModuleName_ != "")
         printf("<%s> ", (ModuleName_).c_str()), OutputDebugString(encoding::ConvertUtf8ToSJIS("<" + ModuleName_ + "> ").c_str());

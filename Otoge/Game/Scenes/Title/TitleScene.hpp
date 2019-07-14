@@ -14,14 +14,17 @@ private:
     std::shared_ptr<Button> MenuPlay_;
     std::shared_ptr<Button> MenuOption_;
     std::shared_ptr<Button> MenuClose_;
-    static std::shared_ptr<Scene> SettingScene_;
+
 public:
     TitleScene();
     ~TitleScene();
 
+    static std::shared_ptr<Scene> SettingScene_;
+
     void SceneFadeIn(float deltaTime) override;
     void OnStoppedFadeIn() override;
 
+    void OnStartedFadeOut() override;
     void SceneFadeOut(float deltaTime) override;
     void OnStoppedFadeOut() override;
 

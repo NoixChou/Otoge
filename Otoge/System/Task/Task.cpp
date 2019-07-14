@@ -21,6 +21,7 @@ bool Task::Initialize(int taskId)
     IsInitialized_ = true;
     IsLiving_ = true;
     IsRunning_ = true;
+    OnInitialize();
     return true;
 }
 

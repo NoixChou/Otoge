@@ -20,29 +20,32 @@ ScrollablePanel::~ScrollablePanel()
 
 void ScrollablePanel::GUIUpdate(float deltaTime)
 {
-    float l_TotalTime = 0.5f;
-    if(IsOnMouse())
+    if (GetRawScreenHeight() < Panel_->GetRawScreenHeight())
     {
-        float mouseVel = MouseManager::GetInstance()->GetMouseWheelAccel();
-        if(mouseVel != 0.f)
+        float l_TotalTime = 0.5f;
+        if (IsOnMouse())
+        {
+            float mouseVel = MouseManager::GetInstance()->GetMouseWheelAccel();
+            if (mouseVel != 0.f)
+            {
+                ResetAnimation();
+            }
+            ScrollPosition_ += mouseVel * (Panel_->GetScreenHeight() / 25.f);
+        }
+
+        Panel_->SetPositionY(engine::CastToFloat(Easing::OutExp(timerCount, l_TotalTime, ScrollPosition_, BeforeChangePosition_)));
+
+        const float l_ScrollMin = -GetScreenHeight() * (Panel_->GetScreenHeight() / GetScreenHeight() - 1.f) + GetPositionY();
+
+        if (ScrollPosition_ < l_ScrollMin || ScrollPosition_ > 0.f)
         {
             ResetAnimation();
         }
-        ScrollPosition_ += mouseVel * (Panel_->GetScreenHeight() / 25.f);
-    }
-
-    Panel_->SetPositionY(engine::CastToFloat(Easing::OutExp(timerCount, l_TotalTime, ScrollPosition_, BeforeChangePosition_)));
-
-    const float l_ScrollMin = -GetScreenHeight() * (Panel_->GetScreenHeight() / GetScreenHeight() - 1.f) + GetPositionY();
-
-    if(ScrollPosition_ < l_ScrollMin || ScrollPosition_ > 0.f)
-    {
-        ResetAnimation();
-    }
-    ScrollPosition_ = engine::LimitRange(ScrollPosition_, l_ScrollMin, 0.f);
-    if(timerCount > l_TotalTime)
-    {
-        timerCount = l_TotalTime;
+        ScrollPosition_ = engine::LimitRange(ScrollPosition_, l_ScrollMin, 0.f);
+        if (timerCount > l_TotalTime)
+        {
+            timerCount = l_TotalTime;
+        }
     }
 }
 

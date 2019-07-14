@@ -6,13 +6,15 @@
 std::shared_ptr<FlexibleScaler> FlexibleScaler::GlobalInstance_ = nullptr;
 std::vector<FlexibleScaler*> FlexibleScaler::Scalers_;
 
-FlexibleScaler::FlexibleScaler(float screenWidth, float screenHeight, float scale)
+FlexibleScaler::FlexibleScaler(float screenWidth, float screenHeight, float scale, float ratioX, float ratioY)
 {
-    Logger::LowLevelLog("Scaler created, w: " + std::to_string(screenWidth) + ", h:" + std::to_string(screenHeight),
+    Logger::LowLevelLog("Scaler created, w: " + std::to_string(screenWidth) + ", h:" + std::to_string(screenHeight) + ", x" + std::to_string(scale),
                         "DEBUG");
-    ScreenWidth_ = screenWidth;
-    ScreenHeight_ = screenHeight;
+    ScreenWidth_ = screenWidth * scale * ratioX;
+    ScreenHeight_ = screenHeight * scale * ratioY;
     Scale_ = scale;
+    RatioX_ = ratioX;
+    RatioY_ = ratioY;
     Scalers_.push_back(this);
 }
 
@@ -31,6 +33,8 @@ FlexibleScaler::~FlexibleScaler()
 
 void FlexibleScaler::ApplyWindowSizeChanges()
 {
+    if (!GlobalInstance_) return;
+
     GlobalInstance_->SetScreenWidth(engine::CastToFloat(DxSettings::windowWidth));
     GlobalInstance_->SetScreenHeight(engine::CastToFloat(DxSettings::windowHeight));
     Logger::LowLevelLog("Scalers Count: " + std::to_string(Scalers_.size()), "FlexScaler");
@@ -49,11 +53,12 @@ std::shared_ptr<FlexibleScaler> FlexibleScaler::GetWindowBasedInstance()
 
 void FlexibleScaler::CreateWindowBasedInstance()
 {
-    if(!GlobalInstance_)
-    {
-        GlobalInstance_.reset(new FlexibleScaler(engine::CastToFloat(DxSettings::windowWidth),
-                                                 engine::CastToFloat(DxSettings::windowHeight), 1.f));
-    }
+    if (GlobalInstance_) return;
+
+    //GlobalInstance_ = std::make_shared<FlexibleScaler>(1920.f, 1080.f, 1.0f);
+    GlobalInstance_ = std::make_shared<FlexibleScaler>(engine::CastToFloat(DxSettings::windowWidth), engine::CastToFloat(DxSettings::windowHeight), 1.f);
+    //GlobalInstance_.reset(new FlexibleScaler(engine::CastToFloat(DxSettings::windowWidth),
+    //                                        engine::CastToFloat(DxSettings::windowHeight), 1.f));
 }
 
 void FlexibleScaler::DestroyWindowBasedInstance()
@@ -96,6 +101,16 @@ float FlexibleScaler::GetScale() const
     return Scale_;
 }
 
+float FlexibleScaler::GetRatioX() const
+{
+    return RatioX_;
+}
+
+float FlexibleScaler::GetRatioY() const
+{
+    return RatioY_;
+}
+
 void FlexibleScaler::SetDiffX(float offsetX)
 {
     GlobalDiffX_ = offsetX;
@@ -121,34 +136,44 @@ void FlexibleScaler::SetScale(float scale)
     Scale_ = scale;
 }
 
+void FlexibleScaler::SetRatioX(float ratioX)
+{
+    RatioX_ = ratioX;
+}
+
+void FlexibleScaler::SetRatioY(float ratioY)
+{
+    RatioY_ = ratioY;
+}
+
 float FlexibleScaler::CalculatePositionRateX(float rawX) const
 {
-    return rawX / (ScreenWidth_) * 100.f * Scale_;
+    return rawX / (ScreenWidth_ * Scale_ * RatioX_) * 100.f;
 }
 
 float FlexibleScaler::CalculatePositionRateY(float rawY) const
 {
-    return rawY / (ScreenHeight_) * 100.f * Scale_;
+    return rawY / (ScreenHeight_ * Scale_ * RatioY_) * 100.f;
 }
 
 float FlexibleScaler::CalculatePositionX(float px) const
 {
-    return ScreenWidth_ * (px / 100.f) * Scale_;
+    return ScreenWidth_ * Scale_ * RatioX_ * (px / 100.f);
 }
 
 float FlexibleScaler::CalculatePositionY(float py) const
 {
-    return ScreenHeight_ * (py / 100.f) * Scale_;
+    return ScreenHeight_ * Scale_ * RatioY_ * (py / 100.f);
 }
 
 float FlexibleScaler::CalculateWidth(float width) const
 {
-    return ScreenWidth_ * (width / 100.f) * Scale_;
+    return ScreenWidth_ * Scale_ * RatioX_ * (width / 100.f);
 }
 
 float FlexibleScaler::CalculateHeight(float height) const
 {
-    return ScreenHeight_ * (height / 100.f) * Scale_;
+    return ScreenHeight_ * Scale_ * RatioY_* (height / 100.f);
 }
 
 ScreenData FlexibleScaler::Calculate(const ScreenData& dataOfPercent) const

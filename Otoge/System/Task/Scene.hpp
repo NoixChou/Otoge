@@ -7,6 +7,7 @@ class Scene : public Task
 {
     /* private は下部 */
 protected:
+    int FadingFrameCount_ = 0;
     bool IsFadingIn_ = false;
     bool IsFadingOut_ = false;
     float CurrentWidth_ = 0.f, CurrentHeight_ = 0.f;
@@ -24,6 +25,8 @@ public:
     Scene(const std::string& sceneName, const ScreenData& screen,
           std::shared_ptr<FlexibleScaler> parentScaler = nullptr, TaskPointer parentTask = nullptr);
     ~Scene();
+
+    void OnInitialize() override;
     void Update(float deltaTime) override;
     void ReCalculateScreen();
     bool RefreshScaler();
@@ -74,21 +77,32 @@ public:
     bool IsFadingOut();
     void SetDrawFunction(DrawFunction func);
     void ChangeDrawFunction(DrawFunction func);
-    int GetDrawBuffer();
+    int GetDrawBuffer() const;
     std::shared_ptr<FlexibleScaler> GetDefaultScaler() const;
     void SetScreen(ScreenData screen);
+    void SetOriginPos(float origX, float origY);
+    void SetOriginX(float origX);
+    void SetOriginY(float origY);
     void SetPositionX(float px);
     void SetPositionY(float py);
     void SetScreenWidth(float width);
     void SetScreenHeight(float height);
+    void SetRotationZ(float radAngle);
+    void SetRotationZDeg(float degAngle);
     void AddPositionX(float px);
     void AddPositionY(float py);
     void AddScreenWidth(float width);
     void AddScreenHeight(float height);
+    void AddRotationZ(float radAngle);
+    void AddRotationZDeg(float degAngle);
+    float GetOriginX() const;
+    float GetOriginY() const;
     float GetPositionX() const;
     float GetPositionY() const;
     float GetScreenWidth() const;
     float GetScreenHeight() const;
+    float GetRotationZ() const;
+    float GetRotationZDeg() const;
     float GetRawPositionX() const;
     float GetRawPositionY() const;
     float GetRawScreenWidth() const;
@@ -112,6 +126,9 @@ private:
     ScreenData PrevScreen_;
     ScreenData Screen_;
     ScreenData PreLayoutScreen_ = { 0.f, 0.f, 0.f, 0.f };
+    float ScreenOriginX_ = 0.f;
+    float ScreenOriginY_ = 0.f;
+    float ScreenRotationZ_ = 0.f;
     bool IsChangedSize_ = false;
     bool IsChangedPosition_ = false;
     bool IsVisible_ = true;
@@ -119,6 +136,8 @@ private:
     bool IsOnMouse_ = false;
     float Transparency_ = 100.f;
     DrawFunction DrawerFunction_ = nullptr;
+
+    bool IsNullSetParent = true;
 
     // デバッグ
     bool IsDrawFrame_;

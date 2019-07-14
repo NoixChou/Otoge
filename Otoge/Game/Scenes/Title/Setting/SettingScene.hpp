@@ -22,6 +22,7 @@ private:
     std::shared_ptr<CheckBox> VSyncCheck_;
 
     std::shared_ptr<Label> InterfaceSectionLabel_;
+    std::shared_ptr<CheckBox> UseSystemCursorCheck_;
     //std::shared_ptr<DropdownList> JapaneseFontList_;
     //std::shared_ptr<DropdownList> AlphabetFontList_;
 

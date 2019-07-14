@@ -20,6 +20,7 @@ DropdownList<V>::Separator::Separator(std::string text, float textSize, float th
     BaseItem(text, textSize, thickness)
 {
 	this->backColor = color_preset::GREY;
+    this->textColor = color_preset::BLACK;
 	this->doDrawBack = true;
 }
 
@@ -28,7 +29,7 @@ DropdownList<V>::SimpleItem::SimpleItem(std::string text, V value, float textSiz
     BaseItem(text, textSize, thickness),
     value(value)
 {
-	this->backColor = color_preset::WHITE_GREY;
+	this->backColor = color_preset::DARK_GREY;
 	this->doDrawBack = true;
 }
 
@@ -57,16 +58,16 @@ DropdownList<V>::DropdownList(const std::string& label, const ScreenData& layout
     AddChildTask(std::static_pointer_cast<Task>(TriangleLabel_));
 
     Panel_ = std::make_shared<Scene>(label + "<panel>", layoutScreen, ParentScaler_);
-    Panel_->SetDrawFunction([&]
+    Panel_->SetDrawFunction([=]
     {
         auto fixed = Panel_->GetDefaultScaler()->Calculate(ScreenData(0.f, 0.f, 100.f, 100.f));
-        DrawBox(engine::CastToInt(fixed.posX), engine::CastToInt(fixed.posY),
-                engine::CastToInt(fixed.posX + fixed.width), engine::CastToInt(fixed.posY + fixed.height), listColor,
-                TRUE);
+        //DrawBox(engine::CastToInt(fixed.posX), engine::CastToInt(fixed.posY),
+        //        engine::CastToInt(fixed.posX + fixed.width), engine::CastToInt(fixed.posY + fixed.height), listColor,
+        //        TRUE);
     });
-    Panel_->SetAlphaBlendMode(DX_BLENDMODE_ALPHA);
+    //Panel_->SetAlphaBlendMode(DX_BLENDMODE_PMA_ALPHA);
     Panel_->SetEnable(false);
-    Panel_->SetVisible(false);
+    //Panel_->SetVisible(false);
     Panel_->SetTransparent(0.f);
     Panel_->SetPriority(70.f);
     SetMaxItem(maxItem);
@@ -82,22 +83,17 @@ void DropdownList<V>::GUIUpdate(float deltaTime)
 {
     //Panel_->SetPositionX(GetDefaultScaler()->CalculatePositionRateX(GetDefaultScaler()->GetDiffX()));
     //Panel_->SetPositionY(GetDefaultScaler()->CalculatePositionRateY(GetDefaultScaler()->GetDiffY()) + PanelOffsetY_);
+
     if(SelectedItem_ > engine::CastToInt(Items_.size())) SelectedItem_ = Items_.size() - 1;
+
     if(IsDownMouse())
     {
-        timerCount = 0.f;
         AddChildTask(std::static_pointer_cast<Task>(
             std::make_shared<ButtonPushedAnimate>(
                 DefaultScaler_->CalculatePositionRateX(MouseManager::GetInstance()->GetMouseXf() - GetRawPositionX() - ParentScaler_->GetDiffX()),
                 DefaultScaler_->CalculatePositionRateY(MouseManager::GetInstance()->GetMouseYf() - GetRawPositionY() - ParentScaler_->GetDiffY()),
                 animationColor, 35.f, DefaultScaler_)
             ));
-    }
-
-    if(IsClickedMouse())
-    {
-        AddPanel();
-        InvertOpening();
     }
 
     if(IsListOpening_)
@@ -109,25 +105,33 @@ void DropdownList<V>::GUIUpdate(float deltaTime)
         if (IsListOpened_)
         {
             Panel_->SetTransparent(Easing::OutExp(timerCount, l_TotalTime, 100., 0.));
-            //Panel_->SetPositionY(l_EaseOpen(timerCount, l_TotalTime, GetPositionY() + GetScreenHeight(), GetPositionY()));
-            Panel_->SetPositionY(GetPositionY() + GetScreenHeight());
+            Panel_->SetPositionY(l_EaseOpen(timerCount, l_TotalTime, GetPositionY() + GetScreenHeight(), GetPositionY()));
+            //Panel_->SetPositionY(GetPositionY() + GetScreenHeight());
             Panel_->SetScreenHeight(l_EaseOpen(timerCount, l_TotalTime, PanelHeight_, 0.));
         }else
         {
             Panel_->SetTransparent(l_EaseClose(timerCount, l_TotalTime, 0., 100.));
-            //Panel_->SetPositionY(l_EaseClose(timerCount, l_TotalTime, GetPositionY(), GetPositionY() + GetScreenHeight()));
-            Panel_->SetPositionY(GetPositionY());
+            Panel_->SetPositionY(l_EaseClose(timerCount, l_TotalTime, GetPositionY(), GetPositionY() + GetScreenHeight()));
+            //Panel_->SetPositionY(GetPositionY());
             Panel_->SetScreenHeight(l_EaseClose(timerCount, l_TotalTime, 0., PanelHeight_));
         }
-        if (timerCount > (l_TotalTime + 0.1f))
+        if (timerCount > l_TotalTime)
         {
-            timerCount = l_TotalTime;
+            timerCount = 0.f;
             IsListOpening_ = false;
 
-            if (!IsListOpened_)
-                Panel_->SetVisible(false);
-            else
+            if (IsListOpened_)
+            {
                 Panel_->SetEnable(true);
+                Panel_->SetTransparent(100.f);
+                Panel_->SetScreenHeight(PanelHeight_);
+            }
+            else
+            {
+                Panel_->SetEnable(false);
+                Panel_->SetTransparent(0.f);
+                Panel_->SetScreenHeight(0.f);
+            }
         }
 
         Panel_->RefreshDrawBuffer();
@@ -146,15 +150,26 @@ void DropdownList<V>::GUIUpdate(float deltaTime)
         }
         l_ItemCount++;
     }
-    
+
+
+    if (IsClickedMouse())
+    {
+        AddPanel();
+        InvertOpening();
+        Logger_->Warn("ボタンクリックで切り替え");
+    }
+    else
+    {
+        if (MouseManager::GetInstance()->IsDownButton(MOUSE_INPUT_LEFT) && (!Panel_->IsOnMouse() && !IsOnMouse()) && IsListOpened_)
+        {
+            Logger_->Warn("範囲外クリックで閉じる");
+            CloseList();
+        }
+    }
+
     if (IsChangedSelect())
     {
         UpdateSelected();
-    }
-    
-    if(MouseManager::GetInstance()->IsDownButton(MOUSE_INPUT_LEFT) && (!Panel_->IsOnMouse() && !IsOnMouse()) && IsListOpened_ && !IsListOpening_)
-    {
-        CloseList();
     }
 
     Panel_->SetTransparent(engine::LimitRange(Panel_->GetTransparent(), 0.f, 100.f));
@@ -210,7 +225,7 @@ void DropdownList<V>::OpenList()
     ResetAnimation();
 
     IsListOpened_ = true;
-    Panel_->SetVisible(true);
+    Panel_->SetEnable(true);
     TriangleLabel_->SetLabel("▲");
 }
 
@@ -225,16 +240,18 @@ void DropdownList<V>::CloseList()
 }
 
 template< typename V >
-bool DropdownList<V>::IsOpenList()
+bool DropdownList<V>::IsOpenList() const
 {
     return IsListOpened_;
 }
 
 template <class V>
-void DropdownList<V>::SetSelectedItemNum(int num)
+void DropdownList<V>::SetSelectedItemNum(int num, bool doChangeFlag)
 {
     if (num > ItemCount_ || num < 0) return;
     SelectedItem_ = num;
+    if (!doChangeFlag)
+        BeforeSelectedItem_ = num;
 
     UpdateSelected();
 }
@@ -316,17 +333,31 @@ void DropdownList<V>::AddItem(int num, const std::shared_ptr<Button>& item) // p
 
     item->SetPositionY((100.f / ItemCount_) * num);
     item->SetScreenHeight(100.f / ItemCount_);
+    item->SetPriority(71.f);
+
+    item->ReCalculateScreen();
+    item->GetTextLabelInstance()->ReCalculateScreen();
+    item->RefreshDrawBuffer();
+    item->GetTextLabelInstance()->RefreshDrawBuffer();
 
     Panel_->AddChildTask(std::static_pointer_cast<Task>(item));
 
-    item->GetTextLabelInstance()->ReCalculateScreen();
-    UpdateSelected();
+    //item->ReCalculateScreen();
+    //item->GetTextLabelInstance()->ReCalculateScreen();
+    //UpdateSelected();
 }
 
 template <class V>
 void DropdownList<V>::AddBaseItem(int num, std::shared_ptr<BaseItem> item)
 {
-    std::shared_ptr<SpringButton> l_Btn = std::make_shared<SpringButton>(item->text, ScreenData(0.f, 0.f, 100.f, -1.f), Panel_->GetDefaultScaler());
+    AddPanel();
+    std::shared_ptr<Button> l_Btn;
+    
+    if (std::shared_ptr<Separator> l_Sep = std::dynamic_pointer_cast<Separator>(item))
+        l_Btn = std::make_shared<Button>(item->text, ScreenData(0.f, 0.f, 100.f, -1.f), Panel_->GetDefaultScaler());
+    else
+        l_Btn = std::make_shared<SpringButton>(item->text, ScreenData(0.f, 0.f, 100.f, -1.f), Panel_->GetDefaultScaler());
+
     l_Btn->isDrawBase = item->doDrawBack;
     l_Btn->textColor = item->textColor;
     l_Btn->baseColor = item->backColor;
@@ -336,6 +367,8 @@ void DropdownList<V>::AddBaseItem(int num, std::shared_ptr<BaseItem> item)
     l_Btn->GetTextLabelInstance()->SetTextAlign(item->Align());
     l_Btn->animationColor = color_preset::DARK_GREY;
     l_Btn->SetEnable(item->IsEnabledOnInit());
+    l_Btn->SetTransparent(100.f);
+    l_Btn->SetVisible(true);
     ItemData_[num] = item;
     AddItem(num, l_Btn);
 }

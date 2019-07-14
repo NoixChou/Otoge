@@ -1,14 +1,15 @@
 ﻿#pragma once
 #include "../Debug/Logger.h"
 
-class SettingManager
+class SettingManager : public std::enable_shared_from_this<SettingManager>
 {
 private:
     std::shared_ptr<Logger> Logger_;
     std::string FileName_;
     boost::property_tree::ptree SettingsTree_;
     boost::property_tree::ptree DefaultTree_;
-    static SettingManager* GlobalSettings_;
+    static std::shared_ptr<SettingManager> GlobalSettings_;
+    static int GlobalUser_;
     bool CanProcess();
 public:
     SettingManager(const std::string& fileName);
@@ -20,7 +21,7 @@ public:
     bool Save(const std::string& fileName);
     void Close();
     void SetGlobal();
-    static SettingManager* GetGlobal();
+    static std::shared_ptr<SettingManager> GetGlobal();
 
     template< typename T >
     void SetDefault(const std::string& dataPath, T value)

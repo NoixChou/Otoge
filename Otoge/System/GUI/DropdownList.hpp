@@ -14,7 +14,7 @@ public:
         float textSize;
         float textThickness;
         virtual Label::TextAlignment Align() { return Label::TextAlignment::center | Label::TextAlignment::middle; }
-        unsigned textColor = color_preset::BLACK;
+        unsigned textColor = color_preset::LIGHT_GREY;
         unsigned backColor;
         bool doDrawBack = false;
         virtual bool IsEnabledOnInit() { return true; }
@@ -26,14 +26,14 @@ public:
         Label::TextAlignment Align() override { return Label::TextAlignment::left | Label::TextAlignment::middle; }
 
         bool IsEnabledOnInit() override { return false; }
-        Separator(std::string text, float textSize = 65.f, float thickness = 3.f);
+        Separator(std::string text, float textSize = 8.8f, float thickness = 1.8f);
     };
     struct SimpleItem :
         public BaseItem
     {
         std::optional<V> value;
 
-        SimpleItem(std::string text, V value, float textSize = 60.f, float thickness = 1.f);
+        SimpleItem(std::string text, V value, float textSize = 7.f, float thickness = 0.2f);
     };
 
 private:
@@ -69,9 +69,9 @@ public:
     void InvertOpening();
     void OpenList();
     void CloseList();
-    bool IsOpenList();
+    bool IsOpenList() const;
 
-    void SetSelectedItemNum(int num);
+    void SetSelectedItemNum(int num, bool doChangeFlag = true);
     int GetSelectedItemNum() const;
     std::shared_ptr<BaseItem> GetSelectedItem() const;
     std::optional<V> GetSelectedItemValue() const;

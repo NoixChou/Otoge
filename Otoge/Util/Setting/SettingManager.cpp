@@ -3,7 +3,8 @@
 
 using namespace std;
 
-SettingManager *SettingManager::GlobalSettings_ = nullptr;
+std::shared_ptr<SettingManager> SettingManager::GlobalSettings_ = nullptr;
+int SettingManager::GlobalUser_ = 0;
 
 bool SettingManager::CanProcess()
 {
@@ -14,10 +15,18 @@ SettingManager::SettingManager(const std::string &fileName)
 {
     Logger_ = make_shared<Logger>("SettingManager");
     FileName_ = fileName;
+    GlobalUser_++;
 }
 
 SettingManager::~SettingManager()
 {
+    GlobalUser_--;
+    if(GlobalUser_ == 0)
+    {
+        Logger_->Info("ユーザーがいないためグローバル設定を初期化します");
+        GlobalSettings_.reset();
+       // GlobalSettings_ = nullptr;
+    }
 }
 
 bool SettingManager::Load(const std::string &fileName, bool autoCreate)
@@ -92,7 +101,7 @@ void SettingManager::SetGlobal()
 {
     if(!GlobalSettings_)
     {
-        GlobalSettings_ = this;
+        GlobalSettings_ = shared_from_this();
         Logger_->Warn("グローバル設定になりました。");
     }else
     {
@@ -100,7 +109,7 @@ void SettingManager::SetGlobal()
     }
 }
 
-SettingManager* SettingManager::GetGlobal()
+std::shared_ptr<SettingManager> SettingManager::GetGlobal()
 {
     return GlobalSettings_;
 }

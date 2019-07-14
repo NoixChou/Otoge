@@ -2,6 +2,7 @@
 #include "../../Util/Window/DxSettings.hpp"
 using namespace std;
 using namespace std::chrono;
+
 std::shared_ptr<TaskManager> TaskManager::Instance_ = nullptr;
 std::vector<Task::TaskPointer>::iterator TaskManager::ProcessingTask_;
 
@@ -81,6 +82,11 @@ float TaskManager::GetFrameRate() const
     return Fps_;
 }
 
+float TaskManager::GetGlobalDeltaTime() const
+{
+    return DeltaTime_;
+}
+
 bool TaskManager::IsGameExit() const
 {
     return IsGameExit_;
@@ -99,9 +105,9 @@ void TaskManager::Tick(float tickSpeed = 1.0f)
     PrevClockCount_ = ClockCount_;
     ClockCount_ = high_resolution_clock::now();
     auto l_ProcessLoad = duration_cast<microseconds>(ClockCount_ - PrevClockCount_).count();
-    const auto l_DeltaTime = l_ProcessLoad / 1000000.0f;
+    DeltaTime_ = l_ProcessLoad / 1000000.0f;
     static float l_FpsIntervalCount = 0.0f;
-    l_FpsIntervalCount += l_DeltaTime;
+    l_FpsIntervalCount += DeltaTime_;
     if(l_FpsIntervalCount > 1.0f)
     {
         Fps_ = 1000000.0f / l_ProcessLoad;
@@ -111,7 +117,7 @@ void TaskManager::Tick(float tickSpeed = 1.0f)
     ClearDrawScreen();
     clsDx();
 
-    UpdateTasks(Tasks_, TaskQueues_, tickSpeed, l_DeltaTime);
+    UpdateTasks(Tasks_, TaskQueues_, tickSpeed, DeltaTime_);
 
     ScreenFlip();
     if (DxSettings::doVSync) WaitVSync(1);
@@ -158,7 +164,7 @@ void TaskManager::UpdateTasks(std::vector<Task::TaskPointer>& tasks, std::vector
             (*l_Task)->SetLifespan((*l_Task)->GetLifespan() - fixedDeltaTime);
             if((*l_Task)->GetLifespan() < 0.0f) (*l_Task)->Terminate();
         }
-        if(duration_cast<milliseconds>(high_resolution_clock::now() - l_BeginTime).count() > 3.f) Logger::LowLevelLog("Task [" + (*l_Task)->GetName() + "] is too late. 3ms<", "WARN");
+        //if(duration_cast<milliseconds>(high_resolution_clock::now() - l_BeginTime).count() > 3.f) Logger::LowLevelLog("Task [" + (*l_Task)->GetName() + "] is too late. 3ms<", "WARN");
     }
     l_Task = tasks.begin();
     for(l_Task; l_Task != tasks.end(); ++l_Task)

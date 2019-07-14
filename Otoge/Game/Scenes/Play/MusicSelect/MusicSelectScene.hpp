@@ -1,20 +1,24 @@
 #pragma once
 #include "../../../../System/Task/Scene.hpp"
 #include "../../../../System/GUI/Button.hpp"
-
+#include "../../../../System/GUI/ScrollablePanel.hpp"
 class MusicInfoPanel;
 
 class MusicSelectScene :
     public Scene
 {
 private:
-    std::shared_ptr<MusicInfoPanel> TestPanel_;
+    int SelectedMusic_ = 0;
+    std::shared_ptr<Scene> HeaderPanel_;
     std::shared_ptr<Button> BackButton_;
+    std::shared_ptr<ScrollablePanel> ListPanel_;
+    std::vector<std::shared_ptr<MusicInfoPanel>> MusicPanels_;
 
 public:
     MusicSelectScene();
     ~MusicSelectScene();
 
+    void OnStartedFadeIn() override;
     void SceneFadeIn(float deltaTime) override;
     void OnStoppedFadeIn() override;
 
@@ -39,10 +43,14 @@ private:
     std::string ArtistName_;
     float Difficulty_;
 
-    float PreLayoutPosY_ = 0.f;
+    float PreLayoutPosX_ = 0.f;
+
+    float DefaultPosX_ = 0.f;
+
+    bool isHoverAnimate = false;
 
 public:
-    MusicInfoPanel(const std::string& musicName, const std::string& artistName, float difficulty);
+    MusicInfoPanel(const std::string& musicName, const std::string& artistName, float difficulty, std::shared_ptr<FlexibleScaler> parentScaler);
     ~MusicInfoPanel();
     /*
     void SceneFadeIn(float deltaTime) override;

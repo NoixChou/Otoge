@@ -42,7 +42,7 @@ CheckBox::CheckBox(const std::string& label, const ScreenData& layoutScreen,
     TextLabel_->baseColor = textColor;
     TextLabel_->adjustmentFontSize = true;
     TextLabel_->ChangeFontThickness(1);
-    TextLabel_->SetTextAlign(Label::TextAlignment::center | Label::TextAlignment::middle);
+    TextLabel_->SetTextAlign(Label::TextAlignment::left | Label::TextAlignment::middle);
     AddChildTask(std::static_pointer_cast<Task>(TextLabel_));
 }
 
@@ -57,7 +57,7 @@ void CheckBox::GUIUpdate(float deltaTime)
     {
         IsChecked_ = !IsChecked_;
     }
-    if(TextLabel_->IsDownMouse())
+    if(IsDownMouse())
     {
         AddChildTask(std::static_pointer_cast<Task>(std::make_shared<ButtonPushedAnimate>(
             DefaultScaler_->

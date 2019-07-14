@@ -60,11 +60,11 @@ TitleScene::TitleScene() : Scene("TitleScene")
     MenuClose_->SetTransparent(100.f);
     MenuGroup_->AddChildTask(std::static_pointer_cast<Task>(MenuClose_));
 
-    if (SettingScene_ == nullptr)
+    if (!SettingScene_)
     {
         SettingScene_ = std::make_shared<SettingScene>();
         SettingScene_->SetPositionX(-SettingScene_->GetScreenWidth());
-        SettingScene_->SetPriority(10.f);
+        SettingScene_->SetPriority(60.f);
         SettingScene_->SetEnable(false);
         TaskManager::GetInstance()->AddTask(SettingScene_);
     }
@@ -94,6 +94,11 @@ void TitleScene::OnStoppedFadeIn()
     SetTransparent(100.f);
 }
 
+void TitleScene::OnStartedFadeOut()
+{
+    SetEnable(false);
+}
+
 void TitleScene::SceneFadeOut(float deltaTime)
 {
     float totalTime = 0.5f;
@@ -115,6 +120,8 @@ void TitleScene::OnStoppedFadeOut()
 
 void TitleScene::SceneUpdate(float deltaTime)
 {
+    //MenuOpener_->SetOriginPos(50.f, 50.f);
+    //MenuOpener_->AddRotationZDeg(10.f * deltaTime);
     if(MenuOpener_->IsClickedMouse())
     {
         timerCount = 0.0f;

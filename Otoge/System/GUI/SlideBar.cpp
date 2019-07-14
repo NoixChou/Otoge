@@ -43,7 +43,7 @@ void SlideBar::GUIUpdate(float deltaTime)
     }
     if(IsHoldMouse())
     {
-        SlideValue_ = (MaxValue_) * (((MouseManager::GetInstance()->GetMouseRateX(DefaultScaler_) - DefaultScaler_->
+        SlideValue_ = (MaxValue_) * (((MouseManager::GetInstance()->GetMouseRateX(DefaultScaler_) - GetOriginX() - DefaultScaler_->
             CalculatePositionRateX(DefaultScaler_->GetDiffX())) / (100.f - ballSize)) - ((ballSize / 2.0f) / 100.f));
     }
     SlideValue_ = engine::LimitRange(SlideValue_, MinValue_, MaxValue_);

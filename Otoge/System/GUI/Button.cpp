@@ -112,7 +112,7 @@ void ButtonPushedAnimate::PreUpdate(float deltaTime)
             if(parentScene->IsHoldMouse())
             {
                 Lifespan_ = 0.5f;
-                if(Size_ < parentScene->GetRawScreenWidth() || Size_ < parentScene->GetRawScreenHeight())
+                if(Size_ < parentScene->GetRawScreenWidth() + position.x || Size_ < parentScene->GetRawScreenHeight() + position.y)
                 {
                     SizeAnimationProcess(deltaTime);
                 }
@@ -123,6 +123,7 @@ void ButtonPushedAnimate::PreUpdate(float deltaTime)
             }
         }
     }
+    
     SizeAnimationProcess(deltaTime);
     SetTransparent(GetTransparent() - (100.f * deltaTime));
 }
@@ -144,5 +145,6 @@ void ButtonPushedAnimate::Draw()
 
 void ButtonPushedAnimate::SizeAnimationProcess(float deltaTime)
 {
+    //Size_ *= deltaTime;
     Size_ += Size_ * 10.f * deltaTime;
 }

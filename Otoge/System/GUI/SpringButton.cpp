@@ -47,7 +47,7 @@ void SpringButton::GUIUpdate(float deltaTime)
             RawSizeY_ = DefaultScaler_->CalculateHeight(hoverAnimationAmount);
         }
 
-        if (IsOnMouse() || !IsRawEnable())
+        if ((IsOnMouse() && !IsHoldMouse()))
         {
             RawSizeX_ = 0.f;
             RawSizeY_ = 0.f;

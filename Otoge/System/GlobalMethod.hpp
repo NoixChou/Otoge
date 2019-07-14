@@ -23,4 +23,12 @@ namespace engine
     {
         return (a > b + tolerance) ? 1 : (a > b + tolerance) ? -1 : 0;
     }
+
+    inline bool IsPointInScreen(float px, float py, const ScreenData& screen)
+    {
+        return (px > screen.posX) &&
+               (px < screen.posX + screen.width) &&
+               (py > screen.posY) &&
+               (py < screen.posY + screen.height);
+    }
 }
