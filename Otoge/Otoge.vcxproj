@@ -207,6 +207,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\Scenes\Play\MainGameScene.cpp" />
     <ClCompile Include="Game\Scenes\Title\Setting\SettingScene.cpp" />
     <ClCompile Include="Game\Scenes\Play\MusicSelect\MusicSelectScene.cpp" />
     <ClCompile Include="System\GUI\CheckBox.cpp" />
@@ -216,6 +217,9 @@
     <ClCompile Include="System\GUI\SlideBar.cpp" />
     <ClCompile Include="System\GUI\SpringButton.cpp" />
     <ClCompile Include="System\Task\CursorDrawer.cpp" />
+    <ClCompile Include="Util\Audio\AudioManager.cpp" />
+    <ClCompile Include="Util\Beatmap\Beatmap.cpp" />
+    <ClCompile Include="Util\Beatmap\Notes.cpp" />
     <ClCompile Include="Util\Calculate\Animation\Easing.cpp" />
     <ClCompile Include="System\Buffer\BufferManager.cpp" />
     <ClCompile Include="System\Font\FontHandleCreator.cpp" />
@@ -244,6 +248,7 @@
     <ClCompile Include="Util\Window\DxSettings.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Scenes\Play\MainGameScene.hpp" />
     <ClInclude Include="Game\Scenes\Title\Setting\SettingScene.hpp" />
     <ClInclude Include="Game\Scenes\Play\MusicSelect\MusicSelectScene.hpp" />
     <ClInclude Include="System\GlobalMethod.hpp" />
@@ -254,6 +259,11 @@
     <ClInclude Include="System\GUI\SlideBar.hpp" />
     <ClInclude Include="System\GUI\SpringButton.hpp" />
     <ClInclude Include="System\Task\CursorDrawer.hpp" />
+    <ClInclude Include="Util\Audio\AudioManager.hpp" />
+    <ClInclude Include="Util\Audio\AudioStream.h" />
+    <ClInclude Include="Util\Beatmap\Beatmap.hpp" />
+    <ClInclude Include="Util\Beatmap\Notes.hpp" />
+    <ClInclude Include="Util\Beatmap\Timing.hpp" />
     <ClInclude Include="Util\Calculate\Animation\Easing.hpp" />
     <ClInclude Include="System\Buffer\BufferManager.hpp" />
     <ClInclude Include="System\DefineSettings.h" />

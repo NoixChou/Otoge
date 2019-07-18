@@ -41,7 +41,14 @@ void SlideBar::GUIUpdate(float deltaTime)
         }
         //SlideValue_ += MouseManager::GetInstance()->GetMouseWheelAccel() * l_MoveSpeed;
     }
-    if(IsHoldMouse())
+    bool isDown = engine::IsPointInScreen(
+        MouseManager::GetInstance()->GetDownPosXf(), MouseManager::GetInstance()->GetDownPosYf(),
+        ScreenData(GetRawPositionX() + ParentScaler_->GetDiffX() - DefaultScaler_->CalculatePositionX(GetOriginX()),
+            GetRawPositionY() + ParentScaler_->GetDiffY() - DefaultScaler_->CalculatePositionY(GetOriginY()),
+            GetRawScreenWidth(),
+            GetRawScreenHeight()
+        ));
+    if(IsHoldMouse() && isDown)
     {
         SlideValue_ = (MaxValue_) * (((MouseManager::GetInstance()->GetMouseRateX(DefaultScaler_) - GetOriginX() - DefaultScaler_->
             CalculatePositionRateX(DefaultScaler_->GetDiffX())) / (100.f - ballSize)) - ((ballSize / 2.0f) / 100.f));

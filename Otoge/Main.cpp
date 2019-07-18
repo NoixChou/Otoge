@@ -13,6 +13,7 @@
 #include "Util/Visual/Color.hpp"
 #include "Util/Encoding/EncodingConverter.h"
 #include "Game/Scenes/Title/Setting/SettingScene.hpp"
+#include "Util/Audio/AudioManager.hpp"
 using namespace std;
 
 // 前方宣言
@@ -51,15 +52,15 @@ void PreInitialize()
     g_SystemSettings->SetDefault(game_config::SETTINGS_AA_SAMPLE, 2);
     g_SystemSettings->SetDefault(game_config::SETTINGS_AA_QUALITY, 2);
     g_SystemSettings->SetDefault<std::string>(game_config::SETTINGS_FONT_NAME, game_config::GAME_APP_DEFAULT_FONT);
-    g_SystemSettings->SetDefault<std::string>(game_config::SETTINGS_ALPHABET_FONT_NAME,
-        game_config::GAME_APP_DEFAULT_FONT);
-    g_SystemSettings->SetDefault<std::string>(game_config::SETTINGS_NUMBER_FONT_NAME,
-        game_config::GAME_APP_DEFAULT_FONT);
+    g_SystemSettings->SetDefault<std::string>(game_config::SETTINGS_ALPHABET_FONT_NAME, game_config::GAME_APP_DEFAULT_FONT);
+    g_SystemSettings->SetDefault<std::string>(game_config::SETTINGS_NUMBER_FONT_NAME, game_config::GAME_APP_DEFAULT_FONT);
     g_SystemSettings->SetDefault(game_config::SETTINGS_FONT_DRAWTYPE, DX_FONTTYPE_NORMAL);
     g_SystemSettings->SetDefault(game_config::SETTINGS_DEBUG_DRAW_SCENE_FRAME, false);
     g_SystemSettings->SetDefault(game_config::SETTINGS_DEBUG_DRAW_DTASK_POINT, false);
     g_SystemSettings->SetDefault(game_config::SETTINGS_MOUSE_AREA_LIMIT, false);
     g_SystemSettings->SetDefault(game_config::SETTINGS_MOUSE_USEORIGINAL, true);
+    g_SystemSettings->SetDefault(game_config::SETTINGS_AUDIO_MUSIC_VOLUME, 255);
+    g_SystemSettings->SetDefault(game_config::SETTINGS_AUDIO_SE_VOLUME, 255);
     g_SystemSettings->Save();
     g_SystemSettings->SetGlobal();
     DxSettings::windowWidth = g_SystemSettings->Get<int>(game_config::SETTINGS_RES_WIDTH).get();
@@ -69,6 +70,9 @@ void PreInitialize()
     DxSettings::antialiasingSample = g_SystemSettings->Get<int>(game_config::SETTINGS_AA_SAMPLE).get();
     DxSettings::antialiasingQuality = g_SystemSettings->Get<int>(game_config::SETTINGS_AA_QUALITY).get();
     DxSettings::useOriginalCursor = g_SystemSettings->Get<bool>(game_config::SETTINGS_MOUSE_USEORIGINAL).get();
+    DxSettings::defaultFont = g_SystemSettings->Get<std::string>(game_config::SETTINGS_FONT_NAME).get();
+    DxSettings::alphabetFont = g_SystemSettings->Get<std::string>(game_config::SETTINGS_ALPHABET_FONT_NAME).get();
+    DxSettings::fontType = g_SystemSettings->Get<int>(game_config::SETTINGS_FONT_DRAWTYPE).get();
 
     if (!DxLib_IsInit())
     {
@@ -113,14 +117,16 @@ void Initialize()
     SetUseZBuffer3D(TRUE);
     SetWriteZBuffer3D(TRUE);
 
-    SetDrawMode(DX_DRAWMODE_NEAREST);
+    SetDrawMode(DX_DRAWMODE_NEAREST); // 描画補間モード
     SetMouseDispFlag(TRUE); // マウスカーソルの表示
+
     // コンポーネント初期化
     FlexibleScaler::CreateWindowBasedInstance();
     FlexibleScaler::GetWindowBasedInstance()->SetScale(1.0f);
     TaskManager::CreateInstance();
     KeyboardManager::CreateInstance();
     MouseManager::CreateInstance();
+    AudioManager::CreateInstance();
 
     // タスク追加
     TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(KeyboardManager::GetInstance()));
@@ -158,6 +164,9 @@ void Initialize()
             });
         TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(l_CursorDrawer));
     }
+
+    AudioManager::GetInstance()->RegisterSound("beat", LoadSoundMem("Data/Sound/beat.ogg"));
+    AudioManager::GetInstance()->RegisterSound("hit", LoadSoundMem("Data/Sound/hit.ogg"));
 }
 
 // メインループ
@@ -167,8 +176,7 @@ void Loop()
     float ReloadHoldTime = 0.f;
     while (ProcessMessage() != -1 && !TaskManager::GetInstance()->IsGameExit())
     {
-        if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_TAB)) TaskManager::GetInstance()->Tick(0.5f);
-        else TaskManager::GetInstance()->Tick(1.0f);
+        TaskManager::GetInstance()->Tick(1.0f);
         
         if (KeyboardManager::GetInstance()->IsHoldKey(KEY_INPUT_R))
             ReloadHoldTime += TaskManager::GetInstance()->GetGlobalDeltaTime();

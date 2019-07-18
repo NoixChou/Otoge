@@ -13,6 +13,7 @@
 #include "../../../../System/GUI/CheckBox.hpp"
 #include "../../../../Util/Window/DxSettings.hpp"
 #include "../../../../System/Font/FontHandleCreator.hpp"
+#include "../../../../Util/Audio/AudioManager.hpp"
 
 SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
 {
@@ -134,6 +135,23 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
     l_TopPosition = UseSystemCursorCheck_->GetPositionY() + UseSystemCursorCheck_->GetScreenHeight() + 0.6f;
 
     {
+        AudioSectionLabel_ = std::make_shared<Label>("オーディオ", ScreenData(0.f, l_TopPosition, 100.f, 2.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
+        AudioSectionLabel_->textAlign = Label::TextAlignment::center | Label::TextAlignment::middle;
+        AudioSectionLabel_->adjustmentFontSize = false;
+        AudioSectionLabel_->SetFontHandle(l_HeaderFontHandle);
+        BodyPanel_->GetPanelInstance()->AddChildTask(std::static_pointer_cast<Task>(AudioSectionLabel_));
+
+        BGMVolumeBar_ = std::make_shared<SlideBar>("BGMVolume", ScreenData(WindowSizeDescription_->GetPositionX(), AudioSectionLabel_->GetPositionY() + AudioSectionLabel_->GetScreenHeight() + 0.3f, 100.f - WindowSizeDescription_->GetPositionX(), 2.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
+        BGMVolumeBar_->SetMaxValue(255.f);
+        BodyPanel_->GetPanelInstance()->AddChildTask(BGMVolumeBar_);
+        SEVolumeBar_ = std::make_shared<SlideBar>("SEVolume", ScreenData(WindowSizeDescription_->GetPositionX(), BGMVolumeBar_->GetPositionY() + BGMVolumeBar_->GetScreenHeight() + 0.2f, BGMVolumeBar_->GetScreenWidth(), 2.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
+        SEVolumeBar_->SetMaxValue(255.f);
+        BodyPanel_->GetPanelInstance()->AddChildTask(SEVolumeBar_);
+    }
+
+    l_TopPosition = SEVolumeBar_->GetPositionY() + SEVolumeBar_->GetScreenHeight() + 0.6f;
+
+    {
         DebugSectionLabel_ = std::make_shared<Label>("デバッグ", ScreenData(0.f, l_TopPosition, 100.f, 2.5f), BodyPanel_->GetPanelInstance()->GetDefaultScaler());
         DebugSectionLabel_->textAlign = Label::TextAlignment::center | Label::TextAlignment::middle;
         DebugSectionLabel_->adjustmentFontSize = false;
@@ -158,6 +176,8 @@ SettingScene::SettingScene() : Scene("SettingScene", 40.f, 100.f)
         DrawablePointDrawCheck_->GetTextLabelInstance()->SetFontHandle(l_ItemFontHandle);
         BodyPanel_->GetPanelInstance()->AddChildTask(DrawablePointDrawCheck_);
     }
+
+    AudioManager::GetInstance()->RegisterSound("testBGM", LoadSoundMem("Data/Music/test.wav"));
 
     StopFade();
 }
@@ -196,6 +216,14 @@ void SettingScene::OnStartedFadeIn()
     // カーソル
     auto l_UseSysCursor = SettingManager::GetGlobal()->Get<bool>(game_config::SETTINGS_MOUSE_USEORIGINAL);
     if (l_UseSysCursor) UseSystemCursorCheck_->SetChecked(!l_UseSysCursor.get());
+
+    // 音量 - BGM
+    auto l_MusicVolume = SettingManager::GetGlobal()->Get<int>(game_config::SETTINGS_AUDIO_MUSIC_VOLUME);
+    if (l_MusicVolume) BGMVolumeBar_->SetValue(engine::CastToFloat(l_MusicVolume.get()));
+
+    // 音量 - SE
+    auto l_SEVolume = SettingManager::GetGlobal()->Get<int>(game_config::SETTINGS_AUDIO_SE_VOLUME);
+    if (l_SEVolume) SEVolumeBar_->SetValue(engine::CastToFloat(l_SEVolume.get()));
 
     // デバッグ - Sceneの枠描画
     auto l_DrawSceneFrame = SettingManager::GetGlobal()->Get<bool>(game_config::SETTINGS_DEBUG_DRAW_SCENE_FRAME);
@@ -310,6 +338,37 @@ void SettingScene::SceneUpdate(float deltaTime)
     {
         SettingManager::GetGlobal()->Set(game_config::SETTINGS_MOUSE_USEORIGINAL, !UseSystemCursorCheck_->IsChecked());
         DxSettings::useOriginalCursor = UseSystemCursorCheck_->IsChecked();
+    }
+
+    // 音量 - BGM
+    if(BGMVolumeBar_->IsChanged())
+    {
+        SettingManager::GetGlobal()->Set(game_config::SETTINGS_AUDIO_MUSIC_VOLUME, engine::CastToInt(BGMVolumeBar_->GetValue()));
+        AudioManager::GetInstance()->SetStreamVolume(AudioManager::STREAM_NAME_BGM, engine::CastToInt(BGMVolumeBar_->GetValue()));
+        ChangeVolumeSoundMem(engine::CastToInt(BGMVolumeBar_->GetValue()), AudioManager::GetInstance()->GetSoundHandle("testBGM"));
+    }
+
+    if(BGMVolumeBar_->IsDownMouse())
+    {
+        AudioManager::GetInstance()->PlayAudio("testBGM", AudioManager::STREAM_NAME_BGM);
+    }
+    if(BGMVolumeBar_->IsClickedMouse() || BGMVolumeBar_->IsEndOnMouse())
+    {
+        AudioManager::GetInstance()->StopAudio("testBGM");
+    }
+
+    // 音量 - SE
+    if (SEVolumeBar_->IsChanged())
+    {
+        SettingManager::GetGlobal()->Set(game_config::SETTINGS_AUDIO_SE_VOLUME, engine::CastToInt(SEVolumeBar_->GetValue()));
+        AudioManager::GetInstance()->SetStreamVolume(AudioManager::STREAM_NAME_SE, engine::CastToInt(SEVolumeBar_->GetValue()));
+    }
+    if(SEVolumeBar_->IsHoldMouse())
+    {
+        if (abs(fmod(timerCount, 0.5f) - 0.5f) <= 0.005f)
+        {
+            AudioManager::GetInstance()->PlayAudio("beat", AudioManager::STREAM_NAME_SE);
+        }
     }
 
     // デバッグ - Sceneの枠描画

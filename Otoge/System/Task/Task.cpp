@@ -27,6 +27,7 @@ bool Task::Initialize(int taskId)
 
 bool Task::Terminate()
 {
+    OnTerminate();
     IsTerminated_ = true;
     IsRunning_ = false;
     return true;

@@ -34,41 +34,15 @@ public:
     void RefreshChildren();
     bool IsChangedScaler();
 
-    virtual void OnReCalculateScreen()
-    {
-    }
-
-    virtual void OnStartedFadeIn()
-    {
-    }
-
-    virtual void OnStoppedFadeIn()
-    {
-    }
-
-    virtual void OnStartedFadeOut()
-    {
-    }
-
-    virtual void OnStoppedFadeOut()
-    {
-    }
-
-    virtual void SceneFadeIn(float deltaTime)
-    {
-    }
-
-    virtual void SceneFadeOut(float deltaTime)
-    {
-    }
-
-    virtual void SceneUpdate(float deltaTime)
-    {
-    }
-
-    virtual void Draw()
-    {
-    }
+    virtual void OnReCalculateScreen() {}
+    virtual void OnStartedFadeIn() {}
+    virtual void OnStoppedFadeIn() {}
+    virtual void OnStartedFadeOut() {}
+    virtual void OnStoppedFadeOut() {}
+    virtual void SceneFadeIn(float deltaTime) {}
+    virtual void SceneFadeOut(float deltaTime) {}
+    virtual void SceneUpdate(float deltaTime) {}
+    virtual void Draw() {}
 
     void StartFadeIn();
     void StartFadeOut();

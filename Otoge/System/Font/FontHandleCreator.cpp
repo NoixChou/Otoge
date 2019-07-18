@@ -1,10 +1,17 @@
 ﻿#include "FontHandleCreator.hpp"
 #include "../Config.h"
 #include "../../Util/Setting/SettingManager.h"
+#include "../../Util/Window/DxSettings.hpp"
 
 int FontHandleCreator::Create(int size, int thickness, const TCHAR* fontName)
 {
-    return CreateFontToHandle(fontName, size, thickness, SettingManager::GetGlobal()->Get<int>(game_config::SETTINGS_FONT_DRAWTYPE).get());
+    int l_PrevAsyncStat = GetUseASyncLoadFlag();
+
+    SetUseASyncLoadFlag(FALSE);
+    int l_Handle = CreateFontToHandle(fontName, size, thickness, DxSettings::fontType);
+    SetUseASyncLoadFlag(l_PrevAsyncStat);
+
+    return l_Handle;
 }
 
 int FontHandleCreator::Create(int size, int thickness, FontType fontType)
@@ -13,10 +20,10 @@ int FontHandleCreator::Create(int size, int thickness, FontType fontType)
 
     if(fontType == FontType::normal)
     {
-        l_FontName = SettingManager::GetGlobal()->Get<std::string>(game_config::SETTINGS_FONT_NAME).get();
+        l_FontName = DxSettings::defaultFont;
     }else
     {
-        l_FontName = SettingManager::GetGlobal()->Get<std::string>(game_config::SETTINGS_ALPHABET_FONT_NAME).get();
+        l_FontName = DxSettings::alphabetFont;
     }
 
     return Create(size, thickness, l_FontName.c_str());

@@ -2,6 +2,8 @@
 #include "../../../../System/Task/Scene.hpp"
 #include "../../../../System/GUI/Button.hpp"
 #include "../../../../System/GUI/ScrollablePanel.hpp"
+#include "../../../../Util/Beatmap/Beatmap.hpp"
+
 class MusicInfoPanel;
 
 class MusicSelectScene :
@@ -39,9 +41,7 @@ private:
     static int SmallFontHandle_;
     static int GlobalPanelCount_;
 
-    std::string MusicName_;
-    std::string ArtistName_;
-    float Difficulty_;
+    std::shared_ptr<Beatmap> Beatmap_;
 
     float PreLayoutPosX_ = 0.f;
 
@@ -50,7 +50,7 @@ private:
     bool isHoverAnimate = false;
 
 public:
-    MusicInfoPanel(const std::string& musicName, const std::string& artistName, float difficulty, std::shared_ptr<FlexibleScaler> parentScaler);
+    MusicInfoPanel(std::shared_ptr<Beatmap> map, std::shared_ptr<FlexibleScaler> parentScaler);
     ~MusicInfoPanel();
     /*
     void SceneFadeIn(float deltaTime) override;

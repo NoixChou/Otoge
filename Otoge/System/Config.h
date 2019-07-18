@@ -37,4 +37,7 @@ namespace game_config
 
     constexpr auto SETTINGS_MOUSE_AREA_LIMIT = "input.mouse.area_limit";
     constexpr auto SETTINGS_MOUSE_USEORIGINAL = "input.mouse.use_original";
+
+    constexpr auto SETTINGS_AUDIO_MUSIC_VOLUME = "audio.volume.music";
+    constexpr auto SETTINGS_AUDIO_SE_VOLUME = "audio.volume.se";
 }

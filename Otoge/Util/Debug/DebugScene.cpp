@@ -83,7 +83,6 @@ DebugScene::~DebugScene()
 
 void DebugScene::SceneUpdate(float deltaTime)
 {
-    if(KeyboardManager::GetInstance()->IsDownKey(KEY_INPUT_ESCAPE)) TaskManager::GetInstance()->GameExit();
     if(KeyboardManager::GetInstance()->IsDownKey(KEY_INPUT_1))
     {
         SetVisible(!IsVisible());

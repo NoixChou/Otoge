@@ -30,7 +30,8 @@ public:
     Task(const std::string& taskName);
     virtual ~Task();
     bool Initialize(int taskId);
-    virtual void OnInitialize() {};
+    virtual void OnInitialize() {}
+    virtual void OnTerminate() {}
     virtual void Update(float deltaTime) = 0;
     bool Terminate();
     void Pause();

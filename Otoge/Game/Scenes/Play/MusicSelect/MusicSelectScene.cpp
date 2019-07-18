@@ -11,6 +11,10 @@
 #include "../../../../System/Input/MouseManager.hpp"
 #include "../../../../System/Font/FontHandleCreator.hpp"
 
+#include <boost/foreach.hpp>
+#include <filesystem>
+#include "../MainGameScene.hpp"
+
 MusicSelectScene::MusicSelectScene() : Scene("MusicSelectScene")
 {
     HeaderPanel_ = std::make_shared<Scene>("Header", ScreenData(0.f, 0.f, 100.f, 10.f), DefaultScaler_);
@@ -34,17 +38,26 @@ MusicSelectScene::MusicSelectScene() : Scene("MusicSelectScene")
     AddChildTask(std::static_pointer_cast<Task>(ListPanel_));
 
 
-    MusicPanels_.push_back(std::make_shared<MusicInfoPanel>("TEST", "hoge", 10.2f, ListPanel_->GetPanelInstance()->GetDefaultScaler()));
-    MusicPanels_.push_back(std::make_shared<MusicInfoPanel>("TEST2", "hoge", 10.2f, ListPanel_->GetPanelInstance()->GetDefaultScaler()));
-    MusicPanels_.push_back(std::make_shared<MusicInfoPanel>("TEST3", "hoge", 10.2f, ListPanel_->GetPanelInstance()->GetDefaultScaler()));
-    MusicPanels_.push_back(std::make_shared<MusicInfoPanel>("TEST4", "hoge", 10.2f, ListPanel_->GetPanelInstance()->GetDefaultScaler()));
-    MusicPanels_.push_back(std::make_shared<MusicInfoPanel>("TEST5", "hoge", 10.2f, ListPanel_->GetPanelInstance()->GetDefaultScaler()));
-    MusicPanels_.push_back(std::make_shared<MusicInfoPanel>("TEST6", "hoge", 10.2f, ListPanel_->GetPanelInstance()->GetDefaultScaler()));
-    MusicPanels_.push_back(std::make_shared<MusicInfoPanel>("TEST7", "hoge", 10.2f, ListPanel_->GetPanelInstance()->GetDefaultScaler()));
-    MusicPanels_.push_back(std::make_shared<MusicInfoPanel>("TEST8", "hoge", 10.2f, ListPanel_->GetPanelInstance()->GetDefaultScaler()));
-    MusicPanels_.push_back(std::make_shared<MusicInfoPanel>("TEST9", "hoge", 10.2f, ListPanel_->GetPanelInstance()->GetDefaultScaler()));
-    MusicPanels_.push_back(std::make_shared<MusicInfoPanel>("TEST10", "hoge", 10.2f, ListPanel_->GetPanelInstance()->GetDefaultScaler()));
-    MusicPanels_.push_back(std::make_shared<MusicInfoPanel>("TEST11", "hoge", 10.2f, ListPanel_->GetPanelInstance()->GetDefaultScaler()));
+    const std::filesystem::path path("Songs");
+
+    //BOOST_FOREACH(const boost::filesystem::path & p, std::make_pair(boost::filesystem::recursive_directory_iterator(path),
+    //    boost::filesystem::recursive_directory_iterator())) {
+    for (const auto& e : boost::make_iterator_range(std::filesystem::recursive_directory_iterator(path), { }))
+    {
+        Logger_->Debug("走査: " + e.path().generic_string());
+        if (!std::filesystem::is_directory(e) && e.path().extension().generic_string() == ".otg")
+        {
+            Logger_->Debug("otgファイルを発見: " + e.path().generic_string());
+            auto map = std::make_shared<Beatmap>(e.path().generic_string());
+            if(map->Load())
+            {
+                MusicPanels_.push_back(std::make_shared<MusicInfoPanel>(map, ListPanel_->GetPanelInstance()->GetDefaultScaler()));
+            }else
+            {
+                Logger_->Error("読み込み失敗。");
+            }
+        }
+    }
 
 
     ListPanel_->GetPanelInstance()->SetScreenHeight((MusicPanels_[0]->GetScreenHeight() + 1.0f) * (MusicPanels_.size() + 1));
@@ -63,6 +76,7 @@ MusicSelectScene::MusicSelectScene() : Scene("MusicSelectScene")
 
 MusicSelectScene::~MusicSelectScene()
 {
+    MusicPanels_.clear();
 }
 
 void MusicSelectScene::OnStartedFadeIn()
@@ -124,15 +138,29 @@ void MusicSelectScene::OnStoppedFadeOut()
 
 void MusicSelectScene::SceneUpdate(float deltaTime)
 {
-    if (BackButton_->IsClickedMouse())
+    if (BackButton_->IsClickedMouse() || KeyboardManager::GetInstance()->IsDownKey(KEY_INPUT_ESCAPE))
     {
         TaskManager::GetInstance()->AddTaskByTypename<TitleScene>();
         StartFadeOut();
+    }
+
+    for (auto panel : MusicPanels_)
+    {
+        if(panel->IsClickedMouse())
+        {
+            StartFadeOut();
+        }
     }
 }
 
 void MusicSelectScene::Draw()
 {
+    ScreenData fixed = DefaultScaler_->Calculate(ScreenData(0.f, 0.f, 100.f, 100.f));
+
+    DrawBox(engine::CastToInt(fixed.posX),
+        engine::CastToInt(fixed.posY),
+        engine::CastToInt(fixed.width),
+        engine::CastToInt(fixed.height), color_preset::DARK_BLUE_GREY, TRUE);
 }
 
 
@@ -142,6 +170,26 @@ int MusicInfoPanel::MiddleFontHandle_ = -1;
 int MusicInfoPanel::SmallFontHandle_ = -1;
 int MusicInfoPanel::GlobalPanelCount_ = 0;
 
+MusicInfoPanel::MusicInfoPanel(std::shared_ptr<Beatmap> map, std::shared_ptr<FlexibleScaler> parentScaler) :
+                        Scene("MusicInfoPanel{" + map->GetTitle() + " , " + map->GetArtist() + ": " + std::_Floating_to_string("%.2f", map->GetDifficulty()) + "}", 100.f, 14.0f, 4.f, 0.f, parentScaler)
+{
+    Beatmap_ = map;
+
+    if (TitleFontHandle_ == -1 && MiddleFontHandle_ == -1 && SmallFontHandle_ == -1 && GlobalPanelCount_ == 0)
+    {
+        TitleFontHandle_ = FontHandleCreator::Create(engine::CastToInt(DefaultScaler_->CalculateHeight(24.f)), engine::CastToInt(DefaultScaler_->CalculateHeight(2.f)), FontHandleCreator::normal);
+        MiddleFontHandle_ = FontHandleCreator::Create(engine::CastToInt(DefaultScaler_->CalculateHeight(18.f)), engine::CastToInt(DefaultScaler_->CalculateHeight(1.4f)), FontHandleCreator::normal);
+        SmallFontHandle_ = FontHandleCreator::Create(engine::CastToInt(DefaultScaler_->CalculateHeight(10.f)), 1, FontHandleCreator::normal);
+    }
+
+    GlobalPanelCount_++;
+
+    PreLayoutPosX_ = ParentScaler_->CalculatePositionRateX(GetRawPositionX());
+
+    DefaultPosX_ = GetPositionX();
+}
+
+/*
 MusicInfoPanel::MusicInfoPanel(const std::string& musicName, const std::string& artistName, float difficulty, std::shared_ptr<FlexibleScaler> parentScaler) :
                         Scene("MusicSelectScene{" + musicName + " , " + artistName + ": " + std::_Floating_to_string("%.2f", difficulty) + "}", 100.f, 14.0f, 4.f, 0.f, parentScaler)
 {
@@ -166,6 +214,7 @@ MusicInfoPanel::MusicInfoPanel(const std::string& musicName, const std::string& 
 
     DefaultPosX_ = GetPositionX();
 }
+*/
 
 MusicInfoPanel::~MusicInfoPanel()
 {
@@ -226,6 +275,13 @@ void MusicInfoPanel::SceneUpdate(float deltaTime)
                 MouseManager::GetInstance()->GetMouseYf() - GetRawPositionY() - ParentScaler_->GetDiffY()),
             color_preset::DARK_GREY, 20.f, DefaultScaler_)));
     }
+
+    if(IsClickedMouse())
+    {
+        auto mainGame = std::make_shared<MainGameScene>(Beatmap_);
+        mainGame->SetPriority(-20.f);
+        TaskManager::GetInstance()->AddTask(mainGame);
+    }
     /*
     if(timerCount <= 0.333f / 2.f)
     {
@@ -249,11 +305,11 @@ void MusicInfoPanel::Draw()
     DrawBoxAA(fixed.posX, fixed.posY, fixed.posX + fixed.width, fixed.posY + fixed.height, color_preset::DARK_GREY, TRUE);
     DrawBoxAA(fixed.posX, fixed.posY, fixed.posX + fixed.width, fixed.posY + fixed.height, color_preset::WHITE, FALSE);
 
-    float TitleTextCenterH = FontStringCalculator::GetStringCenterHorizontal(TitleFontHandle_, MusicName_);
+    float TitleTextCenterH = FontStringCalculator::GetStringCenterHorizontal(TitleFontHandle_, Beatmap_->GetTitle());
     float TitleTextCenterV = FontStringCalculator::GetStringCenterVertical(TitleFontHandle_);
-    float ArtistTextCenterH = FontStringCalculator::GetStringCenterHorizontal(MiddleFontHandle_, MusicName_);
+    float ArtistTextCenterH = FontStringCalculator::GetStringCenterHorizontal(MiddleFontHandle_, Beatmap_->GetArtist());
     float ArtistTextCenterV = FontStringCalculator::GetStringCenterVertical(MiddleFontHandle_);
-    float DifficultyTextCenterH = FontStringCalculator::GetStringCenterHorizontal(SmallFontHandle_, MusicName_);
+    float DifficultyTextCenterH = FontStringCalculator::GetStringCenterHorizontal(SmallFontHandle_, std::_Floating_to_string("%.2f", Beatmap_->GetDifficulty()));
     float DifficultyTextCenterV = FontStringCalculator::GetStringCenterVertical(SmallFontHandle_);
 
     ScreenData TitlePos = DefaultScaler_->Calculate(18.f, 14.f, 0.f, 0.f);
@@ -263,6 +319,6 @@ void MusicInfoPanel::Draw()
     //ArtistPos.posX -= ArtistTextCenterH;
     ArtistPos.posY -= ArtistTextCenterV;
 
-    DrawStringFToHandle(TitlePos.posX, TitlePos.posY, MusicName_.c_str(), color_preset::WHITE, TitleFontHandle_);
-    DrawStringFToHandle(ArtistPos.posX, ArtistPos.posY, ArtistName_.c_str(), color_preset::LIGHT_GREY, MiddleFontHandle_);
+    DrawStringFToHandle(TitlePos.posX, TitlePos.posY, Beatmap_->GetTitle().c_str(), color_preset::WHITE, TitleFontHandle_);
+    DrawStringFToHandle(ArtistPos.posX, ArtistPos.posY, Beatmap_->GetArtist().c_str(), color_preset::LIGHT_GREY, MiddleFontHandle_);
 }

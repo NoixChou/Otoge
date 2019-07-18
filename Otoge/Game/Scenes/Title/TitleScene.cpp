@@ -201,5 +201,4 @@ void TitleScene::Draw()
             engine::CastToInt(fixed.posY),
             engine::CastToInt(fixed.width),
             engine::CastToInt(fixed.height), color_preset::BLACK, TRUE);
-    
 }
