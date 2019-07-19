@@ -11,12 +11,13 @@
 #include "../../../System/GlobalMethod.hpp"
 #include "../../../Util/Visual/Color.hpp"
 #include "../Play/MusicSelect/MusicSelectScene.hpp"
+#include "../../../System/GUI/SpringButton.hpp"
 std::shared_ptr<Scene> TitleScene::SettingScene_ = nullptr;
 
 TitleScene::TitleScene() : Scene("TitleScene")
 {
     // メニュー開閉ボタン
-    MenuOpener_ = std::make_shared<Button>("おなまえ", ScreenData(40.f, 40.f, 20.f, 20.f, true), DefaultScaler_);
+    MenuOpener_ = std::make_shared<SpringButton>("おなまえ", ScreenData(40.f, 40.f, 20.f, 20.f, true), DefaultScaler_);
     MenuOpener_->GetTextLabelInstance()->adjustmentFontSize = false;
     MenuOpener_->baseColor = color_preset::BLUE;
     MenuOpener_->GetTextLabelInstance()->ChangeFontThickness(1);
@@ -32,7 +33,7 @@ TitleScene::TitleScene() : Scene("TitleScene")
     AddChildTask(std::static_pointer_cast<Task>(MenuGroup_));
     MenuGroup_->SetEnable(false);
 
-    MenuPlay_ = std::make_shared<Button>("Play", ScreenData(0.f, 0.f, 100.f / 3.f, 100.f), MenuGroup_->GetDefaultScaler());
+    MenuPlay_ = std::make_shared<SpringButton>("Play", ScreenData(0.f, 0.f, 100.f / 3.f, 100.f), MenuGroup_->GetDefaultScaler());
     MenuPlay_->GetTextLabelInstance()->adjustmentFontSize = false;
     MenuPlay_->baseColor = color_preset::DEEP_ORANGE;
     MenuPlay_->animationColor = color_preset::DEEP_ORANGE;
@@ -41,7 +42,7 @@ TitleScene::TitleScene() : Scene("TitleScene")
     MenuPlay_->SetTransparent(100.f);
     MenuGroup_->AddChildTask(std::static_pointer_cast<Task>(MenuPlay_));
 
-    MenuOption_ = std::make_shared<Button>("Option", ScreenData(MenuPlay_->GetScreenWidth(), 0.f, 100.f / 3.f, MenuPlay_->GetScreenHeight()), MenuGroup_->GetDefaultScaler());
+    MenuOption_ = std::make_shared<SpringButton>("Option", ScreenData(MenuPlay_->GetScreenWidth(), 0.f, 100.f / 3.f, MenuPlay_->GetScreenHeight()), MenuGroup_->GetDefaultScaler());
     MenuOption_->GetTextLabelInstance()->adjustmentFontSize = false;
     MenuOption_->baseColor = color_preset::BLUE_GREY;
     MenuOption_->animationColor = color_preset::DARK_BLUE_GREY;
@@ -50,7 +51,7 @@ TitleScene::TitleScene() : Scene("TitleScene")
     MenuOption_->SetTransparent(100.f);
     MenuGroup_->AddChildTask(std::static_pointer_cast<Task>(MenuOption_));
 
-    MenuClose_ = std::make_shared<Button>("Exit", ScreenData(MenuPlay_->GetScreenWidth() + MenuOption_->GetScreenWidth(), 0.f, 100.f / 3.f, MenuOption_->GetScreenHeight()), MenuGroup_->GetDefaultScaler());
+    MenuClose_ = std::make_shared<SpringButton>("Exit", ScreenData(MenuPlay_->GetScreenWidth() + MenuOption_->GetScreenWidth(), 0.f, 100.f / 3.f, MenuOption_->GetScreenHeight()), MenuGroup_->GetDefaultScaler());
     MenuClose_->baseColor = color_preset::DARK_GREY;
     MenuClose_->animationColor = GetColor(33, 33, 33);
     MenuClose_->GetTextLabelInstance()->adjustmentFontSize = false;
