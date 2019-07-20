@@ -59,18 +59,19 @@ MusicSelectScene::MusicSelectScene() : Scene("MusicSelectScene")
         }
     }
 
-
-    ListPanel_->GetPanelInstance()->SetScreenHeight((MusicPanels_[0]->GetScreenHeight() + 1.0f) * (MusicPanels_.size() + 1));
-    ListPanel_->GetPanelInstance()->ReCalculateScreen();
-    ListPanel_->GetPanelInstance()->RefreshDrawBuffer();
-    int PanelCount = 0;
-    for(auto panel : MusicPanels_)
+    if (!MusicPanels_.empty())
     {
-        panel->SetPositionY((panel->GetScreenHeight() + 1.0f) * PanelCount);
-        ListPanel_->GetPanelInstance()->AddChildTask(panel);
-        PanelCount++;
+        ListPanel_->GetPanelInstance()->SetScreenHeight((MusicPanels_[0]->GetScreenHeight() + 1.0f) * (MusicPanels_.size() + 1));
+        ListPanel_->GetPanelInstance()->ReCalculateScreen();
+        ListPanel_->GetPanelInstance()->RefreshDrawBuffer();
+        int PanelCount = 0;
+        for (auto panel : MusicPanels_)
+        {
+            panel->SetPositionY((panel->GetScreenHeight() + 1.0f) * PanelCount);
+            ListPanel_->GetPanelInstance()->AddChildTask(panel);
+            PanelCount++;
+        }
     }
-
     StartFadeIn();
 }
 
