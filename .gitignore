@@ -198,6 +198,7 @@
 /Bin
 /WorkDir/*
 !/WorkDir/.gitkeep
+!/WorkDir/Data
 /PDB
 /Otoge/x64
 /x64/Debug

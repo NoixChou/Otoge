@@ -43,6 +43,38 @@ Logger::~Logger()
 void Logger::Log(std::string const& message, std::string const& tag)
 {
 #ifdef _DEBUG
+    PutTime();
+
+    printf("[%s]", (tag).c_str());
+    OutputDebugString(std::string("[" + tag + "] ").c_str());
+
+    if (ModuleName_ != "")
+        printf("<%s> ", (ModuleName_).c_str()), OutputDebugString(encoding::ConvertUtf8ToSJIS("<" + ModuleName_ + "> ").c_str());
+    printf("%s\n", message.c_str());
+    OutputDebugString(encoding::ConvertUtf8ToSJIS(message).c_str());
+    OutputDebugString("\n");
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
+#endif
+}
+
+void Logger::LowLevelLog(const std::string& message, const std::string& tag)
+{
+#ifdef _DEBUG
+    PutTime();
+
+    printf("[%s]", (tag).c_str());
+    OutputDebugString(("[" + tag + "] ").c_str());
+
+    printf("%s\n", message.c_str());
+    OutputDebugString(encoding::ConvertUtf8ToSJIS(message).c_str());
+    OutputDebugString("\n");
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
+#endif
+}
+
+void Logger::PutTime()
+{
+#ifdef _DEBUG
     time_t l_GlobalTime;
     time(&l_GlobalTime);
     const auto l_LocalTime = localtime(&l_GlobalTime);
@@ -60,32 +92,8 @@ void Logger::Log(std::string const& message, std::string const& tag)
 
     printf("[%s] ", l_TimeStr.str().c_str());
     OutputDebugString(std::string("[" + l_TimeStr.str() + "] ").c_str());
-
-    printf("[%s]", (tag).c_str());
-    OutputDebugString(std::string("[" + tag + "] ").c_str());
-
-    if (ModuleName_ != "")
-        printf("<%s> ", (ModuleName_).c_str()), OutputDebugString(encoding::ConvertUtf8ToSJIS("<" + ModuleName_ + "> ").c_str());
-    printf("%s\n", message.c_str());
-    OutputDebugString(encoding::ConvertUtf8ToSJIS(message).c_str());
-    OutputDebugString("\n");
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
 #endif
 }
-
-void Logger::LowLevelLog(const std::string& message, const std::string& tag)
-{
-#ifdef _DEBUG
-    printf("[%s]", (tag).c_str());
-    OutputDebugString(("[" + tag + "] ").c_str());
-
-    printf("%s\n", message.c_str());
-    OutputDebugString(encoding::ConvertUtf8ToSJIS(message).c_str());
-    OutputDebugString("\n");
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN);
-#endif
-}
-
 
 void Logger::Debug(const string& message)
 {

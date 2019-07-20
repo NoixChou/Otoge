@@ -14,6 +14,9 @@
 #include "Util/Encoding/EncodingConverter.h"
 #include "Game/Scenes/Title/Setting/SettingScene.hpp"
 #include "Util/Audio/AudioManager.hpp"
+
+#include "direct.h"
+
 using namespace std;
 
 // 前方宣言
@@ -52,9 +55,9 @@ void PreInitialize()
     g_SystemSettings->SetDefault(game_config::SETTINGS_AA_SAMPLE, 2);
     g_SystemSettings->SetDefault(game_config::SETTINGS_AA_QUALITY, 2);
     g_SystemSettings->SetDefault<std::string>(game_config::SETTINGS_FONT_NAME, game_config::GAME_APP_DEFAULT_FONT);
-    g_SystemSettings->SetDefault<std::string>(game_config::SETTINGS_ALPHABET_FONT_NAME, game_config::GAME_APP_DEFAULT_FONT);
+    g_SystemSettings->SetDefault<std::string>(game_config::SETTINGS_ALPHABET_FONT_NAME, game_config::GAME_APP_DEFAULT_ALPHABET_FONT);
     g_SystemSettings->SetDefault<std::string>(game_config::SETTINGS_NUMBER_FONT_NAME, game_config::GAME_APP_DEFAULT_FONT);
-    g_SystemSettings->SetDefault(game_config::SETTINGS_FONT_DRAWTYPE, DX_FONTTYPE_NORMAL);
+    g_SystemSettings->SetDefault(game_config::SETTINGS_FONT_DRAWTYPE, DX_FONTTYPE_ANTIALIASING_8X8);
     g_SystemSettings->SetDefault(game_config::SETTINGS_DEBUG_DRAW_SCENE_FRAME, false);
     g_SystemSettings->SetDefault(game_config::SETTINGS_DEBUG_DRAW_DTASK_POINT, false);
     g_SystemSettings->SetDefault(game_config::SETTINGS_MOUSE_AREA_LIMIT, false);
@@ -164,6 +167,9 @@ void Initialize()
             });
         TaskManager::GetInstance()->AddTask(static_pointer_cast<Task>(l_CursorDrawer));
     }
+
+    // 楽曲フォルダ
+    _mkdir("Songs");
 
     AudioManager::GetInstance()->RegisterSound("beat", LoadSoundMem("Data/Sound/beat.ogg"));
     AudioManager::GetInstance()->RegisterSound("hit", LoadSoundMem("Data/Sound/hit.ogg"));

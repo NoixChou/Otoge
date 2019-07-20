@@ -25,14 +25,14 @@ Beatmap::Beatmap(const std::string& fileName)
 
 Beatmap::~Beatmap()
 {
+    Reset();
+
     GlobalUser_--;
     Logger_->Debug("Beatmap count: " + std::to_string(GlobalUser_));
     if(GlobalUser_ <= 0)
     {
         Logger_.reset();
     }
-
-    Reset();
 }
 
 bool Beatmap::Create()
@@ -169,6 +169,8 @@ void Beatmap::Reset()
         }
     }
     Notes_.clear();
+
+    Logger_->Info("読み込み済み譜面データ初期化");
 }
 
 std::string Beatmap::GetTitle()

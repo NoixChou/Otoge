@@ -13,25 +13,69 @@ MainGameScene::MainGameScene(std::shared_ptr<Beatmap> map) : Scene("MainGameScen
 {
     Beatmap_ = map;
 
-    BPMLabel_ = std::make_shared<Label>("- BPM", ScreenData(50.f, 50.f, 20.f, 5.f), DefaultScaler_);
-    BPMLabel_->baseColor = color_preset::YELLOW;
-    BPMLabel_->adjustmentFontSize = true;
-    AddChildTask(std::static_pointer_cast<Task>(BPMLabel_));
+    LaneKeys_ = new int[6];
+    LaneKeys_[0] = KEY_INPUT_Z;
+    LaneKeys_[1] = KEY_INPUT_X;
+    LaneKeys_[2] = KEY_INPUT_C;
+    LaneKeys_[3] = KEY_INPUT_J;
+    LaneKeys_[4] = KEY_INPUT_K;
+    LaneKeys_[5] = KEY_INPUT_L;
 
-    BarCountLabel_ = std::make_shared<Label>("- Beats", ScreenData(50.f, 55.f, 15.f, 3.f), DefaultScaler_);
-    BarCountLabel_->baseColor = color_preset::LIGHT_GREY;
-    BarCountLabel_->adjustmentFontSize = true;
-    AddChildTask(std::static_pointer_cast<Task>(BarCountLabel_));
+    JudgeText_[Notes::HitsType::just] = std::make_pair("JUST", color_preset::YELLOW);
+    JudgeText_[Notes::HitsType::great] = std::make_pair("GREAT", color_preset::LIGHT_BLUE);
+    JudgeText_[Notes::HitsType::bad] = std::make_pair("BAD", color_preset::PURPLE);
+    JudgeText_[Notes::HitsType::fail] = std::make_pair("FAIL", color_preset::LIGHT_GREY);
 
-    TimingCountLabel_ = std::make_shared<Label>("- Counts", ScreenData(50.f, 58.f, 18.f, 3.f), DefaultScaler_);
-    TimingCountLabel_->baseColor = color_preset::GREY;
-    TimingCountLabel_->adjustmentFontSize = true;
-    AddChildTask(std::static_pointer_cast<Task>(TimingCountLabel_));
+    GamePanel_ = std::make_shared<Scene>("MainGamePanel", ScreenData(0.f, 0.f, 50.f, 100.f), DefaultScaler_);
+    GamePanel_->SetDrawFunction([&] {DrawGamePanel(); });
+    AddChildTask(std::static_pointer_cast<Task>(GamePanel_));
 
-    LoadingLabel_ = std::make_shared<Label>("Loading...", ScreenData(3.f, JudgeLinePosY_ - 8.f, 36.f, 5.f), DefaultScaler_);
+    LoadingLabel_ = std::make_shared<Label>("Loading...", ScreenData(0.f, JudgeLinePosY_ - 14.f, 100.f, 5.f), GamePanel_->GetDefaultScaler());
     LoadingLabel_->baseColor = color_preset::CYAN;
     LoadingLabel_->adjustmentFontSize = true;
-    AddChildTask(std::static_pointer_cast<Task>(LoadingLabel_));
+    LoadingLabel_->SetTextAlign(Label::TextAlignment::middle | Label::TextAlignment::center);
+    GamePanel_->AddChildTask(std::static_pointer_cast<Task>(LoadingLabel_));
+
+
+    InfoPanel_ = std::make_shared<Scene>("InfoPanel", ScreenData(50.f, 0.f, 50.f, 100.f), DefaultScaler_);
+    AddChildTask(std::static_pointer_cast<Task>(InfoPanel_));
+
+    BPMLabel_ = std::make_shared<Label>("------------- BPM", ScreenData(3.f, 50.f, 40.f, 5.f), InfoPanel_->GetDefaultScaler());
+    BPMLabel_->baseColor = color_preset::YELLOW;
+    BPMLabel_->adjustmentFontSize = true;
+    InfoPanel_->AddChildTask(std::static_pointer_cast<Task>(BPMLabel_));
+
+    BarCountLabel_ = std::make_shared<Label>("---:--- / ---", ScreenData(3.f, 55.f, 30.f, 3.f), InfoPanel_->GetDefaultScaler());
+    BarCountLabel_->baseColor = color_preset::LIGHT_GREY;
+    BarCountLabel_->adjustmentFontSize = true;
+    InfoPanel_->AddChildTask(std::static_pointer_cast<Task>(BarCountLabel_));
+
+    TimingCountLabel_ = std::make_shared<Label>("------- Counts", ScreenData(3.f, 58.f, 36.f, 3.f), InfoPanel_->GetDefaultScaler());
+    TimingCountLabel_->baseColor = color_preset::GREY;
+    TimingCountLabel_->adjustmentFontSize = true;
+    InfoPanel_->AddChildTask(std::static_pointer_cast<Task>(TimingCountLabel_));
+
+
+    ScorePanel_ = std::make_shared<Scene>("ScorePanel", ScreenData(4.f, 67.f, 70.f, 30.f), InfoPanel_->GetDefaultScaler());
+    InfoPanel_->AddChildTask(std::static_pointer_cast<Task>(ScorePanel_));
+
+    ScoreLabel_ = std::make_shared<Label>("--------------- pt", ScreenData(0.f, 2.f, 80.f, 12.f), ScorePanel_->GetDefaultScaler());
+    ScoreLabel_->baseColor = color_preset::WHITE_BLUE;
+    ScoreLabel_->adjustmentFontSize = true;
+    ScoreLabel_->SetTextAlign(Label::TextAlignment::middle | Label::TextAlignment::left);
+    ScorePanel_->AddChildTask(std::static_pointer_cast<Task>(ScoreLabel_));
+
+    ComboLabel_ = std::make_shared<Label>("--------x", ScreenData(0.f, 14.f, 80.f, 10.f), ScorePanel_->GetDefaultScaler());
+    ComboLabel_->baseColor = color_preset::WHITE;
+    ComboLabel_->adjustmentFontSize = true;
+    ComboLabel_->SetTextAlign(Label::TextAlignment::middle | Label::TextAlignment::left);
+    ScorePanel_->AddChildTask(std::static_pointer_cast<Task>(ComboLabel_));
+
+    AccuracyLabel_ = std::make_shared<Label>("--------%", ScreenData(0.f, 24.f, 80.f, 15.f), ScorePanel_->GetDefaultScaler());
+    AccuracyLabel_->baseColor = color_preset::WHITE;
+    AccuracyLabel_->adjustmentFontSize = true;
+    AccuracyLabel_->SetTextAlign(Label::TextAlignment::middle | Label::TextAlignment::left);
+    ScorePanel_->AddChildTask(std::static_pointer_cast<Task>(AccuracyLabel_));
 
     Beatmap_->Reset();
     SetUseASyncLoadFlag(TRUE);
@@ -42,6 +86,8 @@ MainGameScene::MainGameScene(std::shared_ptr<Beatmap> map) : Scene("MainGameScen
 MainGameScene::~MainGameScene()
 {
     Beatmap_->Reset();
+    delete[] LaneKeys_;
+    Logger_->Debug("MainGameScene 終了");
 }
 
 void MainGameScene::OnInitialize()
@@ -167,12 +213,43 @@ void MainGameScene::SceneUpdate(float deltaTime)
     {
         Beatmap_->Update(deltaTime);
 
+        // 精度/スコア計算用のカウンタ
+        int l_ProcessedNoteCount = 0;
+        float l_MapAccuracy = 0.f;
+
         for (Notes* note : Beatmap_->GetMapNotes())
         {
             if (note->TimingCount_ < engine::CastToInt(Beatmap_->GetCurrentPlayCount() + timing::HI_SPEED))
             {
-                // 処理済みならスキップ
-                if (note->IsProcessed_) continue;
+                // 処理済み
+                if (note->IsProcessed_)
+                {
+                    // 精度計算
+                    if (note->JudgeResult_ == Notes::HitsType::outside)
+                    {
+                        // 処理済みのためスキップ
+                        continue;
+                    }
+                    l_ProcessedNoteCount++;
+
+                    float l_NoteAccuracy = 0.f;
+                    if (note->JudgeResult_ == Notes::HitsType::just)
+                    {
+                        l_NoteAccuracy = 1.f;
+                    }
+                    if (note->JudgeResult_ == Notes::HitsType::great)
+                    {
+                        l_NoteAccuracy = 0.8f;
+                    }
+                    if (note->JudgeResult_ == Notes::HitsType::bad)
+                    {
+                        l_NoteAccuracy = 0.5f;
+                    }
+
+                    l_MapAccuracy += l_NoteAccuracy;
+
+                    continue;
+                }
 
                 // BPM変更
                 if (note->Type_ == Notes::NoteType::changeBPM)
@@ -198,31 +275,83 @@ void MainGameScene::SceneUpdate(float deltaTime)
 
                         Beatmap_->SetCurrentTempoByBPM(note->BPM_);
                         BPMLabel_->SetLabel(std::_Floating_to_string("%.2f", note->BPM_) + " BPM");
+
+                        note->IsProcessed_ = true;
                     }
                 }
 
                 // シンプルタップノーツ
                 if (note->Type_ == Notes::NoteType::simple)
                 {
-                    if (note->IsPast(Beatmap_->GetCurrentPlayCount()))
+                    Notes::HitsType judge = note->Judgment(Beatmap_->GetCurrentPlayCount(), Beatmap_->GetCurrentTempoByBPM());
+                    if (judge != Notes::HitsType::outside)
                     {
-                        AudioManager::GetInstance()->PlayAudio("hit", AudioManager::STREAM_NAME_SE);
-                    }
-                }
+                        // 判定範囲内
+                        if (KeyboardManager::GetInstance()->IsDownKey(LaneKeys_[note->Position_]))
+                        {
+                            // FAIL判定ではないなら音を鳴らしてノーツ表示を消す
+                            if (judge != Notes::HitsType::fail)
+                            {
+                                AudioManager::GetInstance()->PlayAudio("hit", AudioManager::STREAM_NAME_SE);
+                                note->IsDraw_ = false;
 
-                // タイミングポイントを過ぎていたら処理済みにする
-                if (note->IsPast(Beatmap_->GetCurrentPlayCount()))
-                {
-                    note->IsProcessed_ = true;
+                                // スコア・コンボ加算
+                                CurrentCombo_++;
+                                if (MaxCombo_ < CurrentCombo_) MaxCombo_ = CurrentCombo_;
+
+                                if(judge == Notes::HitsType::just)
+                                {
+                                    Score_ += 500;
+                                }
+                                if (judge == Notes::HitsType::great)
+                                {
+                                    Score_ += 200;
+                                }
+                                if (judge == Notes::HitsType::bad)
+                                {
+                                    Score_ += 50;
+                                }
+                            }else
+                            {
+                                CurrentCombo_ = 0;
+                            }
+
+                            LoadingLabel_->SetLabel(JudgeText_[judge].first);
+                            LoadingLabel_->baseColor = JudgeText_[judge].second;
+                            LoadingLabel_->SetVisible(true);
+
+                            note->IsProcessed_ = true;
+                            Logger_->Debug("judge: " + std::to_string(judge));
+                        }
+                    }else
+                    {
+                        // タイミングポイントを過ぎていたら処理済みにする
+                        if (note->IsPast(Beatmap_->GetCurrentPlayCount()))
+                        {
+                            note->IsProcessed_ = true;
+                            LoadingLabel_->SetLabel("FAIL");
+                            LoadingLabel_->baseColor = color_preset::GREY;
+                            LoadingLabel_->SetVisible(true);
+
+                            CurrentCombo_ = 0;
+                        }
+                    }
                 }
             }
         }
 
+        // 小節/拍数計算
         int l_Beat = timing::GetBeatByCount(Beatmap_->GetCurrentPlayCount());
         int l_Bar = timing::GetBarByBeat(l_Beat, 4);
         BarCountLabel_->SetLabel(std::to_string(l_Bar + 1) + ":" + std::to_string(l_Beat % 4 + 1) + " / " + std::to_string(l_Beat + 1));
         TimingCountLabel_->SetLabel(std::to_string(engine::CastToInt(Beatmap_->GetCurrentPlayCount())) + " Counts");
 
+        // 精度計算、スコアボード更新
+        Accuracy_ = (l_MapAccuracy / engine::CastToFloat(l_ProcessedNoteCount)) * 100.f;
+        if (isnan(Accuracy_)) Accuracy_ = 0.f;
+        ScoreLabel_->SetLabel(std::to_string(Score_) + " pts");
+        ComboLabel_->SetLabel(std::to_string(CurrentCombo_) + "x / Max " + std::to_string(MaxCombo_) + "x");
+        AccuracyLabel_->SetLabel(std::_Floating_to_string("%.2f", Accuracy_) + "%");
         
         if(timing::GetBeatByCount(Beatmap_->GetPrevPlayCount()) != timing::GetBeatByCount(Beatmap_->GetCurrentPlayCount()))
         {
@@ -239,10 +368,15 @@ void MainGameScene::Draw()
         engine::CastToInt(fixed.posY),
         engine::CastToInt(fixed.width),
         engine::CastToInt(fixed.height), color_preset::BLACK, TRUE);
+}
+
+void MainGameScene::DrawGamePanel()
+{
+    float LaneWidth_ = 100.f / 6.f;
 
     for (Notes* note : Beatmap_->GetMapNotes())
     {
-        if (note->TimingCount_ < engine::CastToInt(Beatmap_->GetCurrentPlayCount() + timing::HI_SPEED))
+        if (note->TimingCount_ < engine::CastToInt(Beatmap_->GetCurrentPlayCount() + timing::HI_SPEED) && note->IsDraw_)
         {
             // 処理済みなら半透明化
             if (note->IsProcessed_) SetDrawBlendMode(DX_BLENDMODE_ALPHA, 20);
@@ -252,15 +386,15 @@ void MainGameScene::Draw()
             ScreenData noteBox;
 
             // BPM変更
-            if(note->Type_ == Notes::NoteType::changeBPM)
+            if (note->Type_ == Notes::NoteType::changeBPM)
             {
-                noteBox = DefaultScaler_->Calculate(ScreenData(3.f, notePositionY, 36.f, 0.f));
+                noteBox = GamePanel_->GetDefaultScaler()->Calculate(ScreenData(0.f, notePositionY, 100.f, 0.f));
             }
 
             // シンプルタップノーツ
             if (note->Type_ == Notes::NoteType::simple)
             {
-                noteBox = DefaultScaler_->Calculate(3.f + (note->Position_ * 6.f), notePositionY, 6.f, 2.f);
+                noteBox = GamePanel_->GetDefaultScaler()->Calculate(note->Position_ * LaneWidth_, notePositionY, LaneWidth_, 2.f);
             }
 
             noteBox.posY -= noteBox.height / 2.f;
@@ -269,6 +403,24 @@ void MainGameScene::Draw()
         }
     }
 
-    ScreenData l_LineSD = DefaultScaler_->Calculate(3.f, JudgeLinePosY_, 36.f, 0.5f);
+    ScreenData l_LineSD = GamePanel_->GetDefaultScaler()->Calculate(0.f, JudgeLinePosY_, 100.f, 0.5f);
     DrawBox(l_LineSD.posX, l_LineSD.posY, l_LineSD.posX + l_LineSD.width, l_LineSD.posY + l_LineSD.height, color_preset::LIGHT_GREY, TRUE);
+
+    ScreenData l_OutLine = GamePanel_->GetDefaultScaler()->Calculate(0.f, -5.f, 100.f, 110.f);
+    DrawBoxAA(l_OutLine.posX, l_OutLine.posY, l_OutLine.posX + l_OutLine.width, l_OutLine.posY + l_OutLine.height, color_preset::LIGHT_GREY, FALSE, 2.f);
+
+
+    for (int i = 0; i < 7; i++)
+    {
+        ScreenData l_VLine = GamePanel_->GetDefaultScaler()->Calculate(i * LaneWidth_, 0.f, 0.f, 100.f);
+        DrawLineAA(l_VLine.posX, l_VLine.posY, l_VLine.posX, l_VLine.height, color_preset::LIGHT_GREY, 1.f);
+
+        if (i < 6 && KeyboardManager::GetInstance()->IsHoldKey(LaneKeys_[i]))
+        {
+            ScreenData l_KeyEffect = GamePanel_->GetDefaultScaler()->Calculate(i * LaneWidth_, JudgeLinePosY_, LaneWidth_, 100.f - JudgeLinePosY_);
+            SetDrawBlendMode(DX_BLENDMODE_ALPHA, 40);
+            DrawBoxAA(l_KeyEffect.posX, l_KeyEffect.posY, l_KeyEffect.posX + l_KeyEffect.width, l_KeyEffect.posY + l_KeyEffect.height, LaneColor_, TRUE);
+            SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255);
+        }
+    }
 }

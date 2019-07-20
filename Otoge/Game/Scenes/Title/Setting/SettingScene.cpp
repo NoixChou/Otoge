@@ -306,8 +306,11 @@ void SettingScene::SceneUpdate(float deltaTime)
         VSyncCheck_->SetEnable(false);
         FullscreenCheck_->SetEnable(false);
         UseSystemCursorCheck_->SetEnable(false);
+        BGMVolumeBar_->SetEnable(false);
+        SEVolumeBar_->SetEnable(false);
         SceneFrameDrawCheck_->SetEnable(false);
         DrawablePointDrawCheck_->SetEnable(false);
+
         return;
     }
     /** 解像度リストが開いていなかったら **/
@@ -315,6 +318,8 @@ void SettingScene::SceneUpdate(float deltaTime)
     VSyncCheck_->SetEnable(true);
     FullscreenCheck_->SetEnable(true);
     UseSystemCursorCheck_->SetEnable(true);
+    BGMVolumeBar_->SetEnable(true);
+    SEVolumeBar_->SetEnable(true);
     SceneFrameDrawCheck_->SetEnable(true);
     DrawablePointDrawCheck_->SetEnable(true);
 
