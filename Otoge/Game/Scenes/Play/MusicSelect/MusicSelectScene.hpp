@@ -24,6 +24,7 @@ public:
     void SceneFadeIn(float deltaTime) override;
     void OnStoppedFadeIn() override;
 
+    void OnStartedFadeOut() override;
     void SceneFadeOut(float deltaTime) override;
     void OnStoppedFadeOut() override;
 
@@ -39,6 +40,9 @@ private:
     static int TitleFontHandle_;
     static int MiddleFontHandle_;
     static int SmallFontHandle_;
+    static int TitleAlphabetFontHandle_;
+    static int MiddleAlphabetFontHandle_;
+    static int SmallAlphabetFontHandle_;
     static int GlobalPanelCount_;
 
     std::shared_ptr<Beatmap> Beatmap_;

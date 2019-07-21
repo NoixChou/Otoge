@@ -103,6 +103,45 @@ void GameResultScene::OnTerminate()
     TaskManager::GetInstance()->AddTaskByTypename<MusicSelectScene>();
 }
 
+void GameResultScene::OnStartedFadeIn()
+{
+}
+
+void GameResultScene::SceneFadeIn(float deltaTime)
+{
+    float totalTime = 1.0f;
+    float startPos_ = 20.f;
+    Easing::EaseFunction ease = Easing::OutBounce;
+
+    SetTransparent(engine::CastToFloat(ease(timerCount, totalTime, 100.f, 0.f)));
+
+    SetPositionX(engine::CastToFloat(ease(timerCount, totalTime, 0.f, -startPos_)));
+    SetPositionY(engine::CastToFloat(ease(timerCount, totalTime, 0.f, -startPos_)));
+    SetScreenWidth(engine::CastToFloat(ease(timerCount, totalTime, 100.f, 100.f + startPos_ * 2.f)));
+    SetScreenHeight(engine::CastToFloat(ease(timerCount, totalTime, 100.f, 100.f + startPos_ * 2.f)));
+
+    RefreshScaler();
+    RefreshDrawBuffer();
+
+    if (timerCount > totalTime)
+    {
+        StopFade();
+    }
+}
+
+void GameResultScene::OnStoppedFadeIn()
+{
+    SetTransparent(100.f);
+
+    SetPositionX(0.f);
+    SetPositionY(0.f);
+    SetScreenWidth(100.f);
+    SetScreenHeight(100.f);
+
+    RefreshScaler();
+    RefreshDrawBuffer();
+}
+
 void GameResultScene::SceneUpdate(float deltaTime)
 {
     ScoreLabel_->SetLabel(std::to_string(ResultScore_->score));

@@ -14,6 +14,7 @@
 #include <boost/foreach.hpp>
 #include <filesystem>
 #include "../MainGameScene.hpp"
+#include "../../../../Util/Encoding/CharacterType.hpp"
 
 MusicSelectScene::MusicSelectScene() : Scene("MusicSelectScene")
 {
@@ -118,6 +119,11 @@ void MusicSelectScene::OnStoppedFadeIn()
     SetTransparent(100.f);
 }
 
+void MusicSelectScene::OnStartedFadeOut()
+{
+    SetEnable(false);
+}
+
 void MusicSelectScene::SceneFadeOut(float deltaTime)
 {
     float totalTime = 0.5f;
@@ -140,7 +146,7 @@ void MusicSelectScene::OnStoppedFadeOut()
 
 void MusicSelectScene::SceneUpdate(float deltaTime)
 {
-    if (BackButton_->IsClickedMouse() || KeyboardManager::GetInstance()->IsDownKey(KEY_INPUT_ESCAPE))
+    if ((BackButton_->IsClickedMouse() || KeyboardManager::GetInstance()->IsDownKey(KEY_INPUT_ESCAPE)) && IsEnable())
     {
         TaskManager::GetInstance()->AddTaskByTypename<TitleScene>();
         StartFadeOut();
@@ -148,7 +154,7 @@ void MusicSelectScene::SceneUpdate(float deltaTime)
 
     for (auto panel : MusicPanels_)
     {
-        if(panel->IsClickedMouse())
+        if(panel->IsClickedMouse() && IsEnable())
         {
             StartFadeOut();
         }
@@ -170,6 +176,9 @@ void MusicSelectScene::Draw()
 int MusicInfoPanel::TitleFontHandle_ = -1;
 int MusicInfoPanel::MiddleFontHandle_ = -1;
 int MusicInfoPanel::SmallFontHandle_ = -1;
+int MusicInfoPanel::TitleAlphabetFontHandle_ = -1;
+int MusicInfoPanel::MiddleAlphabetFontHandle_ = -1;
+int MusicInfoPanel::SmallAlphabetFontHandle_ = -1;
 int MusicInfoPanel::GlobalPanelCount_ = 0;
 
 MusicInfoPanel::MusicInfoPanel(std::shared_ptr<Beatmap> map, std::shared_ptr<FlexibleScaler> parentScaler) :
@@ -177,12 +186,19 @@ MusicInfoPanel::MusicInfoPanel(std::shared_ptr<Beatmap> map, std::shared_ptr<Fle
 {
     Beatmap_ = map;
 
-    if (TitleFontHandle_ == -1 && MiddleFontHandle_ == -1 && SmallFontHandle_ == -1 && GlobalPanelCount_ == 0)
-    {
+    if (TitleFontHandle_ == -1)
         TitleFontHandle_ = FontHandleCreator::Create(engine::CastToInt(DefaultScaler_->CalculateHeight(24.f)), engine::CastToInt(DefaultScaler_->CalculateHeight(2.f)), FontHandleCreator::normal);
+    if (MiddleFontHandle_ == -1)
         MiddleFontHandle_ = FontHandleCreator::Create(engine::CastToInt(DefaultScaler_->CalculateHeight(18.f)), engine::CastToInt(DefaultScaler_->CalculateHeight(1.4f)), FontHandleCreator::normal);
+    if (SmallFontHandle_ == -1)
         SmallFontHandle_ = FontHandleCreator::Create(engine::CastToInt(DefaultScaler_->CalculateHeight(10.f)), 1, FontHandleCreator::normal);
-    }
+
+    if (TitleAlphabetFontHandle_ == -1)
+        TitleAlphabetFontHandle_ = FontHandleCreator::Create(engine::CastToInt(DefaultScaler_->CalculateHeight(24.f)), engine::CastToInt(DefaultScaler_->CalculateHeight(2.f)), FontHandleCreator::alphabet);
+    if (MiddleAlphabetFontHandle_ == -1)
+        MiddleAlphabetFontHandle_ = FontHandleCreator::Create(engine::CastToInt(DefaultScaler_->CalculateHeight(18.f)), engine::CastToInt(DefaultScaler_->CalculateHeight(1.4f)), FontHandleCreator::alphabet);
+    if (SmallAlphabetFontHandle_ == -1)
+        SmallAlphabetFontHandle_ = FontHandleCreator::Create(engine::CastToInt(DefaultScaler_->CalculateHeight(10.f)), 1, FontHandleCreator::alphabet);
 
     GlobalPanelCount_++;
 
@@ -303,16 +319,29 @@ void MusicInfoPanel::SceneUpdate(float deltaTime)
 
 void MusicInfoPanel::Draw()
 {
+    int l_TitleFont = TitleAlphabetFontHandle_;
+    int l_MiddleFont = MiddleAlphabetFontHandle_;
+    int l_SmallFont = SmallAlphabetFontHandle_;
+
+    if(character::HasDoubleByteString(Beatmap_->GetTitle()))
+    {
+        l_TitleFont = TitleFontHandle_;
+    }
+    if (character::HasDoubleByteString(Beatmap_->GetArtist()))
+    {
+        l_MiddleFont = MiddleFontHandle_;
+    }
+
     ScreenData fixed = DefaultScaler_->Calculate(0.f, 0.f, 100.f, 100.f);
     DrawBoxAA(fixed.posX, fixed.posY, fixed.posX + fixed.width, fixed.posY + fixed.height, color_preset::DARK_GREY, TRUE);
     DrawBoxAA(fixed.posX, fixed.posY, fixed.posX + fixed.width, fixed.posY + fixed.height, color_preset::WHITE, FALSE);
 
-    float TitleTextCenterH = FontStringCalculator::GetStringCenterHorizontal(TitleFontHandle_, Beatmap_->GetTitle());
-    float TitleTextCenterV = FontStringCalculator::GetStringCenterVertical(TitleFontHandle_);
-    float ArtistTextCenterH = FontStringCalculator::GetStringCenterHorizontal(MiddleFontHandle_, Beatmap_->GetArtist());
-    float ArtistTextCenterV = FontStringCalculator::GetStringCenterVertical(MiddleFontHandle_);
-    float DifficultyTextCenterH = FontStringCalculator::GetStringCenterHorizontal(SmallFontHandle_, std::_Floating_to_string("%.2f", Beatmap_->GetDifficulty()));
-    float DifficultyTextCenterV = FontStringCalculator::GetStringCenterVertical(SmallFontHandle_);
+    float TitleTextCenterH = FontStringCalculator::GetStringCenterHorizontal(l_TitleFont, Beatmap_->GetTitle());
+    float TitleTextCenterV = FontStringCalculator::GetStringCenterVertical(l_TitleFont);
+    float ArtistTextCenterH = FontStringCalculator::GetStringCenterHorizontal(l_MiddleFont, Beatmap_->GetArtist());
+    float ArtistTextCenterV = FontStringCalculator::GetStringCenterVertical(l_MiddleFont);
+    float DifficultyTextCenterH = FontStringCalculator::GetStringCenterHorizontal(l_SmallFont, std::_Floating_to_string("%.2f", Beatmap_->GetDifficulty()));
+    float DifficultyTextCenterV = FontStringCalculator::GetStringCenterVertical(l_SmallFont);
 
     ScreenData TitlePos = DefaultScaler_->Calculate(18.f, 14.f, 0.f, 0.f);
     //TitlePos.posX -= TitleTextCenterH;
@@ -321,6 +350,6 @@ void MusicInfoPanel::Draw()
     //ArtistPos.posX -= ArtistTextCenterH;
     ArtistPos.posY -= ArtistTextCenterV;
 
-    DrawStringFToHandle(TitlePos.posX, TitlePos.posY, Beatmap_->GetTitle().c_str(), color_preset::WHITE, TitleFontHandle_);
-    DrawStringFToHandle(ArtistPos.posX, ArtistPos.posY, Beatmap_->GetArtist().c_str(), color_preset::LIGHT_GREY, MiddleFontHandle_);
+    DrawStringFToHandle(TitlePos.posX, TitlePos.posY, Beatmap_->GetTitle().c_str(), color_preset::WHITE, l_TitleFont);
+    DrawStringFToHandle(ArtistPos.posX, ArtistPos.posY, Beatmap_->GetArtist().c_str(), color_preset::LIGHT_GREY, l_MiddleFont);
 }

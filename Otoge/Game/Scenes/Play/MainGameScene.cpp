@@ -101,7 +101,7 @@ void MainGameScene::OnInitialize()
 void MainGameScene::OnTerminate()
 {
     AudioManager::GetInstance()->StopAudio("map_" + Beatmap_->GetTitle());
-    //AudioManager::GetInstance()->SetStreamVolume("music", defaultMusicStreamVol_);
+    DeleteSoundMem(AudioManager::GetInstance()->GetSoundHandle("map_" + Beatmap_->GetTitle()));
 }
 
 
@@ -119,6 +119,7 @@ void MainGameScene::OnStoppedFadeIn()
 
 void MainGameScene::OnStartedFadeOut()
 {
+    SetEnable(false);
     DefaultMusicStreamVol_ = AudioManager::GetInstance()->GetStreamVolume(AudioManager::STREAM_NAME_BGM);
     TaskManager::GetInstance()->AddTask(std::make_shared<GameResultScene>(ScoreData_, Beatmap_));
 }
@@ -166,7 +167,7 @@ void MainGameScene::SceneFadeOut(float deltaTime)
 void MainGameScene::SceneUpdate(float deltaTime)
 {
 
-    if (KeyboardManager::GetInstance()->IsDownKey(KEY_INPUT_ESCAPE))
+    if (KeyboardManager::GetInstance()->IsDownKey(KEY_INPUT_ESCAPE) && IsEnable())
     {
         StartFadeOut();
     }

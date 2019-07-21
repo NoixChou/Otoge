@@ -2,12 +2,12 @@
 // 
 // 		ＤＸライブラリ		Windows用データタイプ定義ヘッダファイル
 // 
-// 				Ver 3.20c
+// 				Ver 3.20f
 // 
 // -------------------------------------------------------------------------------
 
-#ifndef __DXDATATYPEWIN_H__
-#define __DXDATATYPEWIN_H__
+#ifndef DX_DATATYPEWIN_H
+#define DX_DATATYPEWIN_H
 
 // インクルード ------------------------------------------------------------------
 #include "DxCompileConfig.h"
@@ -25,7 +25,7 @@ struct IUnknown;
 
 // ライブラリリンク定義--------------------------------------------------------
 
-#ifndef __DX_MAKE
+#ifndef DX_MAKE
 	#ifndef DX_LIB_NOT_DEFAULTPATH
 		#ifndef DX_GCC_COMPILE
 			#ifndef DX_SRC_COMPILE
@@ -86,7 +86,7 @@ struct IUnknown;
 												#pragma comment( lib, "DxUseCLibW_vs2015_x64_MDd.lib"				)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 											#endif // defined(_ITERATOR_DEBUG_LEVEL) && _ITERATOR_DEBUG_LEVEL == 0
 										#else
-											#pragma comment( lib, "DxLib_vs2015_x64_MDd.lib"						)		//  ＤＸライブラリ使用指定
+											#pragma comment( lib, "DxLib_x64_d.lib"						)		//  ＤＸライブラリ使用指定
 											#if defined(_ITERATOR_DEBUG_LEVEL) && _ITERATOR_DEBUG_LEVEL == 0
 												#pragma comment( lib, "DxUseCLib_vs2015_x64_ItrDbgLv0_MDd.lib"	)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 											#else
@@ -99,7 +99,7 @@ struct IUnknown;
 											#pragma comment( lib, "DxLibW_vs2015_x64_MD.lib"						)		//  ＤＸライブラリ使用指定
 											#pragma comment( lib, "DxUseCLibW_vs2015_x64_MD.lib"					)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 										#else
-											#pragma comment( lib, "DxLib_vs2015_x64_MD.lib"						)		//  ＤＸライブラリ使用指定
+											#pragma comment( lib, "DxLib_x64.lib"						)		//  ＤＸライブラリ使用指定
 											#pragma comment( lib, "DxUseCLib_vs2015_x64_MD.lib"					)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 										#endif
 									#endif // _DEBUG
@@ -114,7 +114,7 @@ struct IUnknown;
 												#pragma comment( lib, "DxUseCLibW_vs2015_x86_MDd.lib"				)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 											#endif // defined(_ITERATOR_DEBUG_LEVEL) && _ITERATOR_DEBUG_LEVEL == 0
 										#else
-											#pragma comment( lib, "DxLib_vs2015_x86_MDd.lib"						)		//  ＤＸライブラリ使用指定
+											#pragma comment( lib, "DxLib_d.lib"						)		//  ＤＸライブラリ使用指定
 											#if defined(_ITERATOR_DEBUG_LEVEL) && _ITERATOR_DEBUG_LEVEL == 0
 												#pragma comment( lib, "DxUseCLib_vs2015_x86_ItrDbgLv0_MDd.lib"	)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 											#else
@@ -127,7 +127,7 @@ struct IUnknown;
 											#pragma comment( lib, "DxLibW_vs2015_x86_MD.lib"						)		//  ＤＸライブラリ使用指定
 											#pragma comment( lib, "DxUseCLibW_vs2015_x86_MD.lib"					)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 										#else
-											#pragma comment( lib, "DxLib_vs2015_x86_MD.lib"						)		//  ＤＸライブラリ使用指定
+											#pragma comment( lib, "DxLib.lib"						)		//  ＤＸライブラリ使用指定
 											#pragma comment( lib, "DxUseCLib_vs2015_x86_MD.lib"					)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 										#endif
 									#endif // _DEBUG
@@ -144,7 +144,7 @@ struct IUnknown;
 												#pragma comment( lib, "DxUseCLibW_vs2015_x64_MTd.lib"				)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 											#endif // defined(_ITERATOR_DEBUG_LEVEL) && _ITERATOR_DEBUG_LEVEL == 0
 										#else
-											#pragma comment( lib, "DxLib_vs2015_x64_MTd.lib"						)		//  ＤＸライブラリ使用指定
+											#pragma comment( lib, "DxLib_x64_d.lib"						)		//  ＤＸライブラリ使用指定
 											#if defined(_ITERATOR_DEBUG_LEVEL) && _ITERATOR_DEBUG_LEVEL == 0
 												#pragma comment( lib, "DxUseCLib_vs2015_x64_ItrDbgLv0_MTd.lib"	)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 											#else
@@ -157,7 +157,7 @@ struct IUnknown;
 											#pragma comment( lib, "DxLibW_vs2015_x64_MT.lib"						)		//  ＤＸライブラリ使用指定
 											#pragma comment( lib, "DxUseCLibW_vs2015_x64_MT.lib"					)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 										#else
-											#pragma comment( lib, "DxLib_vs2015_x64_MT.lib"						)		//  ＤＸライブラリ使用指定
+											#pragma comment( lib, "DxLib_x64.lib"						)		//  ＤＸライブラリ使用指定
 											#pragma comment( lib, "DxUseCLib_vs2015_x64_MT.lib"					)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 										#endif
 									#endif // _DEBUG
@@ -172,7 +172,7 @@ struct IUnknown;
 												#pragma comment( lib, "DxUseCLibW_vs2015_x86_MTd.lib"				)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 											#endif // defined(_ITERATOR_DEBUG_LEVEL) && _ITERATOR_DEBUG_LEVEL == 0
 										#else
-											#pragma comment( lib, "DxLib_vs2015_x86_MTd.lib"						)		//  ＤＸライブラリ使用指定
+											#pragma comment( lib, "DxLib_d.lib"						)		//  ＤＸライブラリ使用指定
 											#if defined(_ITERATOR_DEBUG_LEVEL) && _ITERATOR_DEBUG_LEVEL == 0
 												#pragma comment( lib, "DxUseCLib_vs2015_x86_ItrDbgLv0_MTd.lib"	)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 											#else
@@ -185,7 +185,7 @@ struct IUnknown;
 											#pragma comment( lib, "DxLibW_vs2015_x86_MT.lib"						)		//  ＤＸライブラリ使用指定
 											#pragma comment( lib, "DxUseCLibW_vs2015_x86_MT.lib"					)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 										#else
-											#pragma comment( lib, "DxLib_vs2015_x86_MT.lib"						)		//  ＤＸライブラリ使用指定
+											#pragma comment( lib, "DxLib.lib"					)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 											#pragma comment( lib, "DxUseCLib_vs2015_x86_MT.lib"					)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 										#endif
 									#endif // _DEBUG
@@ -203,7 +203,7 @@ struct IUnknown;
 											#pragma comment( lib, "DxUseCLibW_vs2013_x64_d.lib"				)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 										#endif // defined(_ITERATOR_DEBUG_LEVEL) && _ITERATOR_DEBUG_LEVEL == 0
 									#else
-										#pragma comment( lib, "DxLib_vs2012_x64_d.lib"			)		//  ＤＸライブラリ使用指定
+										#pragma comment( lib, "DxLib_x64_d.lib"			)		//  ＤＸライブラリ使用指定
 										#if defined(_ITERATOR_DEBUG_LEVEL) && _ITERATOR_DEBUG_LEVEL == 0
 											#pragma comment( lib, "DxUseCLib_vs2013_x64_ItrDbgLv0_d.lib"	)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 										#else
@@ -216,7 +216,7 @@ struct IUnknown;
 										#pragma comment( lib, "DxLibW_vs2012_x64.lib"			)		//  ＤＸライブラリ使用指定
 										#pragma comment( lib, "DxUseCLibW_vs2013_x64.lib"		)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 									#else
-										#pragma comment( lib, "DxLib_vs2012_x64.lib"			)		//  ＤＸライブラリ使用指定
+										#pragma comment( lib, "DxLib_x64.lib"			)		//  ＤＸライブラリ使用指定
 										#pragma comment( lib, "DxUseCLib_vs2013_x64.lib"		)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 									#endif
 								#endif // _DEBUG
@@ -231,7 +231,7 @@ struct IUnknown;
 											#pragma comment( lib, "DxUseCLibW_vs2013_x86_d.lib"				)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 										#endif // defined(_ITERATOR_DEBUG_LEVEL) && _ITERATOR_DEBUG_LEVEL == 0
 									#else
-										#pragma comment( lib, "DxLib_vs2012_x86_d.lib"			)		//  ＤＸライブラリ使用指定
+										#pragma comment( lib, "DxLib_d.lib"			)		//  ＤＸライブラリ使用指定
 										#if defined(_ITERATOR_DEBUG_LEVEL) && _ITERATOR_DEBUG_LEVEL == 0
 											#pragma comment( lib, "DxUseCLib_vs2013_x86_ItrDbgLv0_d.lib"	)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 										#else
@@ -244,7 +244,7 @@ struct IUnknown;
 										#pragma comment( lib, "DxLibW_vs2012_x86.lib"			)		//  ＤＸライブラリ使用指定
 										#pragma comment( lib, "DxUseCLibW_vs2013_x86.lib"		)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 									#else
-										#pragma comment( lib, "DxLib_vs2012_x86.lib"			)		//  ＤＸライブラリ使用指定
+										#pragma comment( lib, "DxLib.lib"			)		//  ＤＸライブラリ使用指定
 										#pragma comment( lib, "DxUseCLib_vs2013_x86.lib"		)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 									#endif
 								#endif // _DEBUG
@@ -261,7 +261,7 @@ struct IUnknown;
 											#pragma comment( lib, "DxUseCLibW_vs2012_x64_d.lib"				)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 										#endif // defined(_ITERATOR_DEBUG_LEVEL) && _ITERATOR_DEBUG_LEVEL == 0
 									#else
-										#pragma comment( lib, "DxLib_vs2012_x64_d.lib"			)		//  ＤＸライブラリ使用指定
+										#pragma comment( lib, "DxLib_x64_d.lib"			)		//  ＤＸライブラリ使用指定
 										#if defined(_ITERATOR_DEBUG_LEVEL) && _ITERATOR_DEBUG_LEVEL == 0
 											#pragma comment( lib, "DxUseCLib_vs2012_x64_ItrDbgLv0_d.lib"	)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 										#else
@@ -274,7 +274,7 @@ struct IUnknown;
 										#pragma comment( lib, "DxLibW_vs2012_x64.lib"			)		//  ＤＸライブラリ使用指定
 										#pragma comment( lib, "DxUseCLibW_vs2012_x64.lib"		)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 									#else
-										#pragma comment( lib, "DxLib_vs2012_x64.lib"			)		//  ＤＸライブラリ使用指定
+										#pragma comment( lib, "DxLib_x64.lib"			)		//  ＤＸライブラリ使用指定
 										#pragma comment( lib, "DxUseCLib_vs2012_x64.lib"		)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 									#endif
 								#endif // _DEBUG
@@ -289,7 +289,7 @@ struct IUnknown;
 											#pragma comment( lib, "DxUseCLibW_vs2012_x86_d.lib"				)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 										#endif // defined(_ITERATOR_DEBUG_LEVEL) && _ITERATOR_DEBUG_LEVEL == 0
 									#else
-										#pragma comment( lib, "DxLib_vs2012_x86_d.lib"			)		//  ＤＸライブラリ使用指定
+										#pragma comment( lib, "DxLib_d.lib"			)		//  ＤＸライブラリ使用指定
 										#if defined(_ITERATOR_DEBUG_LEVEL) && _ITERATOR_DEBUG_LEVEL == 0
 											#pragma comment( lib, "DxUseCLib_vs2012_x86_ItrDbgLv0_d.lib"	)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 										#else
@@ -302,7 +302,7 @@ struct IUnknown;
 										#pragma comment( lib, "DxLibW_vs2012_x86.lib"			)		//  ＤＸライブラリ使用指定
 										#pragma comment( lib, "DxUseCLibW_vs2012_x86.lib"		)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 									#else
-										#pragma comment( lib, "DxLib_vs2012_x86.lib"			)		//  ＤＸライブラリ使用指定
+										#pragma comment( lib, "DxLib.lib"			)		//  ＤＸライブラリ使用指定
 										#pragma comment( lib, "DxUseCLib_vs2012_x86.lib"		)		//  標準Ｃライブラリを使用する部分の lib ファイルの使用指定
 									#endif
 								#endif // _DEBUG
@@ -1248,7 +1248,7 @@ struct IUnknown;
 			#endif
 		#endif  // DX_GCC_COMPILE
 	#endif	// DX_LIB_NOT_DEFAULTPATH
-#endif // __DX_MAKE
+#endif // DX_MAKE
 
 #ifndef DX_NON_NAMESPACE
 
@@ -1337,4 +1337,4 @@ namespace DxLib
 
 #endif // DX_NON_NAMESPACE
 
-#endif // __DXDATATYPEWIN_H__
+#endif // DX_DATATYPEWIN_H

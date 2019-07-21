@@ -37,14 +37,14 @@ public:
     //void OnInitialize() override;
     void OnTerminate() override;
 
-    /*
     void OnStartedFadeIn() override;
-    void OnStoppedFadeIn() override;
-    void OnStartedFadeOut() override;
-    void OnStoppedFadeOut() override;
     void SceneFadeIn(float deltaTime) override;
-    void SceneFadeOut(float deltaTime) override;
-    */
+    void OnStoppedFadeIn() override;
+
+    //void OnStartedFadeOut() override;
+    //void SceneFadeOut(float deltaTime) override;
+    //void OnStoppedFadeOut() override;
+
 
     void SceneUpdate(float deltaTime) override;
     void Draw() override;
