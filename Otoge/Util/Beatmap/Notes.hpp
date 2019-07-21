@@ -17,6 +17,7 @@ public:
         changeBPM,
         simple,
         hold,
+        endMap,
     };
 
     enum HitsType
@@ -29,10 +30,10 @@ public:
         mistake,
     };
 
-    int ID_;
     int TimingCount_;
     NoteType Type_;
     HitsType JudgeResult_ = HitsType::outside;
+    float JudgeDiff_ = 0.f;
     int Position_;
     int SpriteImageHandle_;
     float BPM_;

@@ -102,14 +102,6 @@ bool Beatmap::LoadMapData()
 
         Notes* noteObj = new Notes();
 
-        // ノートID
-        if (boost::optional<int> id = info.get_optional<int>("id")) {
-            noteObj->ID_ = id.get();
-        }
-        else {
-            Logger_->Warn("ノートIDがありません。");
-        }
-
         // ノートタイミング
         if (boost::optional<int> time = info.get_optional<int>("time")) {
             noteObj->TimingCount_ = time.get();
@@ -143,7 +135,7 @@ bool Beatmap::LoadMapData()
         }
 
         Notes_.push_back(noteObj);
-        Logger_->Debug("ノート" + std::to_string(noteObj->ID_) + "{ time: " + std::to_string(noteObj->TimingCount_) + ", type: " + std::to_string(noteObj->Type_) + " }");
+        Logger_->Debug("ノート { time: " + std::to_string(noteObj->TimingCount_) + ", type: " + std::to_string(noteObj->Type_) + " }");
     }
 
     Logger_->Info("音楽データ" + SoundFile_ + " 読み込み中...");
@@ -285,4 +277,34 @@ void Beatmap::Update(float deltaTime)
 std::vector<Notes*>& Beatmap::GetMapNotes()
 {
     return Notes_;
+}
+
+int Beatmap::GetMaxCombo()
+{
+    int count = 0;
+    for(Notes* note : Notes_)
+    {
+        if(note->Type_ == Notes::NoteType::simple)
+        {
+            count++;
+        }
+    }
+    return count;
+}
+
+int Beatmap::GetLastComboCount()
+{
+    float l_PrevTiming = 0.f;
+    for (Notes* note : Notes_)
+    {
+        if(note->Type_ == Notes::NoteType::simple)
+        {
+            l_PrevTiming = note->TimingCount_;
+        }
+        if (note->Type_ == Notes::NoteType::endMap)
+        {
+            return l_PrevTiming;
+        }
+    }
+    return l_PrevTiming;
 }

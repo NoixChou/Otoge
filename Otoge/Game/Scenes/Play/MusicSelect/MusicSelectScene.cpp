@@ -27,6 +27,7 @@ MusicSelectScene::MusicSelectScene() : Scene("MusicSelectScene")
     AddChildTask(std::static_pointer_cast<Task>(HeaderPanel_));
 
     BackButton_ = std::make_shared<Button>("< Back", ScreenData(0.f, 0.f, 10.f, 100.f), HeaderPanel_->GetDefaultScaler());
+    BackButton_->isDrawBase = false;
     BackButton_->GetTextLabelInstance()->adjustmentFontSize = false;
     BackButton_->GetTextLabelInstance()->ChangeFontSize(static_cast<int>(DefaultScaler_->CalculateHeight(2.5f)));
     BackButton_->GetTextLabelInstance()->ChangeFontThickness(2);

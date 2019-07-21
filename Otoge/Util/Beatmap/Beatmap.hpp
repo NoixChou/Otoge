@@ -57,4 +57,6 @@ public:
     void Update(float deltaTime);
 
     std::vector<Notes*>& GetMapNotes();
+    int GetMaxCombo();
+    int GetLastComboCount();
 };

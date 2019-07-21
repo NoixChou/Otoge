@@ -5,6 +5,7 @@
 #include "../../../System/GUI/Button.hpp"
 #include "../../../Util/Visual/Color.hpp"
 #include "../../../System/GUI/SlideBar.hpp"
+#include "../../../Util/Beatmap/BeatmapScore.hpp"
 
 class MainGameScene : public Scene
 {
@@ -13,14 +14,11 @@ private:
     int LaneColor_ = color_preset::GREY;
 
     const float JudgeLinePosY_ = 75.f;
-    int defaultMusicStreamVol_;
+    int DefaultMusicStreamVol_;
 
     bool IsMusicPlaying_ = false;
 
-    int Score_ = 0;
-    int MaxCombo_ = 0;
-    int CurrentCombo_ = 0;
-    float Accuracy_ = 0.f;
+    std::shared_ptr<BeatmapScore> ScoreData_;
 
     std::shared_ptr<Beatmap> Beatmap_;
 

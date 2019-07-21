@@ -207,6 +207,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\Scenes\Play\GameResultScene.cpp" />
     <ClCompile Include="Game\Scenes\Play\MainGameScene.cpp" />
     <ClCompile Include="Game\Scenes\Title\Setting\SettingScene.cpp" />
     <ClCompile Include="Game\Scenes\Play\MusicSelect\MusicSelectScene.cpp" />
@@ -248,6 +249,7 @@
     <ClCompile Include="Util\Window\DxSettings.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Scenes\Play\GameResultScene.hpp" />
     <ClInclude Include="Game\Scenes\Play\MainGameScene.hpp" />
     <ClInclude Include="Game\Scenes\Title\Setting\SettingScene.hpp" />
     <ClInclude Include="Game\Scenes\Play\MusicSelect\MusicSelectScene.hpp" />
@@ -262,6 +264,7 @@
     <ClInclude Include="Util\Audio\AudioManager.hpp" />
     <ClInclude Include="Util\Audio\AudioStream.h" />
     <ClInclude Include="Util\Beatmap\Beatmap.hpp" />
+    <ClInclude Include="Util\Beatmap\BeatmapScore.hpp" />
     <ClInclude Include="Util\Beatmap\Notes.hpp" />
     <ClInclude Include="Util\Beatmap\Timing.hpp" />
     <ClInclude Include="Util\Calculate\Animation\Easing.hpp" />

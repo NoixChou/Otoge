@@ -20,9 +20,10 @@ bool Notes::IsPast(float currentPlayTime)
 Notes::HitsType Notes::Judgment(float currentPlayTime, float BPM)
 {
     float rawDiff = currentPlayTime - engine::CastToFloat(TimingCount_);
-
     float diff = abs(rawDiff);
     //float diffSecond = timing::GetTimeByCount(diff, BPM);
+
+    JudgeDiff_ = diff;
 
     if (diff <= JUST_RANGE)
     {

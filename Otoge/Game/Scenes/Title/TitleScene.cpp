@@ -67,6 +67,7 @@ TitleScene::TitleScene() : Scene("TitleScene")
         SettingScene_->SetPositionX(-SettingScene_->GetScreenWidth());
         SettingScene_->SetPriority(60.f);
         SettingScene_->SetEnable(false);
+        SettingScene_->SetVisible(false);
         TaskManager::GetInstance()->AddTask(SettingScene_);
     }
 }

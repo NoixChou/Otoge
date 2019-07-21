@@ -19,7 +19,7 @@ Label::~Label()
 
 void Label::GUIUpdate(float deltaTime)
 {
-    if(IsChangedSize() || IsChangedLabel_)
+    //if(IsChangedSize() || IsChangedLabel_)
     {
         //Logger_->Debug("Ascent: " + std::to_string(GetFontAscentToHandle(FontHandle_)));
         if((textAlign & TextAlignment::left) == TextAlignment::left) TextX_ = 0.f;

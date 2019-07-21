@@ -189,6 +189,7 @@ SettingScene::~SettingScene()
 void SettingScene::OnStartedFadeIn()
 {
     TaskManager::GetInstance()->SetModalTask(weak_from_this());
+    SetVisible(true);
 
     // 解像度
     auto l_CurrentSize = std::find_if(AllowWindowSizes_.begin(), AllowWindowSizes_.end(), [&](const std::pair<std::string, std::pair<int, int>>& lines)
@@ -251,7 +252,7 @@ void SettingScene::SceneFadeIn(float deltaTime)
     {
         SetTransparent(100.f);
         SetPositionX(0.f);
-        IsFadingIn_ = false;
+        StopFade();
     }
 }
 
@@ -265,7 +266,8 @@ void SettingScene::SceneFadeOut(float deltaTime)
 
     if (timerCount > totalTime)
     {
-        IsFadingOut_ = false;
+        SetVisible(false);
+        StopFade();
         TaskManager::GetInstance()->UnsetModalTask();
     }
 }
