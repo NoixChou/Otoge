@@ -220,16 +220,16 @@ void GameResultScene::DrawAccuracyGraph()
 
     for(Notes* note : Beatmap_->GetMapNotes())
     {
-        if (note->Type_ == Notes::NoteType::simple)
+        if (note->type == Notes::NoteType::simple)
         {
-            float l_NotePoint = (engine::CastToFloat(note->TimingCount_) / engine::CastToFloat(l_MapEoF)) * 100.f;
-            ScreenData l_Point = AccuracyGraph_->GetDefaultScaler()->Calculate(l_NotePoint, (abs(note->JudgeDiff_) / Notes::FAIL_RANGE) * 100.f, 0.f, 100.f);
+            float l_NotePoint = (engine::CastToFloat(note->timingCount) / engine::CastToFloat(l_MapEoF)) * 100.f;
+            ScreenData l_Point = AccuracyGraph_->GetDefaultScaler()->Calculate(l_NotePoint, (abs(note->judgeDiff) / Notes::FAIL_RANGE) * 100.f, 0.f, 100.f);
 
             unsigned l_LineColor = color_preset::DARK_GREY;
-            if (note->JudgeResult_ == Notes::HitsType::just) l_LineColor = color_preset::YELLOW;
-            if (note->JudgeResult_ == Notes::HitsType::great) l_LineColor = color_preset::LIGHT_BLUE;
-            if (note->JudgeResult_ == Notes::HitsType::bad) l_LineColor = color_preset::PURPLE;
-            if(note->JudgeResult_ == Notes::HitsType::fail) l_LineColor = color_preset::LIGHT_GREY;
+            if (note->judgeResult == Notes::HitsType::just) l_LineColor = color_preset::YELLOW;
+            if (note->judgeResult == Notes::HitsType::great) l_LineColor = color_preset::LIGHT_BLUE;
+            if (note->judgeResult == Notes::HitsType::bad) l_LineColor = color_preset::PURPLE;
+            if(note->judgeResult == Notes::HitsType::fail) l_LineColor = color_preset::LIGHT_GREY;
             DrawLineAA(l_PrevPoint.posX, l_PrevPoint.posY, l_Point.posX, l_Point.posY, l_LineColor, TRUE);
             if (l_PrevPoint.posY > l_Point.posY)
             {

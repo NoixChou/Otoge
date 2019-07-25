@@ -159,6 +159,7 @@ void Task::SetLifespan(float lifespan)
 
 void Task::ChildUpdate(float deltaTime)
 {
+    TaskManager::GetInstance()->UpdateTasks(children, childrenQueues, TickSpeed_, deltaTime);
 }
 
 bool Task::AddChildTask(const TaskPointer& task)

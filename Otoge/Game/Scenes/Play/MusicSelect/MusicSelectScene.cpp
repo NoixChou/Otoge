@@ -13,7 +13,7 @@
 
 #include <boost/foreach.hpp>
 #include <filesystem>
-#include "../MainGameScene.hpp"
+#include "../MainGame/MainGameScene.hpp"
 #include "../../../../Util/Encoding/CharacterType.hpp"
 
 MusicSelectScene::MusicSelectScene() : Scene("MusicSelectScene")

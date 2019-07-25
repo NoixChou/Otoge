@@ -1,14 +1,14 @@
 ﻿#include "MainGameScene.hpp"
-#include "../../../System/Task/TaskManager.hpp"
-#include "../../../Util/Beatmap/Timing.hpp"
-#include "../../../System/GlobalMethod.hpp"
-#include "../../../Util/Visual/Color.hpp"
-#include "MusicSelect/MusicSelectScene.hpp"
-#include "../../../System/Input/KeyboardManager.hpp"
-#include "../../../Util/Audio/AudioManager.hpp"
-#include "../../../Util/Encoding/EncodingConverter.h"
-#include "../../../Util/Calculate/Animation/Easing.hpp"
-#include "GameResultScene.hpp"
+#include "../../../../System/Task/TaskManager.hpp"
+#include "../../../../Util/Beatmap/Timing.hpp"
+#include "../../../../System/GlobalMethod.hpp"
+#include "../../../../Util/Visual/Color.hpp"
+#include "../MusicSelect/MusicSelectScene.hpp"
+#include "../../../../System/Input/KeyboardManager.hpp"
+#include "../../../../Util/Audio/AudioManager.hpp"
+#include "../../../../Util/Encoding/EncodingConverter.h"
+#include "../../../../Util/Calculate/Animation/Easing.hpp"
+#include "../GameResultScene.hpp"
 
 MainGameScene::MainGameScene(std::shared_ptr<Beatmap> map) : Scene("MainGameScene[" + map->GetTitle() + "]")
 {
@@ -33,6 +33,10 @@ MainGameScene::MainGameScene(std::shared_ptr<Beatmap> map) : Scene("MainGameScen
     GamePanel_ = std::make_shared<Scene>("MainGamePanel", ScreenData(3.f, 0.f, 44.f, 100.f), DefaultScaler_);
     GamePanel_->SetDrawFunction([&] {DrawGamePanel(); });
     AddChildTask(std::static_pointer_cast<Task>(GamePanel_));
+
+    BreakTimeBar_ = std::make_shared<BreakTimeBar>(ScreenData(0.f, JudgeLinePosY_ - 30.f, 100.f, 15.f), GamePanel_->GetDefaultScaler());
+    GamePanel_->AddChildTask(std::static_pointer_cast<Task>(BreakTimeBar_));
+    BreakTimeBar_->ChildUpdate(0.f);
 
     LoadingLabel_ = std::make_shared<Label>("Loading...", ScreenData(0.f, JudgeLinePosY_ - 14.f, 100.f, 5.f), GamePanel_->GetDefaultScaler());
     LoadingLabel_->baseColor = color_preset::CYAN;
@@ -244,13 +248,13 @@ void MainGameScene::SceneUpdate(float deltaTime)
 
         for (Notes* note : Beatmap_->GetMapNotes())
         {
-            if (note->TimingCount_ < engine::CastToInt(Beatmap_->GetCurrentPlayCount() + timing::HI_SPEED))
+            if (note->timingCount < engine::CastToInt(Beatmap_->GetCurrentPlayCount() + timing::HI_SPEED))
             {
                 // 処理済み
-                if (note->IsProcessed_)
+                if (note->isProcessed)
                 {
                     // 精度計算
-                    if (note->JudgeResult_ == Notes::HitsType::outside)
+                    if (note->judgeResult == Notes::HitsType::outside)
                     {
                         // 処理済みのためスキップ
                         continue;
@@ -258,15 +262,15 @@ void MainGameScene::SceneUpdate(float deltaTime)
                     l_ProcessedNoteCount++;
 
                     float l_NoteAccuracy = 0.f;
-                    if (note->JudgeResult_ == Notes::HitsType::just)
+                    if (note->judgeResult == Notes::HitsType::just)
                     {
                         l_NoteAccuracy = 1.f;
                     }
-                    if (note->JudgeResult_ == Notes::HitsType::great)
+                    if (note->judgeResult == Notes::HitsType::great)
                     {
                         l_NoteAccuracy = 0.8f;
                     }
-                    if (note->JudgeResult_ == Notes::HitsType::bad)
+                    if (note->judgeResult == Notes::HitsType::bad)
                     {
                         l_NoteAccuracy = 0.5f;
                     }
@@ -277,13 +281,13 @@ void MainGameScene::SceneUpdate(float deltaTime)
                 }
 
                 // BPM変更
-                if (note->Type_ == Notes::NoteType::changeBPM)
+                if (note->type == Notes::NoteType::changeBPM)
                 {
                     if (note->IsPast(Beatmap_->GetCurrentPlayCount()))
                     {
                         if (Beatmap_->GetCurrentTempoByBPM() != 0.f)
                         {
-                            float l_CountDiff = Beatmap_->GetCurrentPlayCount() - engine::CastToFloat(note->TimingCount_);
+                            float l_CountDiff = Beatmap_->GetCurrentPlayCount() - engine::CastToFloat(note->timingCount);
                             float l_CurrentCount = Beatmap_->GetCurrentPlayCount();
                             float l_BPMChangeCount = l_CurrentCount - l_CountDiff;
                             float l_DiffSecond = timing::GetTimeByCount(l_CountDiff, Beatmap_->GetCurrentTempoByBPM());
@@ -294,41 +298,62 @@ void MainGameScene::SceneUpdate(float deltaTime)
                             Beatmap_->SetCurrentPlayCount(l_BPMChangeCount + l_DiffCountByNewBPM);
                         }else
                         {
-                            Beatmap_->SetCurrentPlayCount(note->TimingCount_);
+                            Beatmap_->SetCurrentPlayCount(note->timingCount);
                             Logger_->Debug("set BPM, offset fixed");
                         }
 
                         Beatmap_->SetCurrentTempoByBPM(note->BPM_);
                         BPMLabel_->SetLabel(std::_Floating_to_string("%.2f", note->BPM_) + " BPM");
 
-                        note->IsProcessed_ = true;
+                        note->isProcessed = true;
                     }
                 }
 
                 // 譜面終わり
-                if(note->Type_ == Notes::NoteType::endMap)
+                if(note->type == Notes::NoteType::endMap)
                 {
                     if(note->IsPast(Beatmap_->GetCurrentPlayCount()))
                     {
                         StartFadeOut();
-                        note->IsProcessed_ = true;
+                        note->isProcessed = true;
+                    }
+                }
+
+                // 休憩
+                if(note->type == Notes::NoteType::breakTime)
+                {
+                    if(note->IsPast(Beatmap_->GetCurrentPlayCount()))
+                    {
+                        if(note->isDraw)
+                        {
+                            BreakTimeBar_->Show(timing::GetTimeByCount(note->lengthCount, Beatmap_->GetCurrentTempoByBPM()));
+                            note->isDraw = false;
+                        }
+
+                        BreakTimeBar_->SetRemainingTime(timing::GetTimeByCount((note->timingCount + note->lengthCount) - Beatmap_->GetCurrentPlayCount(), Beatmap_->GetCurrentTempoByBPM()));
+
+                        if((Beatmap_->GetCurrentPlayCount() - note->timingCount) >= note->lengthCount)
+                        {
+                            BreakTimeBar_->StartFadeOut();
+                            note->isProcessed = true;
+                        }
                     }
                 }
 
                 // シンプルタップノーツ
-                if (note->Type_ == Notes::NoteType::simple)
+                if (note->type == Notes::NoteType::simple)
                 {
                     Notes::HitsType judge = note->Judgment(Beatmap_->GetCurrentPlayCount(), Beatmap_->GetCurrentTempoByBPM());
                     if (judge != Notes::HitsType::outside)
                     {
                         // 判定範囲内
-                        if (KeyboardManager::GetInstance()->IsDownKey(LaneKeys_[note->Position_]))
+                        if (KeyboardManager::GetInstance()->IsDownKey(LaneKeys_[note->position]))
                         {
                             // FAIL判定ではないなら音を鳴らしてノーツ表示を消す
                             if (judge != Notes::HitsType::fail)
                             {
                                 AudioManager::GetInstance()->PlayAudio("hit", AudioManager::STREAM_NAME_SE);
-                                note->IsDraw_ = false;
+                                note->isDraw = false;
 
                                 // スコア・コンボ加算
                                 ScoreData_->currentCombo++;
@@ -355,7 +380,7 @@ void MainGameScene::SceneUpdate(float deltaTime)
                             LoadingLabel_->baseColor = JudgeText_[judge].second;
                             LoadingLabel_->SetVisible(true);
 
-                            note->IsProcessed_ = true;
+                            note->isProcessed = true;
                             Logger_->Debug("judge: " + std::to_string(judge));
                         }
                     }else
@@ -363,7 +388,7 @@ void MainGameScene::SceneUpdate(float deltaTime)
                         // タイミングポイントを過ぎていたら処理済みにする
                         if (note->IsPast(Beatmap_->GetCurrentPlayCount()))
                         {
-                            note->IsProcessed_ = true;
+                            note->isProcessed = true;
                             LoadingLabel_->SetLabel("FAIL");
                             LoadingLabel_->baseColor = color_preset::GREY;
                             LoadingLabel_->SetVisible(true);
@@ -387,11 +412,13 @@ void MainGameScene::SceneUpdate(float deltaTime)
         ScoreLabel_->SetLabel(std::to_string(ScoreData_->score) + " pts");
         ComboLabel_->SetLabel(std::to_string(ScoreData_->currentCombo) + "x / Max " + std::to_string(ScoreData_->maxCombo) + "x");
         AccuracyLabel_->SetLabel(std::_Floating_to_string("%.2f", ScoreData_->accuracy) + "%");
-        
+
+        /*
         if(timing::GetBeatByCount(Beatmap_->GetPrevPlayCount()) != timing::GetBeatByCount(Beatmap_->GetCurrentPlayCount()))
         {
             AudioManager::GetInstance()->PlayAudio("beat", AudioManager::STREAM_NAME_SE);
         }
+        */
     }
 }
 
@@ -411,25 +438,25 @@ void MainGameScene::DrawGamePanel()
 
     for (Notes* note : Beatmap_->GetMapNotes())
     {
-        if (note->TimingCount_ < engine::CastToInt(Beatmap_->GetCurrentPlayCount() + timing::HI_SPEED) && note->IsDraw_)
+        if (note->timingCount < engine::CastToInt(Beatmap_->GetCurrentPlayCount() + timing::HI_SPEED) && note->isDraw)
         {
             // 処理済みなら半透明化
-            if (note->IsProcessed_) SetDrawBlendMode(DX_BLENDMODE_ALPHA, 20);
+            if (note->isProcessed) SetDrawBlendMode(DX_BLENDMODE_ALPHA, 20);
 
-            float noteTimingDiff = engine::CastToFloat(note->TimingCount_) - Beatmap_->GetCurrentPlayCount();
+            float noteTimingDiff = engine::CastToFloat(note->timingCount) - Beatmap_->GetCurrentPlayCount();
             float notePositionY = JudgeLinePosY_ - (noteTimingDiff / (timing::HI_SPEED / 100.f));
             ScreenData noteBox;
 
             // BPM変更
-            if (note->Type_ == Notes::NoteType::changeBPM)
+            if (note->type == Notes::NoteType::changeBPM)
             {
                 noteBox = GamePanel_->GetDefaultScaler()->Calculate(ScreenData(0.f, notePositionY, 100.f, 0.f));
             }
 
             // シンプルタップノーツ
-            if (note->Type_ == Notes::NoteType::simple)
+            if (note->type == Notes::NoteType::simple)
             {
-                noteBox = GamePanel_->GetDefaultScaler()->Calculate(note->Position_ * LaneWidth_, notePositionY, LaneWidth_, 2.f);
+                noteBox = GamePanel_->GetDefaultScaler()->Calculate(note->position * LaneWidth_, notePositionY, LaneWidth_, 2.f);
             }
 
             noteBox.posY -= noteBox.height / 2.f;
@@ -458,4 +485,111 @@ void MainGameScene::DrawGamePanel()
             SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255);
         }
     }
+}
+
+
+/**# 休憩時間中の帯 #**/
+
+BreakTimeBar::BreakTimeBar(const ScreenData& layoutScreen, std::shared_ptr<FlexibleScaler> parentScaler) : Scene("BreakTimeBar", layoutScreen, parentScaler)
+{
+    DescriptionLabel_ = std::make_shared<Label>("Break time", ScreenData(0.f, 0.f, 100.f, 50.f), DefaultScaler_);
+    DescriptionLabel_->baseColor = color_preset::WHITE;
+    DescriptionLabel_->adjustmentFontSize = true;
+    DescriptionLabel_->SetTextAlign(Label::TextAlignment::middle | Label::TextAlignment::center);
+    AddChildTask(std::static_pointer_cast<Task>(DescriptionLabel_));
+
+    TimeLabel_ = std::make_shared<Label>("xx", ScreenData(0.f, 60.f, 100.f, 40.f), DefaultScaler_);
+    TimeLabel_->baseColor = color_preset::BLUE;
+    TimeLabel_->adjustmentFontSize = true;
+    TimeLabel_->SetTextAlign(Label::TextAlignment::middle | Label::TextAlignment::center);
+    AddChildTask(std::static_pointer_cast<Task>(TimeLabel_));
+
+    StopFade();
+    SetTransparent(0.f);
+    SetVisible(false);
+}
+
+BreakTimeBar::~BreakTimeBar()
+{
+}
+
+void BreakTimeBar::OnInitialize()
+{
+    DescriptionLabel_->AdjustFont();
+    TimeLabel_->AdjustFont();
+}
+
+void BreakTimeBar::Show(float breakTime)
+{
+    BreakTime_ = breakTime;
+    RemainingTime_ = breakTime;
+
+    StartFadeIn();
+    timerCount = 0.f;
+}
+
+void BreakTimeBar::SetRemainingTime(float remainingTime)
+{
+    RemainingTime_ = remainingTime;
+}
+
+void BreakTimeBar::OnStartedFadeIn()
+{
+    SetTransparent(0.f);
+    SetVisible(true);
+}
+
+void BreakTimeBar::OnStoppedFadeIn()
+{
+    SetTransparent(70.f);
+}
+
+void BreakTimeBar::SceneFadeIn(float deltaTime)
+{
+    float totalTime = 0.25f;
+    Easing::EaseFunction ease = Easing::OutExp;
+
+    SetTransparent(engine::CastToFloat(ease(timerCount, totalTime, 70.f, 0.f)));
+
+    if (timerCount > totalTime)
+    {
+        StopFade();
+    }
+}
+
+void BreakTimeBar::OnStartedFadeOut()
+{
+}
+
+void BreakTimeBar::OnStoppedFadeOut()
+{
+    SetTransparent(0.f);
+    SetVisible(false);
+}
+
+void BreakTimeBar::SceneFadeOut(float deltaTime)
+{
+    float totalTime = 0.25f;
+    Easing::EaseFunction ease = Easing::OutExp;
+
+    SetTransparent(engine::CastToFloat(ease(timerCount, totalTime, 0.f, 70.f)));
+
+    if (timerCount > totalTime)
+    {
+        StopFade();
+    }
+}
+
+void BreakTimeBar::SceneUpdate(float deltaTime)
+{
+    TimeLabel_->SetLabel(std::_Floating_to_string("%.1f", abs(RemainingTime_)));
+}
+
+void BreakTimeBar::Draw()
+{
+    float TimeRatio_ = (RemainingTime_ / BreakTime_) * 50.f;
+    ScreenData l_Full = DefaultScaler_->Calculate(50.f - TimeRatio_, 0.f, (TimeRatio_ * 2.f), 100.f);
+
+    SetDrawBlendMode(DX_BLENDMODE_ALPHA, 127);
+    DrawBox(l_Full.posX, l_Full.posY, l_Full.posX + l_Full.width, l_Full.posY + l_Full.height, color_preset::LIGHT_GREY, TRUE);
 }

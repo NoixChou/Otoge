@@ -104,15 +104,20 @@ bool Beatmap::LoadMapData()
 
         // ノートタイミング
         if (boost::optional<int> time = info.get_optional<int>("time")) {
-            noteObj->TimingCount_ = time.get();
+            noteObj->timingCount = time.get();
         }
         else {
             Logger_->Warn("ノートタイミングがセットされていません。");
         }
 
+        // ノート長さ
+        if (boost::optional<int> length = info.get_optional<int>("length")) {
+            noteObj->lengthCount = length.get();
+        }
+
         // ノートタイプ
         if (boost::optional<int> type = info.get_optional<int>("type")) {
-            noteObj->Type_ = static_cast<Notes::NoteType>(type.get());
+            noteObj->type = static_cast<Notes::NoteType>(type.get());
         }
         else {
             Logger_->Warn("ノート種類がセットされていません。");
@@ -120,7 +125,7 @@ bool Beatmap::LoadMapData()
 
         // ノート位置
         if (boost::optional<int> position = info.get_optional<int>("position")) {
-            noteObj->Position_ = static_cast<int>(position.get());
+            noteObj->position = static_cast<int>(position.get());
         }
         else {
             Logger_->Warn("ノート位置がセットされていません。");
@@ -135,7 +140,7 @@ bool Beatmap::LoadMapData()
         }
 
         Notes_.push_back(noteObj);
-        Logger_->Debug("ノート { time: " + std::to_string(noteObj->TimingCount_) + ", type: " + std::to_string(noteObj->Type_) + " }");
+        Logger_->Debug("ノート { time: " + std::to_string(noteObj->timingCount) + ", type: " + std::to_string(noteObj->type) + " }");
     }
 
     Logger_->Info("音楽データ" + SoundFile_ + " 読み込み中...");
@@ -284,7 +289,7 @@ int Beatmap::GetMaxCombo()
     int count = 0;
     for(Notes* note : Notes_)
     {
-        if(note->Type_ == Notes::NoteType::simple)
+        if(note->type == Notes::NoteType::simple)
         {
             count++;
         }
@@ -297,11 +302,11 @@ int Beatmap::GetLastComboCount()
     float l_PrevTiming = 0.f;
     for (Notes* note : Notes_)
     {
-        if(note->Type_ == Notes::NoteType::simple)
+        if(note->type == Notes::NoteType::simple)
         {
-            l_PrevTiming = note->TimingCount_;
+            l_PrevTiming = note->timingCount;
         }
-        if (note->Type_ == Notes::NoteType::endMap)
+        if (note->type == Notes::NoteType::endMap)
         {
             return l_PrevTiming;
         }

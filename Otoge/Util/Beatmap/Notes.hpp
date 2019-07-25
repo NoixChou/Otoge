@@ -5,10 +5,10 @@
 class Notes
 {
 public:
-    inline const static float JUST_RANGE = 100.f;
-    inline const static float GREAT_RANGE = 300.f;
-    inline const static float BAD_RANGE = 500.f;
-    inline const static float FAIL_RANGE = 600.f;
+    inline const static float JUST_RANGE = 150.f;
+    inline const static float GREAT_RANGE = 400.f;
+    inline const static float BAD_RANGE = 600.f;
+    inline const static float FAIL_RANGE = 700.f;
     //inline const static float OUTSIDE_RANGE = 1.5f;
 
     enum NoteType
@@ -18,6 +18,7 @@ public:
         simple,
         hold,
         endMap,
+        breakTime,
     };
 
     enum HitsType
@@ -30,15 +31,16 @@ public:
         mistake,
     };
 
-    int TimingCount_;
-    NoteType Type_;
-    HitsType JudgeResult_ = HitsType::outside;
-    float JudgeDiff_ = 0.f;
-    int Position_;
-    int SpriteImageHandle_;
+    int timingCount;
+    int lengthCount;
+    NoteType type;
+    HitsType judgeResult = HitsType::outside;
+    float judgeDiff = 0.f;
+    int position;
+    int spriteImageHandle;
     float BPM_;
-    bool IsProcessed_ = false;
-    bool IsDraw_ = true;
+    bool isProcessed = false;
+    bool isDraw = true;
 
     Notes();
     ~Notes();

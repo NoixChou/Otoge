@@ -1,11 +1,13 @@
 ﻿#pragma once
-#include "../../../System/Task/Scene.hpp"
-#include "../../../Util/Beatmap/Beatmap.hpp"
-#include "../../../System/GUI/Label.hpp"
-#include "../../../System/GUI/Button.hpp"
-#include "../../../Util/Visual/Color.hpp"
-#include "../../../System/GUI/SlideBar.hpp"
-#include "../../../Util/Beatmap/BeatmapScore.hpp"
+#include "../../../../System/Task/Scene.hpp"
+#include "../../../../Util/Beatmap/Beatmap.hpp"
+#include "../../../../System/GUI/Label.hpp"
+#include "../../../../System/GUI/Button.hpp"
+#include "../../../../Util/Visual/Color.hpp"
+#include "../../../../System/GUI/SlideBar.hpp"
+#include "../../../../Util/Beatmap/BeatmapScore.hpp"
+
+class BreakTimeBar;
 
 class MainGameScene : public Scene
 {
@@ -23,6 +25,8 @@ private:
     std::shared_ptr<Beatmap> Beatmap_;
 
     std::shared_ptr<Scene> GamePanel_;
+    std::shared_ptr<BreakTimeBar> BreakTimeBar_;
+
     std::shared_ptr<Scene> InfoPanel_;
 
     std::shared_ptr<Label> BPMLabel_;
@@ -55,4 +59,34 @@ public:
     void Draw() override;
 
     void DrawGamePanel();
+};
+
+// 休憩中の帯
+class BreakTimeBar : public Scene
+{
+private:
+    float BreakTime_;
+    float RemainingTime_;
+
+    std::shared_ptr<Label> DescriptionLabel_;
+    std::shared_ptr<Label> TimeLabel_;
+
+public:
+    BreakTimeBar(const ScreenData& layoutScreen, std::shared_ptr<FlexibleScaler> parentScaler = nullptr);
+    ~BreakTimeBar();
+
+    void OnInitialize() override;
+
+    void Show(float breakTime);
+    void SetRemainingTime(float remainingTime);
+
+    void OnStartedFadeIn() override;
+    void OnStoppedFadeIn() override;
+    void SceneFadeIn(float deltaTime) override;
+    void OnStartedFadeOut() override;
+    void OnStoppedFadeOut() override;
+    void SceneFadeOut(float deltaTime) override;
+
+    void SceneUpdate(float deltaTime) override;
+    void Draw() override;
 };

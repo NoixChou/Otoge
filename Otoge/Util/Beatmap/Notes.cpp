@@ -14,16 +14,16 @@ Notes::~Notes()
 
 bool Notes::IsPast(float currentPlayTime)
 {
-    return engine::CastToInt(currentPlayTime) >= TimingCount_;
+    return engine::CastToInt(currentPlayTime) >= timingCount;
 }
 
 Notes::HitsType Notes::Judgment(float currentPlayTime, float BPM)
 {
-    float rawDiff = currentPlayTime - engine::CastToFloat(TimingCount_);
+    float rawDiff = currentPlayTime - engine::CastToFloat(timingCount) - timing::GetCountByTime(TaskManager::GetInstance()->GetGlobalDeltaTime(), BPM);
     float diff = abs(rawDiff);
     //float diffSecond = timing::GetTimeByCount(diff, BPM);
 
-    JudgeDiff_ = diff;
+    judgeDiff = diff;
 
     if (diff <= JUST_RANGE)
     {
@@ -45,14 +45,14 @@ Notes::HitsType Notes::Judgment(float currentPlayTime, float BPM)
 
 void Notes::Draw(const ScreenData& notesBox)
 {
-    if(Type_ == NoteType::changeBPM)
+    if(type == NoteType::changeBPM)
     {
         DrawLine(notesBox.posX, notesBox.posY, notesBox.posX + notesBox.width, notesBox.posY, color_preset::YELLOW);
         DrawFormatString(notesBox.posX + notesBox.width, notesBox.posY, color_preset::YELLOW, "%.2f BPM", BPM_);
     }
-    if(Type_ == NoteType::simple)
+    if(type == NoteType::simple)
     {
-        if(Position_ == 1 || Position_ == 4)
+        if(position == 1 || position == 4)
             DrawBox(notesBox.posX, notesBox.posY, notesBox.posX + notesBox.width, notesBox.posY + notesBox.height, color_preset::BLUE, TRUE);
         else
             DrawBox(notesBox.posX, notesBox.posY, notesBox.posX + notesBox.width, notesBox.posY + notesBox.height, color_preset::WHITE, TRUE);
@@ -61,6 +61,6 @@ void Notes::Draw(const ScreenData& notesBox)
 
 Notes::HitsType Notes::ReturnJudgeResult(HitsType result)
 {
-    JudgeResult_ = result;
+    judgeResult = result;
     return result;
 }

@@ -208,7 +208,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Game\Scenes\Play\GameResultScene.cpp" />
-    <ClCompile Include="Game\Scenes\Play\MainGameScene.cpp" />
+    <ClCompile Include="Game\Scenes\Play\MainGame\MainGameScene.cpp" />
     <ClCompile Include="Game\Scenes\Title\Setting\SettingScene.cpp" />
     <ClCompile Include="Game\Scenes\Play\MusicSelect\MusicSelectScene.cpp" />
     <ClCompile Include="System\GUI\CheckBox.cpp" />
@@ -250,7 +250,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Scenes\Play\GameResultScene.hpp" />
-    <ClInclude Include="Game\Scenes\Play\MainGameScene.hpp" />
+    <ClInclude Include="Game\Scenes\Play\MainGame\MainGameScene.hpp" />
     <ClInclude Include="Game\Scenes\Title\Setting\SettingScene.hpp" />
     <ClInclude Include="Game\Scenes\Play\MusicSelect\MusicSelectScene.hpp" />
     <ClInclude Include="System\GlobalMethod.hpp" />
