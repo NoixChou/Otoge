@@ -22,7 +22,7 @@ MusicSelectScene::MusicSelectScene() : Scene("MusicSelectScene")
     HeaderPanel_->SetDrawFunction([=]
         {
             ScreenData fixed = HeaderPanel_->GetDefaultScaler()->Calculate(0.f, 0.f, 100.f, 100.f);
-            DrawBox(engine::CastToInt(fixed.posX), engine::CastToInt(fixed.posY), engine::CastToInt(fixed.posX + fixed.width), engine::CastToInt(fixed.posY + fixed.height), color_preset::WHITE, TRUE);
+            DrawBox(engine::CastToInt(fixed.posX), engine::CastToInt(fixed.posY), engine::CastToInt(fixed.posX + fixed.width), engine::CastToInt(fixed.posY + fixed.height), color_preset::GREY, TRUE);
         });
     HeaderPanel_->SetPriority(50.f);
     AddChildTask(std::static_pointer_cast<Task>(HeaderPanel_));

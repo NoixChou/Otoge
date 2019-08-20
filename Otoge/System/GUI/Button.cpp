@@ -138,8 +138,8 @@ void ButtonPushedAnimate::Draw()
     const auto l_Fixed = ParentScaler_->Calculate(l_Circle);
     SetDrawBlendMode(DX_BLENDMODE_PMA_INVSRC, 255);
     DrawCircleAA(
-        engine::CastToInt(l_Fixed.posX), engine::CastToInt(l_Fixed.posY),
-        engine::CastToInt(l_Fixed.width + l_Fixed.height / 2.0f),
+        l_Fixed.posX, l_Fixed.posY,
+        l_Fixed.width + l_Fixed.height / 2.0f,
         engine::CastToInt(l_Fixed.width + l_Fixed.height / 2.0f) / 2, GetColor(255, 255, 255), TRUE);
 }
 

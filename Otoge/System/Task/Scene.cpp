@@ -124,13 +124,7 @@ void Scene::Update(float deltaTime)
                                                 Screen_.width,
                                                 Screen_.height
                                               )) && IsEnable();
-    /*
-    IsOnMouse_ = (MouseManager::GetInstance()->GetMouseXf() > Screen_.posX + ParentScaler_->GetDiffX() - DefaultScaler_->CalculatePositionX(ScreenOriginX_)) &&
-                 (MouseManager::GetInstance()->GetMouseXf() < Screen_.posX + Screen_.width + ParentScaler_->GetDiffX() - DefaultScaler_->CalculatePositionX(ScreenOriginX_)) &&
-                 (MouseManager::GetInstance()->GetMouseYf() > Screen_.posY + ParentScaler_->GetDiffY() - DefaultScaler_->CalculatePositionY(ScreenOriginY_)) &&
-                 (MouseManager::GetInstance()->GetMouseYf() < Screen_.posY + Screen_.height + ParentScaler_->GetDiffY() - DefaultScaler_->CalculatePositionY(ScreenOriginY_)) &&
-                 IsEnable();
-    */
+
     // Visibleか、透明度が0%以上の場合 描画処理
     if(IsVisible())
     {
@@ -172,7 +166,7 @@ void Scene::Update(float deltaTime)
         SetDrawMode(l_CurrentDrawMode);
         SetDrawBlendMode(l_CurrentBlendMode, l_CurrentBlendParam);
 
-        // シーンバッファを描画(透明度も考慮)
+        // 透明度の設定
         if(engine::CastToInt(Transparency_) < 100) SetDrawBlendMode(AlphaBlendMode_, engine::CastToInt((Transparency_ / 100.f) * 255.f));
         else SetDrawBlendMode(AlphaBlendMode_, 255);
 
@@ -194,18 +188,15 @@ void Scene::Update(float deltaTime)
         }
         if(l_DrawWidth > ParentScaler_->GetScreenWidth()) l_DrawWidth -= l_DrawWidth - ParentScaler_->GetScreenWidth();
         if(l_DrawHeight > ParentScaler_->GetScreenHeight()) l_DrawHeight -= l_DrawHeight - ParentScaler_->GetScreenHeight();
-        /*
-        DrawRectGraphF(l_DrawPosX, l_DrawPosY, 
-                   engine::CastToInt(l_DrawSrcX), engine::CastToInt(l_DrawSrcY),
-                  engine::CastToInt(l_DrawWidth), engine::CastToInt(l_DrawHeight),
-                      SceneBuffer_, TRUE);
-        */
+
+        // 描画
         DrawRectRotaGraph2F(l_DrawPosX, l_DrawPosY,
             engine::CastToInt(l_DrawSrcX), engine::CastToInt(l_DrawSrcY),
             engine::CastToInt(l_DrawWidth), engine::CastToInt(l_DrawHeight),
             DefaultScaler_->CalculatePositionX(ScreenOriginX_), DefaultScaler_->CalculatePositionY(ScreenOriginY_),
             1.0, ScreenRotationZ_,
             SceneBuffer_, TRUE);
+
         // 元の描画設定に戻す
         SetDrawBlendMode(l_CurrentBlendMode, l_CurrentBlendParam);
 

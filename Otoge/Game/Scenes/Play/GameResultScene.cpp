@@ -12,7 +12,7 @@ GameResultScene::GameResultScene(std::shared_ptr<BeatmapScore> score, std::share
     ResultScore_ = score;
     Beatmap_ = map;
 
-    MapInfoPanel_ = std::make_shared<Scene>("MapInfoPanel", ScreenData(0.f, 0.f, 100.f, 15.f), DefaultScaler_);
+    MapInfoPanel_ = std::make_shared<Scene>("MapInfoPanel", ScreenData(0.f, 0.f, 100.f, 10.f), DefaultScaler_);
     MapInfoPanel_->SetDrawFunction([=]
         {
             ScreenData fixed = MapInfoPanel_->GetDefaultScaler()->Calculate(0.f, 0.f, 100.f, 100.f);
@@ -111,14 +111,15 @@ void GameResultScene::SceneFadeIn(float deltaTime)
 {
     float totalTime = 1.0f;
     float startPos_ = 20.f;
+    float startSize_ = 100.f + startPos_ * 2.f;
     Easing::EaseFunction ease = Easing::OutBounce;
 
     SetTransparent(engine::CastToFloat(ease(timerCount, totalTime, 100.f, 0.f)));
 
     SetPositionX(engine::CastToFloat(ease(timerCount, totalTime, 0.f, -startPos_)));
     SetPositionY(engine::CastToFloat(ease(timerCount, totalTime, 0.f, -startPos_)));
-    SetScreenWidth(engine::CastToFloat(ease(timerCount, totalTime, 100.f, 100.f + startPos_ * 2.f)));
-    SetScreenHeight(engine::CastToFloat(ease(timerCount, totalTime, 100.f, 100.f + startPos_ * 2.f)));
+    SetScreenWidth(engine::CastToFloat(ease(timerCount, totalTime, 100.f, startSize_)));
+    SetScreenHeight(engine::CastToFloat(ease(timerCount, totalTime, 100.f, startSize_)));
 
     RefreshScaler();
     RefreshDrawBuffer();
@@ -186,13 +187,13 @@ void GameResultScene::SceneUpdate(float deltaTime)
 
         if (IsFullScreenGraph_)
         {
-            AccuracyGraph_->SetPositionY(ease(timerCount, totalTime, MapInfoPanel_->GetScreenHeight(), DefaultGraphScreen_.posY));
-            AccuracyGraph_->SetScreenHeight(ease(timerCount, totalTime, 100.f - MapInfoPanel_->GetScreenHeight(), DefaultGraphScreen_.height));
+            AccuracyGraph_->SetPositionY(engine::CastToFloat(ease(timerCount, totalTime, MapInfoPanel_->GetScreenHeight(), DefaultGraphScreen_.posY)));
+            AccuracyGraph_->SetScreenHeight(engine::CastToFloat(ease(timerCount, totalTime, static_cast<double>(100.f - MapInfoPanel_->GetScreenHeight()), DefaultGraphScreen_.height)));
         }
         else
         {
-            AccuracyGraph_->SetPositionY(ease(timerCount, totalTime, DefaultGraphScreen_.posY, MapInfoPanel_->GetScreenHeight()));
-            AccuracyGraph_->SetScreenHeight(ease(timerCount, totalTime, DefaultGraphScreen_.height, 100.f - MapInfoPanel_->GetScreenHeight()));
+            AccuracyGraph_->SetPositionY(engine::CastToFloat(ease(timerCount, totalTime, DefaultGraphScreen_.posY, MapInfoPanel_->GetScreenHeight())));
+            AccuracyGraph_->SetScreenHeight(engine::CastToFloat(ease(timerCount, totalTime, DefaultGraphScreen_.height, static_cast<double>(100.f - MapInfoPanel_->GetScreenHeight()))));
         }
 
         if(timerCount > totalTime)
@@ -233,13 +234,17 @@ void GameResultScene::DrawAccuracyGraph()
             DrawLineAA(l_PrevPoint.posX, l_PrevPoint.posY, l_Point.posX, l_Point.posY, l_LineColor, TRUE);
             if (l_PrevPoint.posY > l_Point.posY)
             {
-                DrawTriangle(l_PrevPoint.posX, l_PrevPoint.posY, l_Point.posX, l_Point.posY, l_Point.posX, l_PrevPoint.posY, l_LineColor, TRUE);
-                DrawBox(l_PrevPoint.posX, l_PrevPoint.posY, l_Point.posX, AccuracyGraph_->GetRawScreenHeight(), l_LineColor, TRUE);
+                DrawTriangle(engine::CastToInt(l_PrevPoint.posX), engine::CastToInt(l_PrevPoint.posY),
+                             engine::CastToInt(l_Point.posX), engine::CastToInt(l_Point.posY),
+                             engine::CastToInt(l_Point.posX), engine::CastToInt(l_PrevPoint.posY), l_LineColor, TRUE);
+                DrawBox(engine::CastToInt(l_PrevPoint.posX), engine::CastToInt(l_PrevPoint.posY), engine::CastToInt(l_Point.posX), engine::CastToInt(AccuracyGraph_->GetRawScreenHeight()), l_LineColor, TRUE);
             }
             else
             {
-                DrawTriangle(l_PrevPoint.posX, l_PrevPoint.posY, l_Point.posX, l_Point.posY, l_PrevPoint.posX, l_Point.posY, l_LineColor, TRUE);
-                DrawBox(l_PrevPoint.posX, l_Point.posY, l_Point.posX, AccuracyGraph_->GetRawScreenHeight(), l_LineColor, TRUE);
+                DrawTriangle(engine::CastToInt(l_PrevPoint.posX), engine::CastToInt(l_PrevPoint.posY),
+                             engine::CastToInt(l_Point.posX), engine::CastToInt(l_Point.posY),
+                             engine::CastToInt(l_PrevPoint.posX), engine::CastToInt(l_Point.posY), l_LineColor, TRUE);
+                DrawBox(engine::CastToInt(l_PrevPoint.posX), engine::CastToInt(l_Point.posY), engine::CastToInt(l_Point.posX), engine::CastToInt(AccuracyGraph_->GetRawScreenHeight()), l_LineColor, TRUE);
             }
 
 

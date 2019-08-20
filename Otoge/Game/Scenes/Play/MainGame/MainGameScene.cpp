@@ -298,7 +298,7 @@ void MainGameScene::SceneUpdate(float deltaTime)
                             Beatmap_->SetCurrentPlayCount(l_BPMChangeCount + l_DiffCountByNewBPM);
                         }else
                         {
-                            Beatmap_->SetCurrentPlayCount(note->timingCount);
+                            Beatmap_->SetCurrentPlayCount(engine::CastToFloat(note->timingCount));
                             Logger_->Debug("set BPM, offset fixed");
                         }
 
@@ -326,7 +326,7 @@ void MainGameScene::SceneUpdate(float deltaTime)
                     {
                         if(note->isDraw)
                         {
-                            BreakTimeBar_->Show(timing::GetTimeByCount(note->lengthCount, Beatmap_->GetCurrentTempoByBPM()));
+                            BreakTimeBar_->Show(timing::GetTimeByCount(engine::CastToInt(note->lengthCount), Beatmap_->GetCurrentTempoByBPM()));
                             note->isDraw = false;
                         }
 
@@ -466,7 +466,7 @@ void MainGameScene::DrawGamePanel()
     }
 
     ScreenData l_LineSD = GamePanel_->GetDefaultScaler()->Calculate(0.f, JudgeLinePosY_, 100.f, 0.5f);
-    DrawBox(l_LineSD.posX, l_LineSD.posY, l_LineSD.posX + l_LineSD.width, l_LineSD.posY + l_LineSD.height, color_preset::LIGHT_GREY, TRUE);
+    DrawBox(engine::CastToInt(l_LineSD.posX), engine::CastToInt(l_LineSD.posY), engine::CastToInt(l_LineSD.posX + l_LineSD.width), engine::CastToInt(l_LineSD.posY + l_LineSD.height), color_preset::LIGHT_GREY, TRUE);
 
     ScreenData l_OutLine = GamePanel_->GetDefaultScaler()->Calculate(0.f, -5.f, 100.f, 110.f);
     DrawBoxAA(l_OutLine.posX, l_OutLine.posY, l_OutLine.posX + l_OutLine.width, l_OutLine.posY + l_OutLine.height, color_preset::LIGHT_GREY, FALSE, 2.f);
@@ -591,5 +591,5 @@ void BreakTimeBar::Draw()
     ScreenData l_Full = DefaultScaler_->Calculate(50.f - TimeRatio_, 0.f, (TimeRatio_ * 2.f), 100.f);
 
     SetDrawBlendMode(DX_BLENDMODE_ALPHA, 127);
-    DrawBox(l_Full.posX, l_Full.posY, l_Full.posX + l_Full.width, l_Full.posY + l_Full.height, color_preset::LIGHT_GREY, TRUE);
+    DrawBoxAA(l_Full.posX, l_Full.posY, l_Full.posX + l_Full.width, l_Full.posY + l_Full.height, color_preset::LIGHT_GREY, TRUE);
 }
