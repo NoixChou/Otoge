@@ -9,16 +9,25 @@ private:
     bool IsOpened_ = false;
     bool IsMoving_ = false;
 
-    std::weak_ptr<Button> MenuOpener_;
-    std::weak_ptr<Scene> MenuGroup_;
-    std::weak_ptr<Button> MenuPlay_;
-    std::weak_ptr<Button> MenuOption_;
-    std::weak_ptr<Button> MenuClose_;
-    static std::weak_ptr<Scene> SettingScene_;
+    std::shared_ptr<Button> MenuOpener_;
+    std::shared_ptr<Scene> MenuGroup_;
+    std::shared_ptr<Button> MenuPlay_;
+    std::shared_ptr<Button> MenuOption_;
+    std::shared_ptr<Button> MenuClose_;
+
 public:
     TitleScene();
     ~TitleScene();
+
+    static std::shared_ptr<Scene> SettingScene_;
+
     void SceneFadeIn(float deltaTime) override;
+    void OnStoppedFadeIn() override;
+
+    void OnStartedFadeOut() override;
+    void SceneFadeOut(float deltaTime) override;
+    void OnStoppedFadeOut() override;
+
     void SceneUpdate(float deltaTime) override;
     void Draw() override;
 };

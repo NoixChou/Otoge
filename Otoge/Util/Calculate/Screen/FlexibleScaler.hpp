@@ -9,6 +9,8 @@ private:
     float ScreenWidth_;
     float ScreenHeight_;
     float Scale_;
+    float RatioX_;
+    float RatioY_;
 
     static std::shared_ptr<FlexibleScaler> GlobalInstance_;
     static std::vector<FlexibleScaler*> Scalers_;
@@ -19,7 +21,7 @@ public:
     bool lockLeft = true;
     bool lockRight = false;
 
-    FlexibleScaler(float screenWidth, float screenHeight, float scale = 1.0f);
+    FlexibleScaler(float screenWidth, float screenHeight, float scale = 1.0f, float ratioX = 1.f, float ratioY = 1.f);
     ~FlexibleScaler();
 
     static void ApplyWindowSizeChanges();
@@ -66,6 +68,18 @@ public:
     float GetScale() const;
 
     /// <summary>
+    /// X倍率を取得
+    /// </summary>
+    /// <returns>スケール(1.0=等倍)</returns>
+    float GetRatioX() const;
+
+    /// <summary>
+    /// Y倍率を取得
+    /// </summary>
+    /// <returns>スケール(1.0=等倍)</returns>
+    float GetRatioY() const;
+
+    /// <summary>
     /// X方向のオフセットを設定
     /// </summary>
     /// <param name="offsetX">生Xオフセット</param>
@@ -94,6 +108,18 @@ public:
     /// </summary>
     /// <param name="scale">スケール(1.0=等倍)</param>
     void SetScale(float scale);
+
+    /// <summary>
+    /// X倍率を設定
+    /// </summary>
+    /// <param name="ratioX">スケール(1.0=等倍)</param>
+    void SetRatioX(float ratioX);
+
+    /// <summary>
+    /// Y倍率を設定
+    /// </summary>
+    /// <param name="ratioY">スケール(1.0=等倍)</param>
+    void SetRatioY(float ratioY);
 
 
     /// <summary>

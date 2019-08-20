@@ -21,11 +21,13 @@ bool Task::Initialize(int taskId)
     IsInitialized_ = true;
     IsLiving_ = true;
     IsRunning_ = true;
+    OnInitialize();
     return true;
 }
 
 bool Task::Terminate()
 {
+    OnTerminate();
     IsTerminated_ = true;
     IsRunning_ = false;
     return true;
@@ -157,6 +159,7 @@ void Task::SetLifespan(float lifespan)
 
 void Task::ChildUpdate(float deltaTime)
 {
+    TaskManager::GetInstance()->UpdateTasks(children, childrenQueues, TickSpeed_, deltaTime);
 }
 
 bool Task::AddChildTask(const TaskPointer& task)

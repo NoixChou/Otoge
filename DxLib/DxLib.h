@@ -2,19 +2,19 @@
 // 
 // 		‚c‚wƒ‰ƒCƒuƒ‰ƒŠ		ƒwƒbƒ_ƒtƒ@ƒCƒ‹
 // 
-// 				Ver 3.20c
+// 				Ver 3.20f
 // 
 // -------------------------------------------------------------------------------
 
-#ifndef __DXLIB
-#define __DXLIB
+#ifndef DX_LIB_H
+#define DX_LIB_H
 
 #include "DxCompileConfig.h"
 
 // ‚c‚wƒ‰ƒCƒuƒ‰ƒŠ‚Ìƒo[ƒWƒ‡ƒ“
-#define DXLIB_VERSION 0x320c
-#define DXLIB_VERSION_STR_T _T( "3.20c" )
-#define DXLIB_VERSION_STR_W    L"3.20c"
+#define DXLIB_VERSION 0x320f
+#define DXLIB_VERSION_STR_T _T( "3.20f" )
+#define DXLIB_VERSION_STR_W    L"3.20f"
 
 // İ’è -----------------------------------------------------------------------
 
@@ -23,12 +23,12 @@
 // ƒRƒƒ“ƒg‚ğŠO‚µ‚Ä‚­‚¾‚³‚¢
 //#define DX_LIB_NOT_DEFAULTPATH
 
-#ifndef __DX_MAKE
+#ifndef DX_MAKE
 
 // •`‰æŠÖ˜A‚ÌŠÖ”‚ğˆêØg—p‚³‚ê‚È‚¢ê‡‚ÍˆÈ‰º‚ÌƒRƒƒ“ƒg‚ğŠO‚µ‚Ä‰º‚³‚¢
 //#define DX_NOTUSE_DRAWFUNCTION
 
-#endif // __DX_MAKE
+#endif // DX_MAKE
 
 
 // ’è‹`---------------------------------------------------------------------------
@@ -1784,9 +1784,9 @@ typedef struct tagIPDATA_IPv6
 
 // ŠÖ”ƒvƒƒgƒ^ƒCƒvéŒ¾------------------------------------------------------------------
 
-#ifdef __WINDOWS__
+#ifdef WINDOWS_DESKTOP_OS
 #include "DxFunctionWin.h"
-#endif
+#endif // WINDOWS_DESKTOP_OS
 
 #ifdef __ANDROID__
 #include "DxFunctionAndroid.h"
@@ -2058,6 +2058,7 @@ extern	int			DxSetAllocMemoryErrorCheckFlag(	int Flag ) ;																	// ƒƒ
 extern	int				GetCharBytes( int CharCodeFormat /* DX_CHARCODEFORMAT_SHIFTJIS “™ */ , const void *String ) ;	// •¶š—ñ‚Ìæ“ª‚Ì•¶š‚ÌƒoƒCƒg”‚ğæ“¾‚·‚é
 extern	int				ConvertStringCharCodeFormat( int SrcCharCodeFormat /* DX_CHARCODEFORMAT_SHIFTJIS “™ */ , const void *SrcString, int DestCharCodeFormat /* DX_CHARCODEFORMAT_SHIFTJIS “™ */ , void *DestStringBuffer ) ;		// •¶š—ñ‚Ì•¶šƒR[ƒhŒ`®‚ğ•Ê‚Ì•¶šƒR[ƒhŒ`®‚É•ÏŠ·‚·‚é
 extern	int				SetUseCharCodeFormat( int CharCodeFormat /* DX_CHARCODEFORMAT_SHIFTJIS “™ */ ) ;		// •¶š—ñ‚Ìˆø”‚Ì•¶šƒR[ƒhŒ`®‚ğİ’è‚·‚é( •¶š—ñ•`‰æŒnŠÖ”‚Æ‚»‚Ì‘¼ˆê•”ŠÖ”‚ğœ‚­ )( UNICODE”Å‚Å‚Í–³Œø )
+extern	int				GetUseCharCodeFormat( void ) ;															// •¶š—ñ‚Ìˆø”‚Ì•¶šƒR[ƒhŒ`®‚ğæ“¾‚·‚é( –ß‚è’lF•¶šƒR[ƒhŒ`®( DX_CHARCODEFORMAT_SHIFTJIS “™ ) )( UNICODE”Å‚Å‚Í–³Œø )
 extern	int				Get_wchar_t_CharCodeFormat( void ) ;													// wchar_tŒ^‚Ì•¶šƒR[ƒhŒ`®‚ğæ“¾‚·‚é( –ß‚è’lF DX_CHARCODEFORMAT_UTF16LE ‚È‚Ç )
 
 // •¶š—ñŠÖŒW
@@ -2777,6 +2778,9 @@ extern	int			SetBlendGraphPosition(				int x, int y ) ;												// ƒuƒŒƒ“ƒh‰æ
 extern	int			SetBlendGraphPositionMode(			int BlendGraphPositionMode /* DX_BLENDGRAPH_POSMODE_DRAWGRAPH ‚È‚Ç */ ) ;	// ƒuƒŒƒ“ƒh‰æ‘œ‚Ì“K‰À•Wƒ‚[ƒh‚ğİ’è‚·‚é
 extern	int			SetDrawBright(						int RedBright, int GreenBright, int BlueBright ) ;				// •`‰æ‹P“x‚ğİ’è‚·‚é
 extern	int			GetDrawBright(						int *Red, int *Green, int *Blue ) ;								// •`‰æ‹P“x‚ğæ“¾‚·‚é
+extern	int			SetWriteAlphaChannelFlag(			int Flag ) ;													// •`‰ææ‚ÌƒAƒ‹ƒtƒ@ƒ`ƒƒƒ“ƒlƒ‹‚Ì“à—e‚ğ‘‚«Š·‚¦‚é‚©‚ğİ’è‚·‚é( FALSE:‘‚«Š·‚¦‚È‚¢  TRUE:‘‚«Š·‚¦‚é( ƒfƒtƒHƒ‹ƒg ) )
+extern	int			GetWriteAlphaChannelFlag(			void ) ;														// •`‰ææ‚ÌƒAƒ‹ƒtƒ@ƒ`ƒƒƒ“ƒlƒ‹‚Ì“à—e‚ğ‘‚«Š·‚¦‚é‚©‚ğæ“¾‚·‚é( FALSE:‘‚«Š·‚¦‚È‚¢  TRUE:‘‚«Š·‚¦‚é( ƒfƒtƒHƒ‹ƒg ) )
+extern	int			CheckSeparateAlphaBlendEnable(		void ) ;														// •`‰ææ‚ÌƒAƒ‹ƒtƒ@ƒ`ƒƒƒ“ƒlƒ‹‚Ì“à—e‚ğ‘‚«Š·‚¦‚È‚¢‚±‚Æ‚ª‚Å‚«‚é‚©‚Ç‚¤‚©‚ğæ“¾‚·‚é( TRUE:‘‚«Š·‚¦‚È‚¢‚±‚Æ‚ª‚Å‚«‚é  FALSE:‘‚«Š·‚¦‚È‚¢‚±‚Æ‚ª‚Å‚«‚È‚¢ )
 extern	int			SetIgnoreDrawGraphColor(			int EnableFlag ) ;												// •`‰æ‚·‚é‰æ‘œ‚Ì‚q‚f‚a¬•ª‚ğ–³‹‚·‚é‚©‚Ç‚¤‚©‚ğw’è‚·‚é( EnableFlag:‚±‚Ì‹@”\‚ğg‚¤‚©‚Ç‚¤‚©( TRUE:g‚¤  FALSE:g‚í‚È‚¢( ƒfƒtƒHƒ‹ƒg ) ) )
 extern	int			SetMaxAnisotropy(					int MaxAnisotropy ) ;											// Å‘åˆÙ•û«’l‚ğİ’è‚·‚é
 extern	int			SetUseLarge3DPositionSupport(		int UseFlag ) ;													// ‚R‚cˆ—‚Åg—p‚·‚éÀ•W’l‚ª 10000000.0f ‚È‚Ç‚Ì‘å‚«‚È’l‚É‚È‚Á‚Ä‚à•`‰æ‚Ì•ö‚ê‚ğ¬‚³‚­—}‚¦‚éˆ—‚ğg—p‚·‚é‚©‚Ç‚¤‚©‚ğİ’è‚·‚éADxLib_Init ‚ÌŒÄ‚Ño‚µ‘O‚Å‚Ì‚İg—p‰Â”\( TRUE:•`‰æ‚Ì•ö‚ê‚ğ—}‚¦‚éˆ—‚ğg—p‚·‚é( CPU•‰‰×‚ªã‚ª‚è‚Ü‚· )@@FALSE:•`‰æ‚Ì•ö‚ê‚ğ—}‚¦‚éˆ—‚Íg—p‚µ‚È‚¢( ƒfƒtƒHƒ‹ƒg ) )
@@ -3412,6 +3416,8 @@ extern	int			GetDrawFormatStringCharInfo(            DRAWCHARINFO *InfoBuffer, s
 extern	int			GetDrawExtendStringCharInfo(            DRAWCHARINFO *InfoBuffer, size_t InfoBufferSize, double ExRateX, double ExRateY, const TCHAR *String, int StrLen,          int VerticalFlag = FALSE ) ;	// ƒfƒtƒHƒ‹ƒgƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹‚ğg—p‚µ‚½•¶š—ñ‚Ì‚P•¶š–ˆ‚Ìî•ñ‚ğæ“¾‚·‚é
 extern	int			GetDrawExtendNStringCharInfo(           DRAWCHARINFO *InfoBuffer, size_t InfoBufferSize, double ExRateX, double ExRateY, const TCHAR *String, size_t StringLength, int VerticalFlag = FALSE ) ;	// ƒfƒtƒHƒ‹ƒgƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹‚ğg—p‚µ‚½•¶š—ñ‚Ì‚P•¶š–ˆ‚Ìî•ñ‚ğæ“¾‚·‚é
 extern	int			GetDrawExtendFormatStringCharInfo(      DRAWCHARINFO *InfoBuffer, size_t InfoBufferSize, double ExRateX, double ExRateY, const TCHAR *FormatString, ... ) ;										// ƒfƒtƒHƒ‹ƒgƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹‚ğg—p‚µ‚½‘®•t‚«•¶š—ñ‚Ì‚P•¶š–ˆ‚Ìî•ñ‚ğæ“¾‚·‚é
+extern	int			GetDrawStringKerningPairInfo(			const TCHAR *PairChar,                        int *KernAmount ) ;								// ƒfƒtƒHƒ‹ƒgƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹‚ğg—p‚µ‚½“ñ‚Â‚Ì•¶š‚ÌƒyƒA‚ÌƒJ[ƒjƒ“ƒOî•ñ‚ğæ“¾‚·‚é( PairChar:ƒJ[ƒjƒ“ƒOî•ñ‚ğ’²‚×‚éƒyƒA‚Æ‚È‚é2•¶š‚Ì•¶š—ñ( 2•¶šˆÈã‚ ‚Á‚Ä‚àæ“ª‚Ì2•¶š‚¾‚¯g—p‚³‚ê‚Ü‚· )  KernAmount:2•¶š–Ú‚Ì•¶š‚ğŠî–{‚ÌˆÊ’u‚©‚ç‚¸‚ç‚·ƒhƒbƒg”‚ğ‘ã“ü‚·‚éintŒ^•Ï”‚ÌƒAƒhƒŒƒX )
+extern	int			GetDrawStringKerningPairInfoWithStrLen(	const TCHAR *PairChar, size_t PairCharLength, int *KernAmount ) ;								// ƒfƒtƒHƒ‹ƒgƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹‚ğg—p‚µ‚½“ñ‚Â‚Ì•¶š‚ÌƒyƒA‚ÌƒJ[ƒjƒ“ƒOî•ñ‚ğæ“¾‚·‚é( PairChar:ƒJ[ƒjƒ“ƒOî•ñ‚ğ’²‚×‚éƒyƒA‚Æ‚È‚é2•¶š‚Ì•¶š—ñ( 2•¶šˆÈã‚ ‚Á‚Ä‚àæ“ª‚Ì2•¶š‚¾‚¯g—p‚³‚ê‚Ü‚· )  KernAmount:2•¶š–Ú‚Ì•¶š‚ğŠî–{‚ÌˆÊ’u‚©‚ç‚¸‚ç‚·ƒhƒbƒg”‚ğ‘ã“ü‚·‚éintŒ^•Ï”‚ÌƒAƒhƒŒƒX )
 
 extern	const TCHAR *GetFontNameToHandle(					int FontHandle ) ;																				// ƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹‚ÌƒtƒHƒ“ƒg–¼‚ğæ“¾‚·‚é
 extern	int			GetFontMaxWidthToHandle(                int FontHandle ) ;																				// ƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹‚Ì•¶š‚ÌÅ‘å•‚ğæ“¾‚·‚é
@@ -3440,6 +3446,8 @@ extern	int			GetDrawFormatStringCharInfoToHandle(        DRAWCHARINFO *InfoBuffe
 extern	int			GetDrawExtendStringCharInfoToHandle(        DRAWCHARINFO *InfoBuffer, size_t InfoBufferSize, double ExRateX, double ExRateY, const TCHAR *String, int StrLen,          int FontHandle, int VerticalFlag = FALSE ) ;	// ƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹‚ğg—p‚µ‚½•¶š—ñ‚Ì‚P•¶š–ˆ‚Ìî•ñ‚ğæ“¾‚·‚é
 extern	int			GetDrawExtendNStringCharInfoToHandle(       DRAWCHARINFO *InfoBuffer, size_t InfoBufferSize, double ExRateX, double ExRateY, const TCHAR *String, size_t StringLength, int FontHandle, int VerticalFlag = FALSE ) ;	// ƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹‚ğg—p‚µ‚½•¶š—ñ‚Ì‚P•¶š–ˆ‚Ìî•ñ‚ğæ“¾‚·‚é
 extern	int			GetDrawExtendFormatStringCharInfoToHandle(  DRAWCHARINFO *InfoBuffer, size_t InfoBufferSize, double ExRateX, double ExRateY, int FontHandle, const TCHAR *FormatString, ... ) ;										// ƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹‚ğg—p‚µ‚½‘®•t‚«•¶š—ñ‚Ì‚P•¶š–ˆ‚Ìî•ñ‚ğæ“¾‚·‚é
+extern	int			GetDrawStringKerningPairInfoToHandle(	        const TCHAR *PairChar,                        int *KernAmount, int FontHandle ) ;		// ƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹‚ğg—p‚µ‚½“ñ‚Â‚Ì•¶š‚ÌƒyƒA‚ÌƒJ[ƒjƒ“ƒOî•ñ‚ğæ“¾‚·‚é( PairChar:ƒJ[ƒjƒ“ƒOî•ñ‚ğ’²‚×‚éƒyƒA‚Æ‚È‚é2•¶š‚Ì•¶š—ñ( 2•¶šˆÈã‚ ‚Á‚Ä‚àæ“ª‚Ì2•¶š‚¾‚¯g—p‚³‚ê‚Ü‚· )  KernAmount:2•¶š–Ú‚Ì•¶š‚ğŠî–{‚ÌˆÊ’u‚©‚ç‚¸‚ç‚·ƒhƒbƒg”‚ğ‘ã“ü‚·‚éintŒ^•Ï”‚ÌƒAƒhƒŒƒX )
+extern	int			GetDrawStringKerningPairInfoToHandleWithStrLen(	const TCHAR *PairChar, size_t PairCharLength, int *KernAmount, int FontHandle ) ;		// ƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹‚ğg—p‚µ‚½“ñ‚Â‚Ì•¶š‚ÌƒyƒA‚ÌƒJ[ƒjƒ“ƒOî•ñ‚ğæ“¾‚·‚é( PairChar:ƒJ[ƒjƒ“ƒOî•ñ‚ğ’²‚×‚éƒyƒA‚Æ‚È‚é2•¶š‚Ì•¶š—ñ( 2•¶šˆÈã‚ ‚Á‚Ä‚àæ“ª‚Ì2•¶š‚¾‚¯g—p‚³‚ê‚Ü‚· )  KernAmount:2•¶š–Ú‚Ì•¶š‚ğŠî–{‚ÌˆÊ’u‚©‚ç‚¸‚ç‚·ƒhƒbƒg”‚ğ‘ã“ü‚·‚éintŒ^•Ï”‚ÌƒAƒhƒŒƒX )
 extern	int			GetFontStateToHandle(                   TCHAR   *FontName, int *Size, int *Thick, int FontHandle, int *FontType = NULL , int *CharSet = NULL , int *EdgeSize = NULL , int *Italic = NULL ) ;						// ƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹‚Ìî•ñ‚ğæ“¾‚·‚é
 extern	int			CheckFontCacheToTextureFlag(            int FontHandle ) ;																				// ƒtƒHƒ“ƒgƒnƒ“ƒhƒ‹‚ªƒeƒNƒXƒ`ƒƒƒLƒƒƒbƒVƒ…‚ğg—p‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©‚ğæ“¾‚·‚é
 extern	int			CheckFontChacheToTextureFlag(           int FontHandle ) ;																				// CheckFontCacheToTextureFlag ‚ÌŒëš”Å
@@ -5143,10 +5151,10 @@ using namespace DxLib ;
 
 // ‚c‚wƒ‰ƒCƒuƒ‰ƒŠ“à•”‚Å‚Ì‚İg—p‚·‚éƒwƒbƒ_ƒtƒ@ƒCƒ‹‚ÌƒCƒ“ƒNƒ‹[ƒh -------------------------
 
-#ifdef __DX_MAKE
+#ifdef DX_MAKE
 //	#include "DxStatic.h"
 #endif
 
-#endif
+#endif // DX_LIB_H
 
 

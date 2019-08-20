@@ -4,6 +4,7 @@
 namespace color_preset
 {
     /* グレースケール */
+    const unsigned TRUE_BLACK = GetColor(0, 0, 0);
     const unsigned BLACK = GetColor(33, 33, 33);
     const unsigned WHITE = GetColor(250, 250, 250);
     const unsigned GREY = GetColor(158, 158, 158);

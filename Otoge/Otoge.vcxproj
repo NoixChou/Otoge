@@ -109,7 +109,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
       <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ProgramDataBaseFileName>$(SolutionDir)PDB\$(Configuration)\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
@@ -133,7 +133,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
       <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ProgramDataBaseFileName>$(SolutionDir)PDB\$(Configuration)\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
@@ -159,7 +159,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
       <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ProgramDataBaseFileName>$(SolutionDir)PDB\$(Configuration)\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <DebugInformationFormat>None</DebugInformationFormat>
@@ -173,7 +173,7 @@
       <AdditionalLibraryDirectories>../DxLib;L:/syuto/boost_1_63_0/lib/$(PlatformTarget)</AdditionalLibraryDirectories>
       <OutputFile>$(SolutionDir)Bin\$(Configuration)\$(PlatformTarget)\$(TargetName)$(TargetExt)</OutputFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -189,7 +189,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
       <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ProgramDataBaseFileName>$(SolutionDir)PDB\$(Configuration)\vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <DebugInformationFormat>None</DebugInformationFormat>
@@ -203,12 +203,14 @@
       <AdditionalLibraryDirectories>../DxLib;L:/syuto/boost_1_63_0/lib/$(PlatformTarget)</AdditionalLibraryDirectories>
       <OutputFile>$(SolutionDir)Bin\$(Configuration)\$(PlatformTarget)\$(TargetName)$(TargetExt)</OutputFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Game\Scenes\Play\Game3DTest.cpp" />
+    <ClCompile Include="Game\Scenes\Play\GameResultScene.cpp" />
+    <ClCompile Include="Game\Scenes\Play\MainGame\MainGameScene.cpp" />
     <ClCompile Include="Game\Scenes\Title\Setting\SettingScene.cpp" />
+    <ClCompile Include="Game\Scenes\Play\MusicSelect\MusicSelectScene.cpp" />
     <ClCompile Include="System\GUI\CheckBox.cpp" />
     <ClCompile Include="System\GUI\DropdownList.cpp" />
     <ClCompile Include="System\GUI\RoundedButton.cpp" />
@@ -216,9 +218,12 @@
     <ClCompile Include="System\GUI\SlideBar.cpp" />
     <ClCompile Include="System\GUI\SpringButton.cpp" />
     <ClCompile Include="System\Task\CursorDrawer.cpp" />
+    <ClCompile Include="Util\Audio\AudioManager.cpp" />
+    <ClCompile Include="Util\Beatmap\Beatmap.cpp" />
+    <ClCompile Include="Util\Beatmap\Notes.cpp" />
     <ClCompile Include="Util\Calculate\Animation\Easing.cpp" />
     <ClCompile Include="System\Buffer\BufferManager.cpp" />
-    <ClCompile Include="System\Font\FontManager.cpp" />
+    <ClCompile Include="System\Font\FontHandleCreator.cpp" />
     <ClCompile Include="System\GUI\Button.cpp" />
     <ClCompile Include="System\GUI\GUI.cpp" />
     <ClCompile Include="System\GUI\Label.cpp" />
@@ -244,8 +249,10 @@
     <ClCompile Include="Util\Window\DxSettings.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Game\Scenes\Play\Game3DTest.hpp" />
+    <ClInclude Include="Game\Scenes\Play\GameResultScene.hpp" />
+    <ClInclude Include="Game\Scenes\Play\MainGame\MainGameScene.hpp" />
     <ClInclude Include="Game\Scenes\Title\Setting\SettingScene.hpp" />
+    <ClInclude Include="Game\Scenes\Play\MusicSelect\MusicSelectScene.hpp" />
     <ClInclude Include="System\GlobalMethod.hpp" />
     <ClInclude Include="System\GUI\CheckBox.hpp" />
     <ClInclude Include="System\GUI\DropdownList.hpp" />
@@ -254,10 +261,16 @@
     <ClInclude Include="System\GUI\SlideBar.hpp" />
     <ClInclude Include="System\GUI\SpringButton.hpp" />
     <ClInclude Include="System\Task\CursorDrawer.hpp" />
+    <ClInclude Include="Util\Audio\AudioManager.hpp" />
+    <ClInclude Include="Util\Audio\AudioStream.h" />
+    <ClInclude Include="Util\Beatmap\Beatmap.hpp" />
+    <ClInclude Include="Util\Beatmap\BeatmapScore.hpp" />
+    <ClInclude Include="Util\Beatmap\Notes.hpp" />
+    <ClInclude Include="Util\Beatmap\Timing.hpp" />
     <ClInclude Include="Util\Calculate\Animation\Easing.hpp" />
     <ClInclude Include="System\Buffer\BufferManager.hpp" />
     <ClInclude Include="System\DefineSettings.h" />
-    <ClInclude Include="System\Font\FontManager.hpp" />
+    <ClInclude Include="System\Font\FontHandleCreator.hpp" />
     <ClInclude Include="System\GUI\Button.hpp" />
     <ClInclude Include="System\GUI\GUI.hpp" />
     <ClInclude Include="System\GUI\Label.hpp" />

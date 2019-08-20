@@ -14,6 +14,8 @@ public:
 
     static void LowLevelLog(const std::string &message, const std::string &tag);
 
+    static void PutTime();
+
     void Debug(const std::string &message);
     void Info(const std::string &message);
     void Warn(const std::string &message);

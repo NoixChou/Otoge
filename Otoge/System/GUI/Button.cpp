@@ -112,7 +112,7 @@ void ButtonPushedAnimate::PreUpdate(float deltaTime)
             if(parentScene->IsHoldMouse())
             {
                 Lifespan_ = 0.5f;
-                if(Size_ < parentScene->GetRawScreenWidth() || Size_ < parentScene->GetRawScreenHeight())
+                if(Size_ < parentScene->GetRawScreenWidth() + position.x || Size_ < parentScene->GetRawScreenHeight() + position.y)
                 {
                     SizeAnimationProcess(deltaTime);
                 }
@@ -123,6 +123,7 @@ void ButtonPushedAnimate::PreUpdate(float deltaTime)
             }
         }
     }
+    
     SizeAnimationProcess(deltaTime);
     SetTransparent(GetTransparent() - (100.f * deltaTime));
 }
@@ -137,12 +138,13 @@ void ButtonPushedAnimate::Draw()
     const auto l_Fixed = ParentScaler_->Calculate(l_Circle);
     SetDrawBlendMode(DX_BLENDMODE_PMA_INVSRC, 255);
     DrawCircleAA(
-        engine::CastToInt(l_Fixed.posX), engine::CastToInt(l_Fixed.posY),
-        engine::CastToInt(l_Fixed.width + l_Fixed.height / 2.0f),
+        l_Fixed.posX, l_Fixed.posY,
+        l_Fixed.width + l_Fixed.height / 2.0f,
         engine::CastToInt(l_Fixed.width + l_Fixed.height / 2.0f) / 2, GetColor(255, 255, 255), TRUE);
 }
 
 void ButtonPushedAnimate::SizeAnimationProcess(float deltaTime)
 {
+    //Size_ *= deltaTime;
     Size_ += Size_ * 10.f * deltaTime;
 }

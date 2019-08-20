@@ -22,8 +22,18 @@ private:
     std::shared_ptr<CheckBox> VSyncCheck_;
 
     std::shared_ptr<Label> InterfaceSectionLabel_;
+    std::shared_ptr<CheckBox> UseSystemCursorCheck_;
     //std::shared_ptr<DropdownList> JapaneseFontList_;
     //std::shared_ptr<DropdownList> AlphabetFontList_;
+
+    std::shared_ptr<Label> AudioSectionLabel_;
+    std::shared_ptr<SlideBar> BGMVolumeBar_;
+    std::shared_ptr<SlideBar> SEVolumeBar_;
+
+    std::shared_ptr<Label> DebugSectionLabel_;
+    std::shared_ptr<Label> DebugSectionCaution_;
+    std::shared_ptr<CheckBox> SceneFrameDrawCheck_;
+    std::shared_ptr<CheckBox> DrawablePointDrawCheck_;
 
     std::vector<std::pair<std::string, std::pair<int, int>>> AllowWindowSizes_;
 

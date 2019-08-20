@@ -29,6 +29,7 @@ public:
     bool ChangeFont(const char* fontName = nullptr, int size = -1, int thickness = -1, int fontType = -1);
     bool ChangeFontSize(int size = -1);
     bool ChangeFontThickness(int thickness = -1);
+    void SetFontHandle(int fontHandle);
     int GetFontHandle() const;
     int GetFontSize() const;
     void RemoveFont();

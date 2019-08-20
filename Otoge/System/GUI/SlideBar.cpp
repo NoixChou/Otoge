@@ -41,10 +41,16 @@ void SlideBar::GUIUpdate(float deltaTime)
         }
         //SlideValue_ += MouseManager::GetInstance()->GetMouseWheelAccel() * l_MoveSpeed;
     }
-    if(IsHoldMouse())
+    bool isDown = engine::IsPointInScreen(
+        MouseManager::GetInstance()->GetDownPosXf(), MouseManager::GetInstance()->GetDownPosYf(),
+        ScreenData(GetRawPositionX() + ParentScaler_->GetDiffX() - DefaultScaler_->CalculatePositionX(GetOriginX()),
+            GetRawPositionY() + ParentScaler_->GetDiffY() - DefaultScaler_->CalculatePositionY(GetOriginY()),
+            GetRawScreenWidth(),
+            GetRawScreenHeight()
+        ));
+    if(IsHoldMouse() && isDown)
     {
-        SlideValue_ = (MaxValue_) * (((MouseManager::GetInstance()->GetMouseRateX(DefaultScaler_) - DefaultScaler_->
-            CalculatePositionRateX(DefaultScaler_->GetDiffX())) / (100.f - ballSize)) - ((ballSize / 2.0f) / 100.f));
+        SlideValue_ = MaxValue_ * (((MouseManager::GetInstance()->GetMouseRateX(DefaultScaler_) - GetOriginX() - DefaultScaler_->CalculatePositionRateX(DefaultScaler_->GetDiffX())) / (100.f - ballSize)) - ((ballSize / 1.75f) / 100.f));
     }
     SlideValue_ = engine::LimitRange(SlideValue_, MinValue_, MaxValue_);
 
@@ -65,21 +71,23 @@ void SlideBar::GUIUpdate(float deltaTime)
 
 void SlideBar::Draw()
 {
-    DrawLine(engine::CastToInt(DefaultScaler_->CalculatePositionX(ballSize / 2.f)),
-             engine::CastToInt(GetRawScreenHeight() / 2.f),
-             engine::CastToInt(GetRawScreenWidth() - DefaultScaler_->CalculatePositionX((ballSize / 2.f))),
-             engine::CastToInt(GetRawScreenHeight() / 2.f), barColor,
-             engine::CastToInt(DefaultScaler_->CalculateHeight(4.0f)));
-    DrawCircle(engine::CastToInt(DefaultScaler_->CalculatePositionX((ballSize / 2.f))),
-               engine::CastToInt(GetRawScreenHeight() / 2.f), engine::CastToInt(DefaultScaler_->CalculateHeight(8.0f)),
+    DrawLineAA(DefaultScaler_->CalculatePositionX(ballSize / 2.f),
+             GetRawScreenHeight() / 2.f,
+             GetRawScreenWidth() - DefaultScaler_->CalculatePositionX((ballSize / 2.f)),
+             GetRawScreenHeight() / 2.f, barColor,
+             DefaultScaler_->CalculateHeight(4.0f));
+    DrawCircleAA(DefaultScaler_->CalculatePositionX((ballSize / 2.f)),
+               GetRawScreenHeight() / 2.f, DefaultScaler_->CalculateHeight(8.0f), 12,
                barColor, TRUE);
-    DrawCircle(engine::CastToInt(GetRawScreenWidth() - DefaultScaler_->CalculatePositionX((ballSize / 2.f))),
-               engine::CastToInt(GetRawScreenHeight() / 2.f), engine::CastToInt(DefaultScaler_->CalculateHeight(8.0f)),
+    DrawCircleAA(GetRawScreenWidth() - DefaultScaler_->CalculatePositionX((ballSize / 2.f)),
+               GetRawScreenHeight() / 2.f, DefaultScaler_->CalculateHeight(8.0f), 12,
                barColor, TRUE);
-    DrawCircle(engine::CastToInt(BallPosition_), engine::CastToInt(GetRawScreenHeight() / 2.0f),
-               engine::CastToInt(DefaultScaler_->CalculateHeight(ballSize * 2.f)), baseColor, TRUE);
-    DrawCircle(engine::CastToInt(BallPosition_), engine::CastToInt(GetRawScreenHeight() / 2.0f),
-               engine::CastToInt(DefaultScaler_->CalculateHeight(ballSize * 2.f)), barColor, FALSE);
+    DrawCircleAA(BallPosition_, GetRawScreenHeight() / 2.0f,
+               DefaultScaler_->CalculateHeight(ballSize * 2.f), 24,
+               baseColor, TRUE);
+    DrawCircleAA(BallPosition_, GetRawScreenHeight() / 2.0f,
+               DefaultScaler_->CalculateHeight(ballSize * 2.f), 24,
+               barColor, FALSE, 1.8f);
 }
 
 float SlideBar::GetValue() const

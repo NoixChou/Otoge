@@ -1,7 +1,7 @@
 ﻿#pragma once
-class FontManager
+class FontHandleCreator
 {
 private:
-    std::vector<int> Fonts_;
+    
 public:
 };

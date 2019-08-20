@@ -8,7 +8,7 @@ Label::Label(const std::string& label, const ScreenData& layoutScreen,
              std::shared_ptr<FlexibleScaler> parentScaler) : GUI(label + "\"<Label>\"", layoutScreen, parentScaler,
                                                                  true)
 {
-    baseColor = color_preset::BLACK;
+    baseColor = color_preset::DARK_GREY;
     Label_ = label;
     textAlign = TextAlignment::left | TextAlignment::top;
 }
@@ -19,7 +19,7 @@ Label::~Label()
 
 void Label::GUIUpdate(float deltaTime)
 {
-    if(IsChangedSize() || IsChangedLabel_)
+    //if(IsChangedSize() || IsChangedLabel_)
     {
         //Logger_->Debug("Ascent: " + std::to_string(GetFontAscentToHandle(FontHandle_)));
         if((textAlign & TextAlignment::left) == TextAlignment::left) TextX_ = 0.f;

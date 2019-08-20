@@ -2,12 +2,12 @@
 // 
 // 		ＤＸライブラリ		Windows専用関数プロトタイプ宣言用ヘッダファイル
 // 
-// 				Ver 3.20c
+// 				Ver 3.20f
 // 
 // -------------------------------------------------------------------------------
 
-#ifndef __DXFUNCTIONWIN
-#define __DXFUNCTIONWIN
+#ifndef DX_FUNCTIONWIN_H
+#define DX_FUNCTIONWIN_H
 
 // 関数プロトタイプ宣言------------------------------------------------------------------
 
@@ -259,6 +259,7 @@ extern	int			SetKeyExclusiveCooperativeLevelFlag(	int Flag ) ;															// 
 extern	int			SetKeyboardNotDirectInputFlag(			int Flag ) ;															// キーボードの入力処理に DirectInput を使わないかどうかを設定する( TRUE:DirectInput を使わず、Windows標準機能を使用する　　FALSE:DirectInput を使用する )
 extern	int			SetUseDirectInputFlag(					int Flag ) ;															// 入力処理に DirectInput を使用するかどうかを設定する( TRUE:DirectInput を使用する　　FALSE:DirectInput を使わず、Windows標準機能を使用する )
 extern	int			SetUseXInputFlag(						int Flag ) ;															// Xbox360コントローラの入力処理に XInput を使用するかどうかを設定する( TRUE:XInput を使用する( デフォルト )　　FALSE:XInput を使用しない )
+extern	int			SetUseXboxControllerDirectInputFlag(	int Flag ) ;															// Xbox360コントローラや Xbox Oneコントローラを DirectInputコントローラとしても検出するかどうかを設定する( TRUE:DirectInputコントローラとしても検出する  FALSE:DirectInputコントローラとしては検出しない(デフォルト) )、DxLib_Init の呼び出し前でのみ実行可能
 extern	int			GetJoypadGUID(							int PadIndex, GUID *GuidInstanceBuffer, GUID *GuidProductBuffer = NULL ) ;	// ジョイパッドのＧＵIＤを得る
 extern	int			GetJoypadName(							int InputType, TCHAR *InstanceNameBuffer, TCHAR *ProductNameBuffer ) ;	// ジョイパッドのデバイス登録名と製品登録名を取得する( InstanceNameBuffer, ProductNameBuffer 共に 260 以上のバッファサイズが必要 )
 extern	int			ConvertKeyCodeToVirtualKey(				int KeyCode ) ;															// ＤＸライブラリのキーコード( KEY_INPUT_A など )に対応する Windows の仮想キーコード( VK_LEFT など ) を取得する( KeyCode:変換したいＤＸライブラリのキーコード　戻り値：Windowsの仮想キーコード )
@@ -481,5 +482,5 @@ extern	int			PlayMusicByResourceWithStrLen(		const TCHAR *ResourceName, size_t R
 
 #endif // DX_NON_NAMESPACE
 
-#endif // __DXFUNCTIONWIN
+#endif // DX_FUNCTIONWIN_H
 
