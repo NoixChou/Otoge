@@ -156,13 +156,11 @@ void DropdownList<V>::GUIUpdate(float deltaTime)
     {
         AddPanel();
         InvertOpening();
-        Logger_->Warn("ボタンクリックで切り替え");
     }
     else
     {
         if (MouseManager::GetInstance()->IsDownButton(MOUSE_INPUT_LEFT) && (!Panel_->IsOnMouse() && !IsOnMouse()) && IsListOpened_)
         {
-            Logger_->Warn("範囲外クリックで閉じる");
             CloseList();
         }
     }

@@ -23,7 +23,7 @@ FlexibleScaler::~FlexibleScaler()
     auto result = std::find(Scalers_.begin(), Scalers_.end(), this);
     if(result == Scalers_.end())
     {
-        Logger::LowLevelLog("Broken scaler list!!!", "CRITICAL");
+        Logger::LowLevelLog("Broken scaler list!", "CRITICAL");
     }
     else
     {
@@ -44,6 +44,7 @@ void FlexibleScaler::ApplyWindowSizeChanges()
         s->SetScreenWidth(s->CalculateWidth(GlobalInstance_->CalculatePositionRateX(s->GetScreenWidth())));
         s->SetScreenHeight(s->CalculateHeight(GlobalInstance_->CalculatePositionRateY(s->GetScreenHeight())));
     }
+    Logger::LowLevelLog("Completed SizeChange", "FlexScaler");
 }
 
 std::shared_ptr<FlexibleScaler> FlexibleScaler::GetWindowBasedInstance()

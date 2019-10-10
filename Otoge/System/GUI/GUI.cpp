@@ -8,6 +8,7 @@
 #include "../../Util/Window/DxSettings.hpp"
 #include "../../Util/Encoding/CharacterType.hpp"
 #include "../../Util/Encoding/EncodingConverter.h"
+
 int GUI::GlobalGUICount_ = 0;
 int GUI::JapaneseFontCount_ = 0;
 char* GUI::JapaneseFonts_ = nullptr;
@@ -56,6 +57,16 @@ void GUI::SceneUpdate(float deltaTime)
     {
         AdjustFont();
     }
+    if(IsClickedMouse())
+    {
+        /*
+        Event e;
+        e.name = "testClickEvent";
+        e.sender = this;
+        testEvents.CallHandlers(e);
+        */
+    }
+
     GUIUpdate(deltaTime);
     IsChangedLabel_ = false;
 }
@@ -77,12 +88,17 @@ std::string GUI::GetLabel() const
 
 void GUI::AdjustFont()
 {
-    //if (((FontStringCalculator::GetStringWidth(FontHandle_, Label_) > GetRawScreenWidth()) &&
-    //    (FontStringCalculator::GetStringHeight(FontHandle_) > GetRawScreenHeight())) ||
-    //    (engine::CompareTolerance(FontStringCalculator::GetStringWidth(FontHandle_, Label_), GetRawScreenWidth(), 0.01f) != 0))
-    //ChangeFontSize(engine::CastToInt(GetRawScreenHeight()));
+    if (!IsFontSizeInit_)
     {
         ChangeFontSize(engine::CastToInt(GetRawScreenHeight()));
+        IsFontSizeInit_ = true;
+    }
+    //ChangeFontSize(engine::CastToInt(GetRawScreenHeight()));
+
+    if (((FontStringCalculator::GetStringWidth(FontHandle_, Label_) > GetRawScreenWidth()) &&
+        (FontStringCalculator::GetStringHeight(FontHandle_) > GetRawScreenHeight())) ||
+        (engine::CompareTolerance(FontStringCalculator::GetStringWidth(FontHandle_, Label_), GetRawScreenWidth(), 0.01f) != 0))
+    {
         
         while (FontStringCalculator::GetStringWidth(FontHandle_, Label_) > GetRawScreenWidth())
         {
