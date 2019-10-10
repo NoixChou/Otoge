@@ -1,0 +1,3 @@
+[submodule "EventSystem"]
+	path = EventSystem
+	url = https://github.com/NoixChou/EventSystem.git
