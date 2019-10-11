@@ -1,6 +1,7 @@
 ﻿#pragma once
+#include <EventSystem/Include/EventSystem.hpp>
 
-class Logger
+class Logger : public events::ManagedEventListener
 {
 private:
     std::string ModuleName_;

@@ -59,12 +59,9 @@ void GUI::SceneUpdate(float deltaTime)
     }
     if(IsClickedMouse())
     {
-        /*
-        Event e;
+        events::Event e;
         e.name = "testClickEvent";
-        e.sender = this;
-        testEvents.CallHandlers(e);
-        */
+        testEvent(e);
     }
 
     GUIUpdate(deltaTime);

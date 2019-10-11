@@ -1,7 +1,8 @@
 ﻿#pragma once
 #include "../Task/Scene.hpp"
 #include "../../Util/Calculate/ScreenData.h"
-// #include "../../Util/Event/EventHandlers.hpp"
+
+#include "EventSystem/Include/EventSystem.hpp"
 
 class GUI : public Scene
 {
@@ -16,7 +17,7 @@ protected:
     bool IsUseFont_ = false;
     int FontHandle_ = -1;
 public:
-    //EventHandlers testEvents;
+    events::Delegate<bool, events::Event&> testEvent;
     bool adjustmentFontSize = false;
     unsigned baseColor;
     GUI(const std::string& guiName, const ScreenData& layoutScreen,

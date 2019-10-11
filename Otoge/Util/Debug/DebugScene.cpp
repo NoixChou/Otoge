@@ -76,18 +76,6 @@ DebugScene::DebugScene() : Scene("DebugScene")
         l_DeltaTimePanel->AddChildTask(std::static_pointer_cast<Task>(DeltaTimeDescLabel_));
     }
 
-    TestButton_ = std::make_shared<Button>("--", ScreenData(0.f, 0.f, 15.f, 100.f), DefaultScaler_);
-    TestButton_->baseColor = color_preset::LEAF_GREEN;
-    TestButton_->GetTextLabelInstance()->textAlign = Label::TextAlignment::middle | Label::TextAlignment::right;
-    TestButton_->ChangeFontThickness(8);
-
-    /*
-    EventHandler<DebugScene> handler;
-    handler.SetHandler(this, &DebugScene::HandleTestEvent);
-    TestButton_->testEvents.AddHandler<DebugScene>(handler); //イベント登録
-    */
-    AddChildTask(std::static_pointer_cast<Task>(TestButton_));
-
     SetTransparent(80.f);
     SetPriority(100.f);
 }
@@ -115,11 +103,3 @@ void DebugScene::Draw()
     l_DeltaTimeScreen.width = DeltaTimeLabel_->GetRawScreenWidth();
     l_DeltaTimeScreen.height = DeltaTimeLabel_->GetRawScreenHeight();
 }
-
-/*
-bool DebugScene::HandleTestEvent(Event e)
-{
-    Logger_->Warn("HandleTestEvent");
-    return true;
-}
-*/

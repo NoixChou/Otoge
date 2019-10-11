@@ -25,6 +25,8 @@ TitleScene::TitleScene() : Scene("TitleScene")
     MenuOpener_->SetPriority(10.f);
     AddChildTask(std::static_pointer_cast<Task>(MenuOpener_));
 
+    MenuOpener_->testEvent += events::EventHandler<bool, events::Event&>(this, &TitleScene::TestHandler);
+
     //メニュー項目ボタン
     auto l_GroupScreen = ScreenData(20.f, 43.f, 60.f, 14.f);
     MenuGroup_ = std::make_shared<Scene>("MenuGroup", l_GroupScreen, DefaultScaler_);
@@ -203,4 +205,10 @@ void TitleScene::Draw()
             engine::CastToInt(fixed.posY),
             engine::CastToInt(fixed.width),
             engine::CastToInt(fixed.height), color_preset::BLACK, TRUE);
+}
+
+bool TitleScene::TestHandler(events::Event& e) const
+{
+    Logger_->Warn("Called Event: " + e.name);
+    return true;
 }
