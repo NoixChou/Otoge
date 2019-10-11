@@ -2,6 +2,8 @@
 #include "../Task/Scene.hpp"
 #include "../../Util/Calculate/ScreenData.h"
 
+#include "EventSystem/Include/EventSystem.hpp"
+
 class GUI : public Scene
 {
 private:
@@ -11,10 +13,12 @@ private:
 protected:
     std::string Label_;
     bool IsChangedLabel_ = false;
+    bool IsFontSizeInit_ = false;
     bool IsUseFont_ = false;
     int FontHandle_ = -1;
 public:
-    bool adjustmentFontSize = true;
+    events::Delegate<bool, events::Event&> testEvent;
+    bool adjustmentFontSize = false;
     unsigned baseColor;
     GUI(const std::string& guiName, const ScreenData& layoutScreen,
         std::shared_ptr<FlexibleScaler> parentScaler = nullptr, bool isUseFont = false);

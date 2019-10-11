@@ -30,13 +30,14 @@ DebugScene::DebugScene() : Scene("DebugScene")
         FpsLabel_->baseColor = color_preset::LEAF_GREEN;
         FpsLabel_->textAlign = Label::TextAlignment::middle | Label::TextAlignment::right;
         FpsLabel_->ChangeFontThickness(8);
+        FpsLabel_->adjustmentFontSize = true;
         l_FpsPanel->AddChildTask(std::static_pointer_cast<Task>(FpsLabel_));
         FpsDescLabel_ = std::make_shared<Label>("fps", ScreenData(70.f, 0.f, 30.f, 100.f),
                                                 l_FpsPanel->GetDefaultScaler());
         FpsDescLabel_->baseColor = color_preset::LEAF_GREEN;
         FpsDescLabel_->textAlign = Label::TextAlignment::bottom | Label::TextAlignment::center;
         FpsDescLabel_->ChangeFontThickness(2);
-        FpsDescLabel_->adjustmentFontSize = false;
+        FpsDescLabel_->adjustmentFontSize = true;
         FpsDescLabel_->ChangeFontSize(static_cast<int>(l_FpsPanel->GetDefaultScaler()->CalculateHeight(70.f)));
         l_FpsPanel->AddChildTask(std::static_pointer_cast<Task>(FpsDescLabel_));
     }
@@ -62,17 +63,19 @@ DebugScene::DebugScene() : Scene("DebugScene")
         DeltaTimeLabel_->baseColor = color_preset::LEMON_YELLOW;
         DeltaTimeLabel_->textAlign = Label::TextAlignment::middle | Label::TextAlignment::right;
         DeltaTimeLabel_->ChangeFontThickness(6);
+        DeltaTimeLabel_->adjustmentFontSize = true;
         l_DeltaTimePanel->AddChildTask(std::static_pointer_cast<Task>(DeltaTimeLabel_));
         DeltaTimeDescLabel_ = std::make_shared<Label>(" ms", ScreenData(70.f, 0.f, 30.f, 100.f),
                                                       l_DeltaTimePanel->GetDefaultScaler());
         DeltaTimeDescLabel_->baseColor = color_preset::LEMON_YELLOW;
         DeltaTimeDescLabel_->textAlign = Label::TextAlignment::bottom | Label::TextAlignment::center;
         DeltaTimeDescLabel_->ChangeFontThickness(6);
-        DeltaTimeDescLabel_->adjustmentFontSize = false;
+        DeltaTimeDescLabel_->adjustmentFontSize = true;
         DeltaTimeDescLabel_->ChangeFontSize(
             static_cast<int>(l_DeltaTimePanel->GetDefaultScaler()->CalculateHeight(80.f)));
         l_DeltaTimePanel->AddChildTask(std::static_pointer_cast<Task>(DeltaTimeDescLabel_));
     }
+
     SetTransparent(80.f);
     SetPriority(100.f);
 }

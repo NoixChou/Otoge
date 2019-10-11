@@ -1,9 +1,10 @@
 ﻿#pragma once
+#include "EventSystem/Include/EventSystem.hpp"
 #include "../../../System/Task/Scene.hpp"
 #include "../../../Util/Calculate/Screen/FlexibleScaler.hpp"
 #include "../../../System/GUI/Button.hpp"
 
-class TitleScene : public Scene
+class TitleScene : public Scene, events::ManagedEventListener
 {
 private:
     bool IsOpened_ = false;
@@ -30,4 +31,6 @@ public:
 
     void SceneUpdate(float deltaTime) override;
     void Draw() override;
+
+    bool TestHandler(events::Event& e) const;
 };
